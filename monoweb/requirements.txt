@@ -1,0 +1,15 @@
+# Flask
+Flask
+Flask-SQLAlchemy
+Flask-Script
+
+
+# crawler
+feedparser
+
+
+# utils
+bpython
+
+# deployment
+gunicorn
