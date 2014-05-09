@@ -12,6 +12,15 @@ def shell():
             use_bpython=True
             )
 
+@manager.command
+def syncdb():
+    from mono.models import Site, Article, Category, FavArticle
+    db.create_all()
+
+@manager.command
+def dropdb():
+    db.drop_all()
+
 class GunicornServer(Command):
 
     description = 'Run the app within Gunicorn'
