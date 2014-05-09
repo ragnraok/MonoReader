@@ -1,5 +1,6 @@
 from flask.ext.script import Manager, Command, Option
 from mono import mono_app
+from mono.database import db
 
 manager = Manager(mono_app)
 
@@ -7,6 +8,7 @@ manager = Manager(mono_app)
 def shell():
     return dict(
             app=mono_app,
+            db=db,
             use_bpython=True
             )
 
@@ -14,7 +16,7 @@ class GunicornServer(Command):
 
     description = 'Run the app within Gunicorn'
 
-    def __init__(self, port=5000, host='127.0.0.1', workers=4):
+    def __init__(self, host='127.0.0.1', port=5000, workers=4):
         self.port = port
         self.host = host
         self.workers = workers
@@ -60,10 +62,9 @@ class GunicornServer(Command):
 
             FlaskApplication().run()
 
+
 manager.add_command("gunicorn", GunicornServer())
 
 
 if __name__ == '__main__':
     manager.run()
-
-
