@@ -29,7 +29,7 @@ class FeedHtmlParser(HTMLParser):
 
 def pretreate_html(html):
     # remove all suck tags in html'
-    re_judge1 = re.compile('<!-*[^>]*>') # remove brower judgement
+    re_judge1 = re.compile('<!-*[^>]*>') # remove browser judgement
     tmp1 = re_judge1.sub('', html)
     tmp2 = tmp1.replace('<![endif]–>', '')
     re_script = re.compile('<\s*script[^>]*>[^<]*<\s*/\s*script\s*>',re.I)
@@ -55,7 +55,7 @@ def get_feed_url(url):
                         'Gecko/20071127 Firefox/2.0.0.11'}
     response = requests.get(url, headers=headers)
     html = response.text
-    #html = pretreate_html(html)
+    html = pretreate_html(html.encode('utf-8'))
     parser = FeedHtmlParser()
     parser.feed(html)
 
