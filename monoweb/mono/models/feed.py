@@ -1,8 +1,9 @@
 from mono.database import db
+from base import ModelMixin
 
 import datetime
 
-class Site(db.Model):
+class Site(db.Model, ModelMixin):
     __tablename__ = 'site'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -15,7 +16,7 @@ class Site(db.Model):
     def __repr__(self):
         return "<Site: %s, updated at %s, url: %s>" % (self.title, self.updated, self.url)
 
-class Article(db.Model):
+class Article(db.Model, ModelMixin):
     __tablename__ = 'article'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.Text, nullable=False)
@@ -32,7 +33,7 @@ category_site = db.Table('category_site',
         db.Column('site_id', db.Integer, db.ForeignKey('site.id'))
         )
 
-class Category(db.Model):
+class Category(db.Model, ModelMixin):
     __tablename__ = 'category'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
@@ -42,7 +43,7 @@ class Category(db.Model):
     def __repr__(self):
         return "<Category: %s>" % self.name
 
-class FavArticle(db.Model):
+class FavArticle(db.Model, ModelMixin):
     __tablename__ = 'favarticle'
 
     id = db.Column(db.Integer, primary_key=True)
