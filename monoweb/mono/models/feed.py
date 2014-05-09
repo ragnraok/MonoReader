@@ -50,7 +50,8 @@ class FavArticle(db.Model):
     content = db.Column(db.Text, nullable=False)
     updated = db.Column(db.DateTime, default=datetime.datetime.now)
     url = db.Column(db.String(120), nullable=False)
-    site_id = db.Column(db.Integer, db.ForeignKey('site.id'))
+    #site_id = db.Column(db.Integer, db.ForeignKey('site.id'))
+    site_title = db.Column(db.Text, nullable=False)
 
     def __repr__(self):
         return "<FavArticle: %s, updated at %s>" % (self.title, self.updated)
