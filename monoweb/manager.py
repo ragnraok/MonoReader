@@ -6,10 +6,15 @@ manager = Manager(mono_app)
 
 @manager.shell
 def shell():
+    from mono.models import Site, Article, Category, FavArticle
     return dict(
             app=mono_app,
             db=db,
-            use_bpython=True
+            use_bpython=True,
+            Site=Site,
+            Article=Article,
+            Category=Category,
+            FavArticle=FavArticle
             )
 
 @manager.command
