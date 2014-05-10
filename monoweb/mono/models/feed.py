@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from mono.database import db
 from mono.feed import FeedDataFetcher
-from base import ModelMixin
+from base import ModelMixin, MonoQuery
 
 import datetime
 
@@ -53,7 +53,7 @@ class Site(db.Model, ModelMixin):
         self.save()
 
     def set_category_by_id(self, category_id):
-        if Category.query.get(category_id) is not None:
+        if Category.query.is_exist(category_id):
             self.category_id = category_id
             self.save()
 
@@ -76,6 +76,8 @@ class Article(db.Model, ModelMixin):
 
 class Category(db.Model, ModelMixin):
     __tablename__ = 'category'
+    query_class = MonoQuery
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
     #sites = db.relationship('Site', secondary=category_site, backref=db.backref('categories',

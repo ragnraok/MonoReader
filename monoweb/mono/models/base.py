@@ -1,3 +1,4 @@
+from flask.ext.sqlalchemy import BaseQuery
 from mono.database import db
 
 class ModelMixin(object):
@@ -16,3 +17,10 @@ class ModelMixin(object):
 
     def save_without_commit(self):
         db.session.add(self)
+
+class MonoQuery(BaseQuery):
+    def is_exist(self, id):
+        if self.get(id) is not None:
+            return True
+        else:
+            return False
