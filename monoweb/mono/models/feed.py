@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from mono.database import db
 from mono.feed import FeedDataFetcher
-from base import ModelMixin, MonoQuery
+from base import ModelMixin, MonoQuery, FavArticleQuery
 
 import datetime
 
@@ -59,6 +59,7 @@ class Site(db.Model, ModelMixin):
 
 class Article(db.Model, ModelMixin):
     __tablename__ = 'article'
+
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.Text, nullable=False)
     content = db.Column(db.Text, nullable=False)
@@ -68,6 +69,21 @@ class Article(db.Model, ModelMixin):
 
     def __repr__(self):
         return "<Article: %s, updated at %s>" % (self.title.encode('utf-8'), self.updated)
+
+    def fav(self):
+        if not self.is_fav():
+            fav_article = FavArticle(title=self.title, content=self.content,
+                    updated=self.updated, url=self.url, site_title=self.site.title)
+            fav_article.save()
+
+    def is_fav(self):
+        if hasattr(self, "_is_fav"):
+            return self._is_fav
+        if FavArticle.query.is_fav(self.title):
+            self._is_fav = True
+        else:
+            self._is_fav = False
+        return self._is_fav
 
 #category_site = db.Table('category_site',
 #        db.Column('category_id', db.Integer, db.ForeignKey('category.id')),
@@ -89,6 +105,7 @@ class Category(db.Model, ModelMixin):
 
 class FavArticle(db.Model, ModelMixin):
     __tablename__ = 'favarticle'
+    query_class = FavArticleQuery
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.Text, nullable=False)
@@ -99,4 +116,4 @@ class FavArticle(db.Model, ModelMixin):
     site_title = db.Column(db.Text, nullable=False)
 
     def __repr__(self):
-        return "<FavArticle: %s, updated at %s>" % (self.title, self.updated)
+        return "<FavArticle: %s, updated at %s>" % (self.title.encode('utf-8'), self.updated)

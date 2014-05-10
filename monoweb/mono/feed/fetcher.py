@@ -115,8 +115,18 @@ class FeedDataFetcher(object):
                 article['title'] = item['title']
                 article['date'] = self.__parse_timestr(self.parser.version,
                        item['updated'], self.url)
-                article['content'] = item['description']
+                if 'content' in item:
+                    #content_list = [content['value'] for content in item['content']]
+                    #content = ''.join(content_list)
+                    #article['content'] = content
+                    article['content'] = item['content'][0]['value']
+                elif 'summary' in item:
+                    article['content'] = item['summary']
+                elif 'description' in item:
+                    article['content'] = item['description']
+                #article['content'] = item['description']
                 result.append(article)
+                break
             self.articles = result
         elif 'rss' in self.parser.version:
             item_list = self.parser['items']
@@ -128,6 +138,9 @@ class FeedDataFetcher(object):
                 article['date'] = self.__parse_timestr(self.parser.version,
                         item['updated'], self.url)
                 if 'content' in item:
+                    #content_list = [content['value'] for content in item['content']]
+                    #content = ''.join(content_list)
+                    #article['content'] = content
                     article['content'] = item['content'][0]['value']
                 elif 'summary' in item:
                     article['content'] = item['summary']
@@ -141,6 +154,6 @@ class FeedDataFetcher(object):
 if __name__ == '__main__':
     url = raw_input("Please input a url: ")
     fetcher = FeedDataFetcher(url)
-    print fetcher.fetch_site_title()
-    print fetcher.fetch_site_updated_time()
-    print fetcher.fetch_articles()
+    #print fetcher.fetch_site_title()
+    #print fetcher.fetch_site_updated_time()
+    fetcher.fetch_articles()

@@ -2,6 +2,8 @@ from flask.ext.script import Manager, Command, Option
 from mono import mono_app
 from mono.database import db
 
+import os
+
 manager = Manager(mono_app)
 
 @manager.shell
@@ -25,6 +27,8 @@ def syncdb():
 @manager.command
 def dropdb():
     db.drop_all()
+    db_path = os.path.join(mono_app.config['APP_DIR_NAME'], mono_app.config['DATABASE_NAME'])
+    os.remove(db_path)
 
 class GunicornServer(Command):
 

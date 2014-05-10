@@ -24,3 +24,9 @@ class MonoQuery(BaseQuery):
             return True
         else:
             return False
+
+class FavArticleQuery(MonoQuery):
+    def is_fav(self, title):
+        if self.filter_by(title=title).count() > 0:
+            return True
+        return False
