@@ -36,7 +36,7 @@ def pretreate_html(html):
     result = re_script.sub('', tmp2)
     return result
 
-def if_feed_url(url):
+def is_feed_url(url):
     if 'feed' in url or 'rss' in url or 'atom' in url:
         return True
     headers = {'User-Agent': 'Mozilla/5.0 (X11; U; Linux i686)' +
@@ -48,14 +48,14 @@ def if_feed_url(url):
     return False
 
 def get_feed_url(url):
-    if if_feed_url(url):
+    if is_feed_url(url):
         return url
 
     headers = {'User-Agent': 'Mozilla/5.0 (X11; U; Linux i686)' +
                         'Gecko/20071127 Firefox/2.0.0.11'}
     response = requests.get(url, headers=headers)
     html = response.text
-    html = pretreate_html(html.encode('utf-8'))
+    #html = pretreate_html(html.encode('utf-8'))
     parser = FeedHtmlParser()
     parser.feed(html)
 
