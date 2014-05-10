@@ -30,3 +30,8 @@ class FavArticleQuery(MonoQuery):
         if self.filter_by(title=title).count() > 0:
             return True
         return False
+
+class SiteQuery(MonoQuery):
+    def daily_read_sites(self):
+        sites = self.filter_by(is_read_daily=True).all()
+        return sites

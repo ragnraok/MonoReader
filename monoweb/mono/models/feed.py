@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 from mono.database import db
 from mono.feed import FeedDataFetcher
-from base import ModelMixin, MonoQuery, FavArticleQuery
+from modelbase import ModelMixin, MonoQuery, FavArticleQuery, SiteQuery
 
 import datetime
 
 class Site(db.Model, ModelMixin):
     __tablename__ = 'site'
+    query_class = SiteQuery
 
     id = db.Column(db.Integer, primary_key=True)
     url = db.Column(db.String(120), nullable=False)
@@ -114,6 +115,7 @@ class FavArticle(db.Model, ModelMixin):
     url = db.Column(db.String(120), nullable=False)
     #site_id = db.Column(db.Integer, db.ForeignKey('site.id'))
     site_title = db.Column(db.Text, nullable=False)
+    fav_date = db.Column(db.DateTime, default=datetime.datetime.now)
 
     def __repr__(self):
         return "<FavArticle: %s, updated at %s>" % (self.title.encode('utf-8'), self.updated)
