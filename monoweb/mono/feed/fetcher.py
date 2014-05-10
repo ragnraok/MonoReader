@@ -15,7 +15,7 @@ class FeedDataFetcher(object):
         self.articles = None
 
     def __init_parser(self):
-        locale.setlocale(locale.LC_TIME, "en_US.UTF8")
+        locale.setlocale(locale.LC_TIME, "en_US.UTF-8")
         if self.is_feed_url == False:
             self.url = get_feed_url(self.url)
 
@@ -53,7 +53,7 @@ class FeedDataFetcher(object):
         else:
             self.site_updated_time = datetime.datetime.now()
 
-        return None
+        return self.site_updated_time
 
     def __parse_timestr(self, version, timestr, url):
         if 'rss' in version:
@@ -114,7 +114,7 @@ class FeedDataFetcher(object):
                 article['url'] = item['link']
                 article['title'] = item['title']
                 article['date'] = self.__parse_timestr(self.parser.version,
-                       item['udpated'], self.url)
+                       item['updated'], self.url)
                 article['content'] = item['description']
                 result.append(article)
             self.articles = result
@@ -137,3 +137,10 @@ class FeedDataFetcher(object):
             self.articles = result
 
         return self.articles
+
+if __name__ == '__main__':
+    url = raw_input("Please input a url: ")
+    fetcher = FeedDataFetcher(url)
+    print fetcher.fetch_site_title()
+    print fetcher.fetch_site_updated_time()
+    print fetcher.fetch_articles()
