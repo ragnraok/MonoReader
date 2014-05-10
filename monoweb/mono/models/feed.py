@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from mono.database import db
 from mono.feed import FeedDataFetcher
 from base import ModelMixin
@@ -19,8 +20,7 @@ class Site(db.Model, ModelMixin):
     #    super(Site, self).__init__(*args, **kwargs)
 
     def __repr__(self):
-        return "<Site: %s, updated at %s, url: %s>" % (self.title,
-                self.updated.strftime("%Y-%m-%d"), self.url)
+        return "<Site: updated at %s, url: %s>" % (self.updated.strftime("%Y-%m-%d"), self.url)
 
     def update_site(self):
         data_fetcher = FeedDataFetcher(self.url, False)
