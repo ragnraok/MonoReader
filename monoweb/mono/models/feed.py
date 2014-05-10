@@ -1,4 +1,5 @@
 from mono.database import db
+from mono.feed import FeedDataFetcher
 from base import ModelMixin
 
 import datetime
@@ -8,13 +9,53 @@ class Site(db.Model, ModelMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     url = db.Column(db.String(120), nullable=False)
-    title = db.Column(db.Text, nullable=False)
-    updated = db.Column(db.DateTime, default=datetime.datetime.now)
+    title = db.Column(db.Text)
+    updated = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     is_read_daily = db.Column(db.Boolean, default=False)
     articles = db.relationship('Article', backref='site', lazy='dynamic', cascade='all,delete')
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
+
+    #def __init__(self, *args, **kwargs):
+    #    super(Site, self).__init__(*args, **kwargs)
 
     def __repr__(self):
-        return "<Site: %s, updated at %s, url: %s>" % (self.title, self.updated, self.url)
+        return "<Site: %s, updated at %s, url: %s>" % (self.title,
+                self.updated.strftime("%Y-%m-%d"), self.url)
+
+    def update_site(self):
+        data_fetcher = FeedDataFetcher(self.url, False)
+        updated = data_fetcher.fetch_site_updated_time()
+        if updated > self.updated or self.articles.count() == 0:
+            self.delete_all_articles()
+            if self.title is None:
+                self.title = data_fetcher.fetch_site_title()
+            self.__update_articles_from_fetcher(data_fetcher)
+            self.url = data_fetcher.url
+            self.updated = updated
+
+        self.save()
+
+    def __update_articles_from_fetcher(self, data_fetcher):
+        articles_list = data_fetcher.fetch_articles()
+        if articles_list is not None:
+            for item in articles_list:
+                article = Article(title=item['title'], content=item['content'],
+                        url=item['url'], updated=item['date'], site_id=self.id)
+                article.save_without_commit()
+
+    def delete_all_articles(self):
+        for a in self.articles:
+            a.delete_without_commit()
+        self.save()
+
+    def set_category(self, category):
+        self.category_id = category.id
+        self.save()
+
+    def set_category_by_id(self, category_id):
+        if Category.query.get(category_id) is not None:
+            self.category_id = category_id
+            self.save()
 
 class Article(db.Model, ModelMixin):
     __tablename__ = 'article'
@@ -26,19 +67,20 @@ class Article(db.Model, ModelMixin):
     site_id = db.Column(db.Integer, db.ForeignKey('site.id'))
 
     def __repr__(self):
-        return "<Article: %s, updated at %s>" % (self.title, self.updated)
+        return "<Article: %s, updated at %s>" % (self.title.encode('utf-8'), self.updated)
 
-category_site = db.Table('category_site',
-        db.Column('category_id', db.Integer, db.ForeignKey('category.id')),
-        db.Column('site_id', db.Integer, db.ForeignKey('site.id'))
-        )
+#category_site = db.Table('category_site',
+#        db.Column('category_id', db.Integer, db.ForeignKey('category.id')),
+#        db.Column('site_id', db.Integer, db.ForeignKey('site.id'))
+#        )
 
 class Category(db.Model, ModelMixin):
     __tablename__ = 'category'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
-    sites = db.relationship('Site', secondary=category_site, backref=db.backref('categories',
-        lazy='dynamic'), lazy='dynamic')
+    #sites = db.relationship('Site', secondary=category_site, backref=db.backref('categories',
+    #    lazy='dynamic'), lazy='dynamic')
+    sites = db.relationship('Site', backref='category', lazy='dynamic')
 
     def __repr__(self):
         return "<Category: %s>" % self.name

@@ -128,7 +128,7 @@ class FeedDataFetcher(object):
                 article['date'] = self.__parse_timestr(self.parser.version,
                         item['updated'], self.url)
                 if 'content' in item:
-                    article['content'] = item['content']
+                    article['content'] = item['content'][0]['value']
                 elif 'summary' in item:
                     article['content'] = item['summary']
                 elif 'description' in item:

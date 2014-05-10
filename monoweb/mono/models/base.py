@@ -13,3 +13,6 @@ class ModelMixin(object):
 
     def delete_without_commit(self):
         db.session.delete(self)
+
+    def save_without_commit(self):
+        db.session.add(self)
