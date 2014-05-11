@@ -8,6 +8,7 @@ import urlparse
 
 class FeedHtmlParser(HTMLParser):
     def __init__(self):
+        #super(FeedHtmlParser, self).__init__()
         HTMLParser.__init__(self)
         self.found = False
         self.feed_url = None
@@ -23,6 +24,16 @@ class FeedHtmlParser(HTMLParser):
                     href_index = names.index('href')
                     self.feed_url = values[href_index]
                     self.found = True
+
+    def handle_data(self, data):
+        pass
+
+class ArticleImageURLParser(HTMLParser):
+    def __init__(self):
+        super(ArticleImageURLParser, self).__init__()
+
+    def handle_starttag(self, tag, attrs):
+        pass
 
     def handle_data(self, data):
         pass

@@ -66,6 +66,7 @@ class Article(db.Model, ModelMixin):
     updated = db.Column(db.DateTime, default=datetime.datetime.now)
     url = db.Column(db.String(120), nullable=False)
     site_id = db.Column(db.Integer, db.ForeignKey('site.id'))
+    first_image_url = db.Column(db.Text, nullable=True)
 
     def __repr__(self):
         return "<Article: %s, updated at %s>" % (self.title.encode('utf-8'), self.updated)
@@ -115,6 +116,7 @@ class FavArticle(db.Model, ModelMixin):
     #site_id = db.Column(db.Integer, db.ForeignKey('site.id'))
     site_title = db.Column(db.Text, nullable=False)
     fav_date = db.Column(db.DateTime, default=datetime.datetime.now)
+    first_image_url = db.Column(db.Text, nullable=True)
 
     def __repr__(self):
         return "<FavArticle: %s, updated at %s>" % (self.title.encode('utf-8'), self.updated)

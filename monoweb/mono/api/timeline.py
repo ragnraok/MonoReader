@@ -53,7 +53,7 @@ class DailyReadTimelineView(BaseArticleListView):
             article_list = Article.query.filter(Article.site_id.in_(daily_read_sites_id)).order_by(desc(
                 Article.updated)).paginate(page=page, per_page=per_page_num).items
         else:
-            raise ValueError()
+            raise ValueError(PAGE_SMALL_THAN_ONE)
         result = []
         for article in article_list:
             result.append(fill_list_article_object(article.title, article.site.title, article.updated))
