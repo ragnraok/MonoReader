@@ -126,7 +126,6 @@ class FeedDataFetcher(object):
                     article['content'] = item['description']
                 #article['content'] = item['description']
                 result.append(article)
-                break
             self.articles = result
         elif 'rss' in self.parser.version:
             item_list = self.parser['items']

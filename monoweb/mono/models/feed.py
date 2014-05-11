@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from mono.database import db
 from mono.feed import FeedDataFetcher
 from modelbase import ModelMixin, MonoQuery, FavArticleQuery, SiteQuery
