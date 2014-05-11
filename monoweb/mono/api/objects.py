@@ -2,9 +2,9 @@
 API object specification and correspond methods
 """
 
-def fill_timeline_article_object(title, site, updated):
+def fill_list_article_object(title, site, updated):
     """
-    timeline article object:
+    list article object:
         {
             title: title,
             site: site_title,

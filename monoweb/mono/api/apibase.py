@@ -1,8 +1,8 @@
 from flask.views import View
-from utils import make_api_response
+from utils import make_api_response, SUCCESS
 
 class BaseArticleListView(View):
-    methods = ['GET', 'POST']
+    methods = ['GET', ]
 
     def get_article_list(self, **kwargs):
         raise NotImplementedError()
@@ -18,4 +18,8 @@ class BaseArticleListView(View):
             ]
         }
         """
-        return make_api_response(error_code=0, data={'articles': self.get_article_list(**kwargs)})
+        try:
+            articles = self.get_article_list(**kwargs)
+            return make_api_response(error_code=SUCCESS, data={'articles': articles})
+        except ValueError, e:
+            return make_api_response(error_code=e.message, data=None)

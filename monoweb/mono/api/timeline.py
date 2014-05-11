@@ -1,11 +1,10 @@
-from flask.views import View
 from flask import current_app
 from sqlalchemy.sql.expression import desc
 
-from utils import make_api_response
+from utils import PAGE_SMALL_THAN_ONE
 from apibase import BaseArticleListView
-from mono.models import Article
-from objects import fill_timeline_article_object
+from mono.models import Article, Site
+from objects import fill_list_article_object
 
 class MainTimelineView(BaseArticleListView):
     """
@@ -13,7 +12,7 @@ class MainTimelineView(BaseArticleListView):
     {
         error_code: error_code,
         articles: [
-            timeline article object
+            list article object
             ...
         ]
     }
@@ -26,10 +25,10 @@ class MainTimelineView(BaseArticleListView):
             article_list = Article.query.order_by(desc(Article.updated)).paginate(
                     page=page, per_page=per_page_num).items
         else:
-            article_list = []
+            raise ValueError(PAGE_SMALL_THAN_ONE)
         result = []
         for article in article_list:
-            result.append(fill_timeline_article_object(article.title,
+            result.append(fill_list_article_object(article.title,
                 article.site.title, article.updated))
         return result
 
@@ -39,7 +38,7 @@ class DailyReadTimelineView(BaseArticleListView):
     {
         error_code: error_code,
         articles: [
-            timeline article object
+            list article object
             ...
         ]
     }
@@ -54,8 +53,8 @@ class DailyReadTimelineView(BaseArticleListView):
             article_list = Article.query.filter(Article.site_id.in_(daily_read_sites_id)).order_by(desc(
                 Article.updated)).paginate(page=page, per_page=per_page_num).items
         else:
-            article_list = []
+            raise ValueError()
         result = []
         for article in article_list:
-            result.append(fill_timeline_article_object(article.title, article.site.title, article.updated))
+            result.append(fill_list_article_object(article.title, article.site.title, article.updated))
         return result
