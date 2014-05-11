@@ -18,17 +18,19 @@ class MainTimelineView(BaseArticleListView):
         ]
     }
     """
-    def get_article_list(self):
+    def get_article_list(self, **kwargs):
         article_list = []
         per_page_num = current_app.config.get('ARTICLE_NUM_PER_PAGE', 10)
-        if self.page >= 1:
+        page = kwargs.get('page', 1)
+        if page >= 1:
             article_list = Article.query.order_by(desc(Article.updated)).paginate(
                     page=page, per_page=per_page_num).items
         else:
             article_list = []
         result = []
         for article in article_list:
-            result.append(fill_timeline_article_object(article.title, article.site.title, article.updated))
+            result.append(fill_timeline_article_object(article.title,
+                article.site.title, article.updated))
         return result
 
 class DailyReadTimelineView(BaseArticleListView):
@@ -42,10 +44,11 @@ class DailyReadTimelineView(BaseArticleListView):
         ]
     }
     """
-    def get_article_list(self):
+    def get_article_list(self, **kwargs):
         article_list = []
         per_page_num = current_app.config.get('ARTICLE_NUM_PER_PAGE', 10)
-        if self.page >= 1:
+        page = kwargs.get('page', 1)
+        if page >= 1:
             daily_read_sites = Site.query.filter_by(is_read_daily=True).all()
             daily_read_sites_id = [item.id for item in daily_read_sites]
             article_list = Article.query.filter(Article.site_id.in_(daily_read_sites_id)).order_by(desc(

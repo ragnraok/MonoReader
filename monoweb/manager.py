@@ -30,6 +30,10 @@ def dropdb():
     db_path = os.path.join(mono_app.config['APP_DIR_NAME'], mono_app.config['DATABASE_NAME'])
     os.remove(db_path)
 
+@manager.command
+def runserver():
+    mono_app.run(host="127.0.0.1", port=5000)
+
 class GunicornServer(Command):
 
     description = 'Run the app within Gunicorn'

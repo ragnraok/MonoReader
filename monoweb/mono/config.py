@@ -6,6 +6,7 @@ DEBUG = True
 APP_DIR_NAME = "mono"
 
 ARTICLE_NUM_PER_PAGE = 10
+API_URL_PREFIX = "/api"
 
 # database setting
 DATABASE_NAME = 'monoreader.db'
