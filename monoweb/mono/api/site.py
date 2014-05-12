@@ -12,7 +12,7 @@ class SiteArticleListView(BaseArticleListView):
     {
         error_code: error_code,
         articles: [
-            timeline article object
+            list article object
             ...
         ]
     }
