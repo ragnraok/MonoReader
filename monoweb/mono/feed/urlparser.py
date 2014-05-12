@@ -8,7 +8,6 @@ import urlparse
 
 class FeedHtmlParser(HTMLParser):
     def __init__(self):
-        #super(FeedHtmlParser, self).__init__()
         HTMLParser.__init__(self)
         self.found = False
         self.feed_url = None
@@ -29,11 +28,23 @@ class FeedHtmlParser(HTMLParser):
         pass
 
 class ArticleImageURLParser(HTMLParser):
+    """
+    get the first image in the html
+    """
     def __init__(self):
-        super(ArticleImageURLParser, self).__init__()
+        HTMLParser.__init__(self) # old-style class
+        self.found = False
+        self.image_url = None
 
     def handle_starttag(self, tag, attrs):
-        pass
+        if tag == 'img' and self.found is False:
+            names = [val[0] for val in attrs]
+            values = [val[1] for val in attrs]
+            if 'src' in names:
+                src_index = names.index('src')
+                val = values[src_index]
+                self.image_url = val
+                self.found = True
 
     def handle_data(self, data):
         pass
@@ -84,9 +95,14 @@ def get_feed_url(url):
         return None
 
 if __name__ == '__main__':
-    link = raw_input("please input a url: ")
-    feed_url = get_feed_url(link)
-    if feed_url:
-        print feed_url
-    else:
-        print "cannot find the feed site"
+    #link = raw_input("please input a url: ")
+    #feed_url = get_feed_url(link)
+    #if feed_url:
+    #    print feed_url
+    #else:
+    #    print "cannot find the feed site"
+    import requests
+    rv = requests.get("http://coolshell.cn/articles/11466.html")
+    parser = ArticleImageURLParser()
+    parser.feed(rv.text)
+    print parser.image_url
