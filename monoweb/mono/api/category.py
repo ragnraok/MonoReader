@@ -6,6 +6,21 @@ from utils import SITE_NOT_EXIST, DATA_FORMAT_ERROR, get_post_data
 from mono.models import Site, Category
 
 class CategoryListView(BaseAPIGETView):
+    """
+    response format:
+    {
+        error_code: error_code,
+        data: {
+            category: [
+                category object
+                ...
+            ]
+        }
+    }
+    """
+    def __init__(self, **kwargs):
+        self.data_key = "category"
+
     def get_data(self, **kwargs):
         category_list = Category.query.all()
         result = []
@@ -31,7 +46,10 @@ class CategorySetView(BaseAPIPOSTView):
                 site_id: site_id
             }
         """
-        data = dict(data)
+        try:
+            data = dict(data)
+        except:
+            raise ValueError(DATA_FORMAT_ERROR)
         site_id = data.get('site_id', None)
         category_name = data.get('category', None)
         if site_id is None:
@@ -42,7 +60,7 @@ class CategorySetView(BaseAPIPOSTView):
         if site is None:
             raise ValueError(SITE_NOT_EXIST)
         if self.is_set:
-            category = Category.query.filter_by(name=category_name)
+            category = Category.query.filter_by(name=category_name).first()
             if category is None:
                 category = Category(name=category_name)
                 category.save()

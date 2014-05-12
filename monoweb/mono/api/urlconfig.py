@@ -25,4 +25,4 @@ def config_api_url():
     category_unsetview = CategorySetView.as_view('category_unsetview', is_set=False)
     api_app.add_url_rule("/category/get_all/", view_func=CategoryListView.as_view('category_listview'))
     api_app.add_url_rule("/category/set/", view_func=category_setview)
-    api_app.add_url_rule("/category/unset", view_func=category_unsetview)
+    api_app.add_url_rule("/category/unset/", view_func=category_unsetview)
