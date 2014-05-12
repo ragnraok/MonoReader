@@ -11,10 +11,12 @@ class MainTimelineView(BaseArticleListView):
     response format:
     {
         error_code: error_code,
-        articles: [
-            list article object
-            ...
-        ]
+        data: {
+            articles: [
+                list article object
+                ...
+            ]
+        }
     }
     """
     def get_article_list(self, **kwargs):
@@ -29,7 +31,7 @@ class MainTimelineView(BaseArticleListView):
         result = []
         for article in article_list:
             result.append(fill_list_article_object(article.title,
-                article.site.title, article.updated))
+                article.site.title, article.updated, article.first_image_url))
         return result
 
 class DailyReadTimelineView(BaseArticleListView):
@@ -37,10 +39,12 @@ class DailyReadTimelineView(BaseArticleListView):
     response format:
     {
         error_code: error_code,
-        articles: [
-            list article object
-            ...
-        ]
+        data: {
+            articles: [
+                list article object
+                ...
+            ]
+        }
     }
     """
     def get_article_list(self, **kwargs):
@@ -56,5 +60,6 @@ class DailyReadTimelineView(BaseArticleListView):
             raise ValueError(PAGE_SMALL_THAN_ONE)
         result = []
         for article in article_list:
-            result.append(fill_list_article_object(article.title, article.site.title, article.updated))
+            result.append(fill_list_article_object(article.title, article.site.title,
+                article.updated, article.first_image_url))
         return result

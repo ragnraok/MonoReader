@@ -2,17 +2,19 @@
 API object specification and correspond methods
 """
 
-def fill_list_article_object(title, site, updated):
+def fill_list_article_object(title, site, updated, cover_url):
     """
     list article object:
         {
             title: title,
             site: site_title,
-            updated: YYYY-MM-DD
+            updated: YYYY-MM-DD,
+            cover_url: url, may be None
         }
     """
     print updated
-    result = dict(title=title, site=site, updated=updated.strftime("%Y-%m-%d"))
+    result = dict(title=title, site=site, updated=updated.strftime("%Y-%m-%d"),
+            cover_url=cover_url)
     return result
 
 def fill_article_object(title, site, updated, content, url):
