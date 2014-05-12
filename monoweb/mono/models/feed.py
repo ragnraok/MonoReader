@@ -97,7 +97,7 @@ class Category(db.Model, ModelMixin):
     query_class = MonoQuery
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120), nullable=False)
+    name = db.Column(db.String(120), nullable=False, unique=True)
     #sites = db.relationship('Site', secondary=category_site, backref=db.backref('categories',
     #    lazy='dynamic'), lazy='dynamic')
     sites = db.relationship('Site', backref='category', lazy='dynamic')

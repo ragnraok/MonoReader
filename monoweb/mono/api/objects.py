@@ -28,3 +28,18 @@ def fill_article_object(title, site, updated, content, url):
     """
     return dict(title=title, site=site, updated=updated.strftime("%Y-%M-%d"),
             content=content, url=url)
+
+def fill_site_object(title, updated, url, category, is_read_daily, article_count):
+    """
+    site object:
+        {
+            title: title,
+            udpated: YYYY-MM-DD,
+            category: category,
+            is_fav: boolean,
+            article_count: article_count,
+            url: url
+        }
+    """
+    return dict(title=title, updated=updated.strftime("%Y-%m-%d"), category=getattr(category, 'name', None),
+            is_fav=is_read_daily, article_count=article_count, url=url)
