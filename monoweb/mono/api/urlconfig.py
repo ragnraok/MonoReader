@@ -19,3 +19,10 @@ def config_api_url():
     api_app.add_url_rule("/site/get_all_by_category/", view_func=site_listview_by_category)
     api_app.add_url_rule("/site/get_by_category/<string:category>/", view_func=site_listview_by_category)
     api_app.add_url_rule("/site/get_by_category_id/<int:category_id>/", view_func=site_listview_by_category)
+
+    from category import CategoryListView, CategorySetView
+    category_setview = CategorySetView.as_view('category_setview', is_set=True)
+    category_unsetview = CategorySetView.as_view('category_unsetview', is_set=False)
+    api_app.add_url_rule("/category/get_all/", view_func=CategoryListView.as_view('category_listview'))
+    api_app.add_url_rule("/category/set/", view_func=category_setview)
+    api_app.add_url_rule("/category/unset", view_func=category_unsetview)

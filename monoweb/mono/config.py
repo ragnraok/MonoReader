@@ -7,6 +7,7 @@ APP_DIR_NAME = "mono"
 
 ARTICLE_NUM_PER_PAGE = 10
 API_URL_PREFIX = "/api"
+UNCLASSIFIED = "not classified"
 
 # database setting
 DATABASE_NAME = 'monoreader.db'

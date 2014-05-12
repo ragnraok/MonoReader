@@ -1,3 +1,5 @@
+from flask import current_app
+
 from mono.database import db
 from mono.feed import FeedDataFetcher
 from modelbase import ModelMixin, MonoQuery, FavArticleQuery, SiteQuery
@@ -48,6 +50,19 @@ class Site(db.Model, ModelMixin):
         for a in self.articles:
             a.delete_without_commit()
         self.save()
+
+    def unset_category(self):
+        unclassified_name = current_app.config.get('UNCLASSIFIED', "not classified")
+        unclassified = Category.query.filter_by(name=unclassified_name).first()
+        if unclassified is not None:
+            self.category_id = unclassified.id
+            self.save()
+        else:
+            unclassified = Category(name=unclassified_name)
+            unclassified.save()
+            self.category_id = unclassified.id
+            self.save()
+
 
     def set_category(self, category):
         self.category_id = category.id

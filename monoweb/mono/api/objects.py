@@ -45,3 +45,12 @@ def fill_site_object(title, updated, url, category, is_read_daily, article_count
     """
     return dict(title=title, updated=updated.strftime("%Y-%m-%d"), category=getattr(category, 'name', None),
             is_fav=is_read_daily, article_count=article_count, url=url)
+
+def fill_category_object(name):
+    """
+    category object:
+        {
+            name: category_name
+        }
+    """
+    return dict(name=name)

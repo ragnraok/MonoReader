@@ -1,5 +1,6 @@
 from flask.views import View
-from utils import make_api_response, SUCCESS
+from flask import request
+from utils import make_api_response, get_post_data, SUCCESS
 
 class BaseAPIGETView(View):
     methods = ['GET', ]
@@ -14,8 +15,20 @@ class BaseAPIGETView(View):
         except ValueError, e:
             return make_api_response(error_code=e.message, data=None)
 
-class BaseAPIPostView(View):
-    pass
+class BaseAPIPOSTView(View):
+    methods = ['POST', ]
+
+    def proc_data(self, data, **kwargs):
+        pass
+
+    def dispatch_request(self, **kwargs):
+        try:
+            data = get_post_data()
+            self.proc_data(data, **kwargs)
+            return make_api_response(error_code=SUCCESS)
+        except ValueError, e:
+            return make_api_response(error_code=e.message)
+
 
 class BaseArticleListView(BaseAPIGETView):
 
