@@ -11,10 +11,12 @@ class SiteArticleListView(BaseArticleListView):
     response format:
     {
         error_code: error_code,
-        articles: [
-            list article object
-            ...
-        ]
+        data: {
+            articles: [
+                list article object
+                ...
+            ]
+        }
     }
     """
     def get_article_list(self, **kwargs):
@@ -33,7 +35,7 @@ class SiteArticleListView(BaseArticleListView):
         result = []
         for article in article_list:
             result.append(fill_list_article_object(article.title,
-                article.site.title, article.updated))
+                article.site.title, article.updated, article.first_image_url))
         return result
 
 class SiteList(object):
@@ -69,16 +71,68 @@ class SitesListView(BaseSiteListView):
 
     def get_sites(self, **kwargs):
         if self.is_arrange_by_category is False:
+            """
+            response format:
+            {
+                error_code: error_code,
+                data: {
+                    sites: [
+                        site_object
+                        ...
+                    ]
+                }
+            }
+            """
             return self.site_list.get_all_sites()
         else:
             category = kwargs.get('category', None)
             category_id = kwargs.get('category_id', None)
             if category is not None:
+                """
+                response format:
+                {
+                    error_code: error_code,
+                    data: {
+                        sites: [
+                            site_object
+                            ...
+                        ]
+                    }
+                }
+                """
                 category = Category.query.filter_by(name=category).first()
                 return self.site_list.get_sites_by_cateogry(category)
             elif category_id is not None:
+                """
+                response format:
+                {
+                    error_code: error_code,
+                    data: {
+                        sites: [
+                            site_object
+                            ...
+                        ]
+                    }
+                }
+                """
                 return self.site_list.get_sites_by_cateogry_id(category_id)
             else:
+                """
+                response format:
+                {
+                    error_code: error_code,
+                    data: {
+                        sites: [
+                            {
+                                category: category_name,
+                                sites: [
+                                    site object
+                                ]
+                            }
+                        ]
+                    }
+                }
+                """
                 category_list = Category.query.all()
                 result = []
                 for category in category_list:
