@@ -28,7 +28,8 @@ class SiteArticleListView(BaseArticleListView):
             if page < 1:
                 raise ValueError(PAGE_SMALL_THAN_ONE)
             article_list = Article.query.filter_by(site_id=site_id).order_by(desc(
-                Article.updated)).paginate(page=page, per_page=per_page_num).items
+                Article.updated)).paginate(page=page, per_page=per_page_num,
+                        error_out=False).items
         else:
             article_list = Article.query.filter_by(site_id=site_id).order_by(desc(
                 Article.updated)).all()
@@ -125,6 +126,7 @@ class SitesListView(BaseSiteListView):
                         sites: [
                             {
                                 category: category_name,
+                                is_un_classified: boolean,
                                 sites: [
                                     site object
                                 ]
@@ -135,7 +137,10 @@ class SitesListView(BaseSiteListView):
                 """
                 category_list = Category.query.all()
                 result = []
+                unclassified_name = current_app.config.get('UNCLASSIFIED', "not classified")
                 for category in category_list:
-                    result.append({'category': category.name,
+                    result.append({
+                        'category': category.name,
+                        'is_un_classified': category.name == unclassified_name,
                         'sites': self.site_list.get_sites_by_cateogry(category)})
                 return result

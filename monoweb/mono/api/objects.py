@@ -12,7 +12,6 @@ def fill_list_article_object(title, site, updated, cover_url):
             cover_url: url, may be None
         }
     """
-    print updated
     result = dict(title=title, site=site, updated=updated.strftime("%Y-%m-%d"),
             cover_url=cover_url)
     return result
