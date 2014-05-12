@@ -1,9 +1,9 @@
 from sqlalchemy.sql.expression import desc
 from flask import current_app
 
-from apibase import BaseArticleListView, BaseSiteListView
+from apibase import BaseArticleListView, BaseSiteListView, BaseAPIPOSTView
 from objects import fill_list_article_object, fill_site_object
-from utils import SITE_NOT_EXIST, PAGE_SMALL_THAN_ONE
+from utils import SITE_NOT_EXIST, PAGE_SMALL_THAN_ONE, DATA_FORMAT_ERROR
 from mono.models import Article, Site, Category
 
 class SiteArticleListView(BaseArticleListView):
@@ -147,3 +147,28 @@ class SitesListView(BaseSiteListView):
                         'is_un_classified': category.name == unclassified_name,
                         'sites': self.site_list.get_sites_by_cateogry(category)})
                 return result
+
+class FavSiteSetView(BaseAPIPOSTView):
+    def proc_data(self, data, **kwargs):
+        """
+        post data format:
+            {
+                site_id: site_id,
+                is_fav: boolean
+            }
+        """
+        try:
+            data = dict(data)
+        except:
+            raise ValueError(DATA_FORMAT_ERROR)
+        site_id = data.get('site_id', None)
+        is_fav = data.get('is_fav', None)
+        if site_id is None or is_fav is None:
+            raise ValueError(DATA_FORMAT_ERROR)
+        if not isinstance(is_fav, bool):
+            raise ValueError(DATA_FORMAT_ERROR)
+        site = Site.query.get(site_id)
+        if site is None:
+            raise ValueError(SITE_NOT_EXIST)
+        site.is_read_daily = is_fav
+        site.save()
