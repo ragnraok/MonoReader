@@ -40,7 +40,8 @@ class Site(db.Model, ModelMixin):
         if articles_list is not None:
             for item in articles_list:
                 article = Article(title=item['title'], content=item['content'],
-                        url=item['url'], updated=item['date'], site_id=self.id)
+                        url=item['url'], updated=item['date'], site_id=self.id,
+                        first_image_url=item['first_img_url'])
                 article.save_without_commit()
 
     def delete_all_articles(self):

@@ -40,17 +40,15 @@ class FeedDataFetcher(object):
             return self.site_updated_time
         elif self.parser is None:
             self.__init_parser()
-        if 'updated' in self.parser['channel']:
-            timestr = self.parser['channel']['updated']
-            version = self.parser.version
-            self.site_updated_time = self.__parse_timestr(version, timestr,
-                    self.url)
-        elif 'published' in self.parser['channel']:
+        if 'published' in self.parser['channel']:
             timestr = self.parser['channel']['published']
-            version = self.parser.version
-            self.site_updated_time = self.__parse_timestr(version, timestr,
-                    self.url)
-        else:
+        elif 'updated' in self.parser['channel']:
+            timestr = self.parser['channel']['updated']
+
+        version = self.parser.version
+        self.site_updated_time = self.__parse_timestr(version, timestr,
+                self.url)
+        if self.site_updated_time is None:
             self.site_updated_time = datetime.datetime.now()
 
         return self.site_updated_time
@@ -90,6 +88,8 @@ class FeedDataFetcher(object):
                 %Y-%m-%dT%H:%M:%S
             """
             return datetime.datetime.strptime(timestr[:19], "%Y-%m-%dT%H:%M:%S")
+        else:
+            return None
 
     def fetch_articles(self):
         """
@@ -113,14 +113,23 @@ class FeedDataFetcher(object):
             article = {}
             article['url'] = item['link']
             article['title'] = item['title']
+
+            if 'published' in item:
+                article_timestr = item['published']
+            elif 'updated' in item:
+                article_timestr = item['updated']
             article['date'] = self.__parse_timestr(self.parser.version,
-                   item['updated'], self.url)
+                   article_timestr, self.url)
+            if article['date'] is None:
+                article['date'] = datetime.datetime.now()
+
             if 'content' in item:
                 article['content'] = item['content'][0]['value']
             elif 'summary' in item:
                 article['content'] = item['summary']
             elif 'description' in item:
                 article['content'] = item['description']
+
             image_url_parser = ArticleImageURLParser()
             image_url_parser.feed(article['content'])
             article['first_img_url'] = image_url_parser.image_url

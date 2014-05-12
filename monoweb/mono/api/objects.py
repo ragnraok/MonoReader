@@ -11,7 +11,8 @@ def fill_list_article_object(title, site, updated):
             updated: YYYY-MM-DD
         }
     """
-    result = dict(title=title, site=site, updated=updated.strftime("%Y-%M-%d"))
+    print updated
+    result = dict(title=title, site=site, updated=updated.strftime("%Y-%m-%d"))
     return result
 
 def fill_article_object(title, site, updated, content, url):
