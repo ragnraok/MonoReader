@@ -1,6 +1,7 @@
 from flask.ext.script import Manager, Command, Option
 from mono import mono_app
 from mono.database import db
+from mono.models import init_db
 
 import os
 
@@ -23,6 +24,7 @@ def shell():
 def syncdb():
     from mono.models import Site, Article, Category, FavArticle
     db.create_all()
+    init_db(mono_app)
 
 @manager.command
 def dropdb():

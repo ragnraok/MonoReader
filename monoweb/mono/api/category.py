@@ -24,8 +24,10 @@ class CategoryListView(BaseAPIGETView):
     def get_data(self, **kwargs):
         category_list = Category.query.all()
         result = []
+        unclassified_name = current_app.config.get('UNCLASSIFIED', "not classified")
         for category in category_list:
-            result.append(fill_category_object(name=category.name))
+            result.append(fill_category_object(category_id=category.id, name=category.name,
+                is_un_classified=category.name==unclassified_name))
         return result
 
 class CategorySetView(BaseAPIPOSTView):

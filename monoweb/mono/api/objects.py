@@ -45,11 +45,13 @@ def fill_site_object(title, updated, url, category, is_read_daily, article_count
     return dict(title=title, updated=updated.strftime("%Y-%m-%d"), category=getattr(category, 'name', None),
             is_fav=is_read_daily, article_count=article_count, url=url)
 
-def fill_category_object(name):
+def fill_category_object(category_id, name, is_un_classified):
     """
     category object:
         {
-            name: category_name
+            category_id: category_id,
+            name: category_name,
+            is_un_classified: boolean
         }
     """
-    return dict(name=name)
+    return dict(category_id=category_id, name=name, is_un_classified=is_un_classified)

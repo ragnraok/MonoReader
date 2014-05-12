@@ -49,20 +49,23 @@ class SiteList(object):
                 article_count=site.articles.count(), url=site.url))
         return result
 
-
     def get_all_sites(self):
         site_list = Site.query.all()
         return self.__get_site_object_list(site_list)
 
     def get_sites_by_cateogry(self, category):
-        site_list = category.sites
-        return self.__get_site_object_list(site_list)
+        if category:
+            return self.__get_site_object_list(category.sites)
+        else:
+            return []
 
     def get_sites_by_cateogry_id(self, category_id):
         category = Category.query.get(category_id)
         if category:
             site_list = category.sites
             return self.__get_site_object_list(site_list)
+        else:
+            return []
 
 class SitesListView(BaseSiteListView):
     def __init__(self, is_arrange_by_category=False, **kwargs):
