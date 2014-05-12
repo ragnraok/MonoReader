@@ -1,4 +1,4 @@
-from urlparser import get_feed_url
+from urlparser import get_feed_url, ArticleImageURLParser
 
 import feedparser
 import datetime
@@ -99,6 +99,7 @@ class FeedDataFetcher(object):
                 'url': original post's url
                 'content': content in html
                 'date': a datetime.datetime object
+                'first_img_url': the first image's url, may be None
             }]
         """
         if self.articles is not None:
@@ -106,53 +107,30 @@ class FeedDataFetcher(object):
         elif self.parser is None:
             self.__init_parser()
 
-        if 'atom' in self.parser.version:
-            item_list = self.parser['items']
-            result = []
-            for item in item_list:
-                article = {}
-                article['url'] = item['link']
-                article['title'] = item['title']
-                article['date'] = self.__parse_timestr(self.parser.version,
-                       item['updated'], self.url)
-                if 'content' in item:
-                    #content_list = [content['value'] for content in item['content']]
-                    #content = ''.join(content_list)
-                    #article['content'] = content
-                    article['content'] = item['content'][0]['value']
-                elif 'summary' in item:
-                    article['content'] = item['summary']
-                elif 'description' in item:
-                    article['content'] = item['description']
-                #article['content'] = item['description']
-                result.append(article)
-            self.articles = result
-        elif 'rss' in self.parser.version:
-            item_list = self.parser['items']
-            result = []
-            for item in item_list:
-                article = {}
-                article['url'] = item['link']
-                article['title'] = item['title']
-                article['date'] = self.__parse_timestr(self.parser.version,
-                        item['updated'], self.url)
-                if 'content' in item:
-                    #content_list = [content['value'] for content in item['content']]
-                    #content = ''.join(content_list)
-                    #article['content'] = content
-                    article['content'] = item['content'][0]['value']
-                elif 'summary' in item:
-                    article['content'] = item['summary']
-                elif 'description' in item:
-                    article['content'] = item['description']
-                result.append(article)
-            self.articles = result
-
+        item_list = self.parser['items']
+        result = []
+        for item in item_list:
+            article = {}
+            article['url'] = item['link']
+            article['title'] = item['title']
+            article['date'] = self.__parse_timestr(self.parser.version,
+                   item['updated'], self.url)
+            if 'content' in item:
+                article['content'] = item['content'][0]['value']
+            elif 'summary' in item:
+                article['content'] = item['summary']
+            elif 'description' in item:
+                article['content'] = item['description']
+            image_url_parser = ArticleImageURLParser()
+            image_url_parser.feed(article['content'])
+            article['first_img_url'] = image_url_parser.image_url
+            result.append(article)
+        self.articles = result
         return self.articles
 
 if __name__ == '__main__':
     url = raw_input("Please input a url: ")
     fetcher = FeedDataFetcher(url)
-    #print fetcher.fetch_site_title()
-    #print fetcher.fetch_site_updated_time()
-    fetcher.fetch_articles()
+    print fetcher.fetch_site_title()
+    print fetcher.fetch_site_updated_time()
+    #print fetcher.fetch_articles()
