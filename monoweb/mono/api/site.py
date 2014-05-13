@@ -44,7 +44,7 @@ class SiteList(object):
     def __get_site_object_list(self, site_list):
         result = []
         for site in site_list:
-            result.append(fill_site_object(title=site.title, updated=site.updated,
+            result.append(fill_site_object(site_id=site.id, title=site.title, updated=site.updated,
                 category=site.category, is_read_daily=site.is_read_daily,
                 article_count=site.articles.count(), url=site.url))
         return result

@@ -30,10 +30,11 @@ def fill_article_object(title, site, updated, content, url):
     return dict(title=title, site=site, updated=updated.strftime("%Y-%M-%d"),
             content=content, url=url)
 
-def fill_site_object(title, updated, url, category, is_read_daily, article_count):
+def fill_site_object(site_id, title, updated, url, category, is_read_daily, article_count):
     """
     site object:
         {
+            site_id: site_id,
             title: title,
             udpated: YYYY-MM-DD,
             category: category,
@@ -42,7 +43,8 @@ def fill_site_object(title, updated, url, category, is_read_daily, article_count
             url: url
         }
     """
-    return dict(title=title, updated=updated.strftime("%Y-%m-%d"), category=getattr(category, 'name', None),
+    return dict(site_id=site_id, title=title, updated=updated.strftime("%Y-%m-%d"),
+            category=getattr(category, 'name', None),
             is_fav=is_read_daily, article_count=article_count, url=url)
 
 def fill_category_object(category_id, name, is_un_classified):

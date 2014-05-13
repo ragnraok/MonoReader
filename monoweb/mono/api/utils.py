@@ -25,5 +25,6 @@ def get_post_data():
         all post data must be in json format
         """
         result = dict(result)
+        return result
     except:
         raise ValueError(DATA_FORMAT_ERROR)

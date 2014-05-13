@@ -36,7 +36,7 @@ class SiteQuery(MonoQuery):
         sites = self.filter_by(is_read_daily=True).all()
         return sites
     def is_exist_by_url(self, url):
-        if self.filter_by(url=url).count() >= 0:
+        if self.filter_by(url=url).count() > 0:
             return True
         return False
 
