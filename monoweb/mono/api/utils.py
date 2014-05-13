@@ -20,4 +20,10 @@ def get_post_data():
     result = request.get_json(force=True, silent=True)
     if result is None:
         result = request.data
-    return result
+    try:
+        """
+        all post data must be in json format
+        """
+        result = dict(result)
+    except:
+        raise ValueError(DATA_FORMAT_ERROR)

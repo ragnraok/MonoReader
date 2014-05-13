@@ -73,6 +73,13 @@ class Site(db.Model, ModelMixin):
             self.category_id = category_id
             self.save()
 
+    def set_category_by_name(self, category_name):
+        category = Category.query.filter_by(name=category_name)
+        if category is None:
+            category = Category(name=category_name)
+            category.save()
+        self.set_category(category)
+
 class Article(db.Model, ModelMixin):
     __tablename__ = 'article'
 

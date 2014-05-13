@@ -1,5 +1,4 @@
 from flask import Blueprint
-from flask.views import View
 
 api_app = Blueprint("api", __name__)
 
@@ -26,3 +25,9 @@ def config_api_url():
     api_app.add_url_rule("/category/get_all/", view_func=CategoryListView.as_view('category_listview'))
     api_app.add_url_rule("/category/set/", view_func=category_setview)
     api_app.add_url_rule("/category/unset/", view_func=category_unsetview)
+
+    from subscribe import SiteSubscribeView
+    subscribe_view = SiteSubscribeView.as_view('subscribe_view', is_subscribe=True)
+    unsubscribe_view = SiteSubscribeView.as_view('unsubscribe_view', is_subscribe=False)
+    api_app.add_url_rule("/subscribe/", view_func=subscribe_view)
+    api_app.add_url_rule("/unsubscribe/", view_func=unsubscribe_view)

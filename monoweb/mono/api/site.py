@@ -157,10 +157,6 @@ class FavSiteSetView(BaseAPIPOSTView):
                 is_fav: boolean
             }
         """
-        try:
-            data = dict(data)
-        except:
-            raise ValueError(DATA_FORMAT_ERROR)
         site_id = data.get('site_id', None)
         is_fav = data.get('is_fav', None)
         if site_id is None or is_fav is None:

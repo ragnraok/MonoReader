@@ -2,7 +2,7 @@ from flask import current_app
 
 from apibase import BaseAPIGETView, BaseAPIPOSTView
 from objects import fill_category_object
-from utils import SITE_NOT_EXIST, DATA_FORMAT_ERROR, get_post_data
+from utils import SITE_NOT_EXIST, DATA_FORMAT_ERROR
 from mono.models import Site, Category
 
 class CategoryListView(BaseAPIGETView):
@@ -32,7 +32,7 @@ class CategoryListView(BaseAPIGETView):
 
 class CategorySetView(BaseAPIPOSTView):
     def __init__(self, is_set=True, **kwargs):
-        super(CategorySetView, self).__init__()
+        super(CategorySetView, self).__init__(**kwargs)
         self.is_set = is_set
 
     def proc_data(self, data, **kwargs):
@@ -48,10 +48,6 @@ class CategorySetView(BaseAPIPOSTView):
                 site_id: site_id
             }
         """
-        try:
-            data = dict(data)
-        except:
-            raise ValueError(DATA_FORMAT_ERROR)
         site_id = data.get('site_id', None)
         category_name = data.get('category', None)
         if site_id is None:
