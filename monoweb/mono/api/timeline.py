@@ -52,12 +52,8 @@ class DailyReadTimelineView(BaseArticleListView):
         per_page_num = current_app.config.get('ARTICLE_NUM_PER_PAGE', 10)
         page = kwargs.get('page', 1)
         if page >= 1:
-            #daily_read_sites = Site.query.filter_by(is_read_daily=True).all()
-            #daily_read_sites_id = [item.id for item in daily_read_sites]
-            #article_list = Article.query.filter(Article.site_id.in_(daily_read_sites_id)).order_by(desc(
-            #    Article.updated)).paginate(page=page, per_page=per_page_num, error_out=False).items
             article_list = Article.query.filter(Article.site_id.in_(
-                Site.query.filter(Site.is_read_daily==True).with_entities(Site.id))).order_by(desc(
+                Site.query.with_entities(Site.id).filter(Site.is_read_daily==True))).order_by(desc(
                 Article.updated)).paginate(page=page, per_page=per_page_num, error_out=False).items
         else:
             raise ValueError(PAGE_SMALL_THAN_ONE)

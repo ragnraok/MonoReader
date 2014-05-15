@@ -14,4 +14,8 @@ requests
 
 
 # deployment
-gunicorn==0.17.4
+gunicorn
+
+# task
+apscheduler
+rq
