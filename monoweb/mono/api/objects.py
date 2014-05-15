@@ -17,7 +17,7 @@ def fill_list_article_object(article_id, title, site, updated, cover_url):
             updated=updated.strftime("%Y-%m-%d"), cover_url=cover_url)
     return result
 
-def fill_article_object(article_id, title, site, updated, content, url):
+def fill_article_object(article_id, title, site, updated, content, url, cover_url):
     """
     article object:
         {
@@ -26,11 +26,13 @@ def fill_article_object(article_id, title, site, updated, content, url):
             site: site_title,
             updated: YYYY-MM-DD,
             content: html content,
-            url: origin article url
+            url: origin article url,
+            cover_url: url, may be null
         }
     """
     return dict(article_id=article_id, title=title, site=site,
-            updated=updated.strftime("%Y-%M-%d"), content=content, url=url)
+            updated=updated.strftime("%Y-%M-%d"), content=content, url=url,
+            cover_url=cover_url)
 
 def fill_site_object(site_id, title, updated, url, category, is_read_daily, article_count):
     """
