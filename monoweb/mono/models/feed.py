@@ -38,7 +38,6 @@ class Site(db.Model, ModelMixin):
         self.save()
 
     def __update_articles_from_fetcher(self, data_fetcher):
-        # TODO: need store old articles
         articles_list = data_fetcher.fetch_articles()
         if articles_list is not None:
             for item in articles_list:
