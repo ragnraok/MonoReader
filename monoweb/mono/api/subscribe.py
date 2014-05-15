@@ -35,6 +35,7 @@ class SiteSubscribeView(BaseAPIPOSTView):
                 new_site.set_category_by_name(category_name)
             else:
                 new_site.unset_category()
+
             new_site.update_site()
         else:
             site_id = data.get('site_id', None)
