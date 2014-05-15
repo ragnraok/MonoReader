@@ -22,12 +22,19 @@ class BaseAPIPOSTView(View):
         pass
 
     def dispatch_request(self, **kwargs):
+        """
+        post response format:
+            {
+                error_code: error_code(0 is success),
+                data: data(may be null)
+            }
+        """
         try:
             data = get_post_data()
-            self.proc_data(data, **kwargs)
-            return make_api_response(error_code=SUCCESS)
+            rv = self.proc_data(data, **kwargs)
+            return make_api_response(error_code=SUCCESS, data=rv)
         except ValueError, e:
-            return make_api_response(error_code=e.message)
+            return make_api_response(error_code=e.message, data=None)
 
 
 class BaseArticleListView(BaseAPIGETView):

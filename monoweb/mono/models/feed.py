@@ -25,6 +25,7 @@ class Site(db.Model, ModelMixin):
         return "<Site: updated at %s, url: %s>" % (self.updated.strftime("%Y-%m-%d"), self.url)
 
     def update_site(self):
+        # TODO: need store old articles
         data_fetcher = FeedDataFetcher(self.url, False)
         updated = data_fetcher.fetch_site_updated_time()
         if updated > self.updated or self.articles.count() == 0:
@@ -97,7 +98,8 @@ class Article(db.Model, ModelMixin):
     def fav(self):
         if not self.is_fav():
             fav_article = FavArticle(title=self.title, content=self.content,
-                    updated=self.updated, url=self.url, site_title=self.site.title)
+                    updated=self.updated, url=self.url, site_title=self.site.title,
+                    first_image_url=self.first_image_url)
             fav_article.save()
 
     def is_fav(self):

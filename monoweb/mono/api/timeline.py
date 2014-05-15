@@ -23,16 +23,14 @@ class MainTimelineView(BaseArticleListView):
         article_list = []
         per_page_num = current_app.config.get('ARTICLE_NUM_PER_PAGE', 10)
         page = kwargs.get('page', 1)
-        print page
         if page >= 1:
             article_list = Article.query.order_by(desc(Article.updated)).paginate(
                     page=page, per_page=per_page_num, error_out=False).items
-            print article_list
         else:
             raise ValueError(PAGE_SMALL_THAN_ONE)
         result = []
         for article in article_list:
-            result.append(fill_list_article_object(article.title,
+            result.append(fill_list_article_object(article.id, article.title,
                 article.site.title, article.updated, article.first_image_url))
         return result
 
@@ -62,6 +60,6 @@ class DailyReadTimelineView(BaseArticleListView):
             raise ValueError(PAGE_SMALL_THAN_ONE)
         result = []
         for article in article_list:
-            result.append(fill_list_article_object(article.title, article.site.title,
+            result.append(fill_list_article_object(article.id, article.title, article.site.title,
                 article.updated, article.first_image_url))
         return result

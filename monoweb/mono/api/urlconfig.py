@@ -31,3 +31,16 @@ def config_api_url():
     unsubscribe_view = SiteSubscribeView.as_view('unsubscribe_view', is_subscribe=False)
     api_app.add_url_rule("/subscribe/", view_func=subscribe_view)
     api_app.add_url_rule("/unsubscribe/", view_func=unsubscribe_view)
+
+    from article import ArticleLoadView, ArticleFavSetView, FavArticleListView
+    load_article_view = ArticleLoadView.as_view('load_article_view', is_load_fav=False)
+    load_fav_article_view = ArticleLoadView.as_view('load_fav_article_view', is_load_fav=True)
+    fav_article_setview = ArticleFavSetView.as_view('fav_article_setview', is_fav=True)
+    unfav_article_setview = ArticleFavSetView.as_view('unfav_article_setview', is_fav=False)
+    fav_article_listview = FavArticleListView.as_view('fav_article_listview')
+    api_app.add_url_rule("/article/load/<int:article_id>/", view_func=load_article_view)
+    api_app.add_url_rule("/article/load_fav/<int:article_id>/", view_func=load_fav_article_view)
+    api_app.add_url_rule("/article/fav/", view_func=fav_article_setview)
+    api_app.add_url_rule("/article/unfav/", view_func=unfav_article_setview)
+    api_app.add_url_rule("/article/fav_list/", view_func=fav_article_listview)
+    api_app.add_url_rule("/article/fav_list/<int:page>/", view_func=fav_article_listview)

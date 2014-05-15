@@ -2,24 +2,26 @@
 API object specification and correspond methods
 """
 
-def fill_list_article_object(title, site, updated, cover_url):
+def fill_list_article_object(article_id, title, site, updated, cover_url):
     """
     list article object:
         {
+            article_id: article_id,
             title: title,
             site: site_title,
             updated: YYYY-MM-DD,
             cover_url: url, may be None
         }
     """
-    result = dict(title=title, site=site, updated=updated.strftime("%Y-%m-%d"),
-            cover_url=cover_url)
+    result = dict(article_id=article_id, title=title, site=site,
+            updated=updated.strftime("%Y-%m-%d"), cover_url=cover_url)
     return result
 
-def fill_article_object(title, site, updated, content, url):
+def fill_article_object(article_id, title, site, updated, content, url):
     """
     article object:
         {
+            article_id: article_id,
             title: title,
             site: site_title,
             updated: YYYY-MM-DD,
@@ -27,8 +29,8 @@ def fill_article_object(title, site, updated, content, url):
             url: origin article url
         }
     """
-    return dict(title=title, site=site, updated=updated.strftime("%Y-%M-%d"),
-            content=content, url=url)
+    return dict(article_id=article_id, title=title, site=site,
+            updated=updated.strftime("%Y-%M-%d"), content=content, url=url)
 
 def fill_site_object(site_id, title, updated, url, category, is_read_daily, article_count):
     """

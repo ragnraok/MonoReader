@@ -2,7 +2,6 @@
 Flask
 Flask-SQLAlchemy
 Flask-Script
-requests
 
 
 # crawler
@@ -11,6 +10,8 @@ feedparser
 
 # utils
 bpython
+requests
+
 
 # deployment
-gunicorn
+gunicorn==0.17.4
