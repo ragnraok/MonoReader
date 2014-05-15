@@ -2,7 +2,7 @@ from flask import current_app
 
 from utils import SITE_NOT_EXIST, ARTICLE_NOT_EXIST, PAGE_SMALL_THAN_ONE
 from objects import fill_article_object
-from mono.database import Site, Article, FavArticle
+from mono.models import Site, Article, FavArticle
 from apibase import BaseAPIGETView, BaseAPIPOSTView, BaseArticleListView
 
 class ArticleLoadView(BaseAPIGETView):
