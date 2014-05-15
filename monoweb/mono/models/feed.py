@@ -25,11 +25,10 @@ class Site(db.Model, ModelMixin):
         return "<Site: updated at %s, url: %s>" % (self.updated.strftime("%Y-%m-%d"), self.url)
 
     def update_site(self):
-        # TODO: need store old articles
         data_fetcher = FeedDataFetcher(self.url, False)
         updated = data_fetcher.fetch_site_updated_time()
         if updated > self.updated or self.articles.count() == 0:
-            self.delete_all_articles()
+            #self.delete_all_articles()
             if self.title is None:
                 self.title = data_fetcher.fetch_site_title()
             self.__update_articles_from_fetcher(data_fetcher)
@@ -39,13 +38,15 @@ class Site(db.Model, ModelMixin):
         self.save()
 
     def __update_articles_from_fetcher(self, data_fetcher):
+        # TODO: need store old articles
         articles_list = data_fetcher.fetch_articles()
         if articles_list is not None:
             for item in articles_list:
-                article = Article(title=item['title'], content=item['content'],
-                        url=item['url'], updated=item['date'], site_id=self.id,
-                        first_image_url=item['first_img_url'])
-                article.save_without_commit()
+                if not Article.query.is_exist_by_url(item['url']):
+                    article = Article(title=item['title'], content=item['content'],
+                            url=item['url'], updated=item['date'], site_id=self.id,
+                            first_image_url=item['first_img_url'])
+                    article.save_without_commit()
 
     def delete_all_articles(self):
         for a in self.articles:
@@ -81,8 +82,16 @@ class Site(db.Model, ModelMixin):
             category.save()
         self.set_category(category)
 
+
+class ArticleQuery(MonoQuery):
+    def is_exist_by_url(self, url):
+        if self.with_entities(Article.url).filter_by(url=url).count() > 0:
+            return True
+        return False
+
 class Article(db.Model, ModelMixin):
     __tablename__ = 'article'
+    query_class = ArticleQuery
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.Text, nullable=False)
@@ -110,6 +119,7 @@ class Article(db.Model, ModelMixin):
         else:
             self._is_fav = False
         return self._is_fav
+
 
 #category_site = db.Table('category_site',
 #        db.Column('category_id', db.Integer, db.ForeignKey('category.id')),

@@ -44,10 +44,15 @@ class FeedDataFetcher(object):
             timestr = self.parser['channel']['published']
         elif 'updated' in self.parser['channel']:
             timestr = self.parser['channel']['updated']
+        else:
+            timestr = None
 
-        version = self.parser.version
-        self.site_updated_time = self.__parse_timestr(version, timestr,
-                self.url)
+        if timestr is not None:
+            version = self.parser.version
+            self.site_updated_time = self.__parse_timestr(version, timestr,
+                    self.url)
+        else:
+            self.site_updated_time = datetime.datetime.now()
         if self.site_updated_time is None:
             self.site_updated_time = datetime.datetime.now()
 
