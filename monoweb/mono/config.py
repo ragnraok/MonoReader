@@ -14,3 +14,5 @@ DATABASE_NAME = 'monoreader.db'
 SQLALCHEMY_DATABASE_URI = "sqlite:////%s/%s" % (HERE, DATABASE_NAME)
 SQLALCHEMY_ECHO = False
 
+# redis
+REDIS_URL = "redis://localhost:6379"

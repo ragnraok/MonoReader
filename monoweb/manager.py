@@ -2,6 +2,7 @@ from flask.ext.script import Manager, Command, Option
 from mono import mono_app
 from mono.database import db
 from mono.models import init_db
+from mono.task import start_worker, start_clock
 
 import os
 
@@ -35,6 +36,14 @@ def dropdb():
 @manager.command
 def runserver():
     mono_app.run(host="127.0.0.1", port=5000)
+
+@manager.command
+def worker():
+    start_worker()
+
+@manager.command
+def clock():
+    start_clock()
 
 #class GunicornServer(Command):
 #

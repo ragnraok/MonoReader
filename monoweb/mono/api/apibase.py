@@ -9,6 +9,13 @@ class BaseAPIGETView(View):
         raise NotImplementedError()
 
     def dispatch_request(self, **kwargs):
+        """
+        get response format:
+            {
+                error_code: error_code,
+                data: {data_key: data}
+            }
+        """
         try:
             data = self.get_data(**kwargs)
             return make_api_response(error_code=SUCCESS, data={self.data_key: data})
@@ -60,4 +67,3 @@ class BaseSiteListView(BaseAPIGETView):
 
     def get_sites(self, **kwargs):
         raise NotImplementedError()
-
