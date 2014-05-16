@@ -5,8 +5,8 @@ import sys
 
 sched = Scheduler(daemonic=False)
 
-@sched.interval_schedule(minutes=1)
-#@sched.cron_schedule(hour='0')
+#@sched.interval_schedule(minutes=1)
+@sched.cron_schedule(hour='0')
 def clock_task():
     app.logger.info("start execute task")
     from worker import add_update_task

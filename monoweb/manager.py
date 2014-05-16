@@ -1,7 +1,7 @@
 from flask.ext.script import Manager, Command, Option
 from mono import mono_app
 from mono.database import db
-from mono.models import init_db
+from mono.models import init_db, update_all_site
 from mono.task import start_worker, start_clock
 
 import os
@@ -18,7 +18,8 @@ def shell():
             Site=Site,
             Article=Article,
             Category=Category,
-            FavArticle=FavArticle
+            FavArticle=FavArticle,
+            update_all_site=update_all_site
             )
 
 @manager.command
@@ -35,8 +36,8 @@ def dropdb():
 
 @manager.command
 def runserver():
-    from logger import init_logger
-    init_logger(app, app.config.get('LOG_FILE', 'monoreader.log'))
+    from mono.logger import init_logger
+    init_logger(mono_app, mono_app.config.get('LOG_FILE', 'monoreader.log'))
     mono_app.run(host="127.0.0.1", port=5000)
 
 @manager.command
@@ -102,8 +103,8 @@ def clock():
 
 @manager.command
 def gunicorn():
-    from logger import init_logger
-    init_logger(app, app.config.get('LOG_FILE', 'monoreader.log'))
+    from mono.logger import init_logger
+    init_logger(mono_app, mono_app.config.get('LOG_FILE', 'monoreader.log'))
     os.system("gunicorn -w 4 -b 0.0.0.0:5000 manager:mono_app")
 
 
