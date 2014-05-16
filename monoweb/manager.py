@@ -3,6 +3,9 @@ from mono import mono_app
 from mono.database import db
 from mono.models import init_db, update_all_site
 from mono.task import start_worker, start_clock
+from mono.logger import init_logger
+
+init_logger(mono_app, mono_app.config.get('LOG_FILE', 'monoreader.log'))
 
 import os
 
@@ -36,8 +39,6 @@ def dropdb():
 
 @manager.command
 def runserver():
-    from mono.logger import init_logger
-    init_logger(mono_app, mono_app.config.get('LOG_FILE', 'monoreader.log'))
     mono_app.run(host="127.0.0.1", port=5000)
 
 @manager.command
@@ -103,8 +104,6 @@ def clock():
 
 @manager.command
 def gunicorn():
-    from mono.logger import init_logger
-    init_logger(mono_app, mono_app.config.get('LOG_FILE', 'monoreader.log'))
     os.system("gunicorn -w 4 -b 0.0.0.0:5000 manager:mono_app")
 
 
