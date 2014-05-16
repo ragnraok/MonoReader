@@ -16,3 +16,7 @@ SQLALCHEMY_ECHO = False
 
 # redis
 REDIS_URL = "redis://localhost:6379"
+
+# logging
+LOG_FILE = "monoreader.log"
+TASK_LOG_FILE = "monoreader_task.log"

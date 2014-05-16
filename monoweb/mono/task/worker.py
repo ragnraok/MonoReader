@@ -1,13 +1,13 @@
 from rq import Connection, Queue, Worker
 from mono.models import Site
-from mono import mono_app
+from base import task_app as app
 
 import os
 import redis
 
 QUEUE_NAME = "MonoReaderQueue"
 
-redis_url = mono_app.config.get('REDIS_URL', "redis://localhost:6379")
+redis_url = app.config.get('REDIS_URL', "redis://localhost:6379")
 connection = redis.from_url(redis_url)
 
 queue = Queue(QUEUE_NAME, connection=connection)
@@ -17,7 +17,7 @@ def update_site(site):
         site.update_site()
 
 def add_update_task(site):
-    print "update task for %s" % site
+    app.logger.info("update site %s", site)
     queue.enqueue(update_site, site)
 
 def start_worker():
