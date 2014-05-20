@@ -13,7 +13,7 @@ class BaseAPIGETView(View):
         get response format:
             {
                 error_code: error_code,
-                data: {data_key: data}
+                data: {data_key: data(may be null)}
             }
         """
         try:
