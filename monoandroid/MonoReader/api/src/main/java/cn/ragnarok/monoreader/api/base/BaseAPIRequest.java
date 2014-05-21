@@ -13,25 +13,21 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 
 import cn.ragnarok.monoreader.api.util.Constant;
+import cn.ragnarok.monoreader.api.util.ErrorHelper;
 
 /**
  * Created by ragnarok on 14-5-21.
  */
 public class BaseAPIRequest extends StringRequest {
 
-    protected APIErrorListener mAPIErrorListener = null;
     protected String mPostData = null;
 
-    public BaseAPIRequest(int method, String url, Response.Listener<String> listener, Response.ErrorListener errorListener,
-                          APIErrorListener apiErrorListener) {
+    public BaseAPIRequest(int method, String url, Response.Listener<String> listener, Response.ErrorListener errorListener) {
         super(method, url, listener, errorListener);
-        this.mAPIErrorListener = apiErrorListener;
     }
 
-    public BaseAPIRequest(int method, String url, Response.Listener<String> listener, Response.ErrorListener errorListener,
-                          APIErrorListener apiErrorListener, String postData) {
+    public BaseAPIRequest(int method, String url, Response.Listener<String> listener, Response.ErrorListener errorListener, String postData) {
         super(method, url, listener, errorListener);
-        this.mAPIErrorListener = apiErrorListener;
         this.mPostData = postData;
     }
 
@@ -41,8 +37,8 @@ public class BaseAPIRequest extends StringRequest {
             String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
             JSONObject resultObject = new JSONObject(json);
             int errorCode = Integer.parseInt(resultObject.getString("error_code"));
-            if (errorCode != Constant.ErrorCode.SUCCESS && mAPIErrorListener != null) {
-                mAPIErrorListener.handleError(errorCode);
+            if (errorCode != Constant.ErrorCode.SUCCESS) {
+                return ErrorHelper.handleError(errorCode); // return Response.error here, so that invoke errorListener
             } else {
                 String data = resultObject.getJSONObject("data").toString();
                 return Response.success(data, HttpHeaderParser.parseCacheHeaders(response));

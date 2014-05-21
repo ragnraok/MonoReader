@@ -2,6 +2,7 @@ package cn.ragnarok.monoreader.api.service;
 
 import android.content.Context;
 
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 
 /**
@@ -39,6 +40,14 @@ public class APIService {
         service.mContext = context;
         service.mRequestQueue = requestQueue;
         service.mIsInit = true;
+    }
+
+    void queueJob(Request request) {
+        this.mRequestQueue.add(request);
+    }
+
+    public RequestQueue getQueue() {
+        return mRequestQueue;
     }
 
 }
