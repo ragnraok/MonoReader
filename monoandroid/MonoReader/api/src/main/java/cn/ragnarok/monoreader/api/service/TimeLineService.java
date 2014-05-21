@@ -6,13 +6,14 @@ import java.util.List;
 
 import cn.ragnarok.monoreader.api.base.APIResultListener;
 import cn.ragnarok.monoreader.api.base.BaseAPIGetRequest;
+import cn.ragnarok.monoreader.api.base.BaseAPIService;
 import cn.ragnarok.monoreader.api.object.ListArticleObject;
 import cn.ragnarok.monoreader.api.util.Constant;
 
 /**
  * Created by ragnarok on 14-5-21.
  */
-public class TimeLineService {
+public class TimeLineService extends BaseAPIService {
     public static final String API_TAG = "TimeLine";
     private static final String DATA_KEY = "articles";
 
@@ -55,5 +56,10 @@ public class TimeLineService {
         if (APIService.getInstance().isInit()) {
             APIService.getInstance().queueJob(timelineRequest.get());
         }
+    }
+
+    @Override
+    public void cancelRequest() {
+        APIService.getInstance().getQueue().cancelAll(API_TAG);
     }
 }

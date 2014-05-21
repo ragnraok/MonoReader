@@ -5,6 +5,8 @@ import android.content.Context;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 
+import java.util.ArrayList;
+
 /**
  * Created by ragnarok on 14-5-21.
  */
@@ -12,6 +14,11 @@ public class APIService {
     private RequestQueue mRequestQueue;
     private Context mContext;
     private boolean mIsInit;
+
+    private static ArrayList<String> serviceTagList = new ArrayList<String>();
+    static {
+        serviceTagList.add(TimeLineService.API_TAG);
+    }
 
     private static APIService service;
     private APIService() {}
@@ -48,6 +55,12 @@ public class APIService {
 
     public RequestQueue getQueue() {
         return mRequestQueue;
+    }
+
+    public void cancelAllRequest() {
+        for (String tag : serviceTagList) {
+            this.mRequestQueue.cancelAll(tag);
+        }
     }
 
 }
