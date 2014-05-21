@@ -12,6 +12,7 @@ import cn.ragnarok.monoreader.api.util.Constant;
 
 /**
  * Created by ragnarok on 14-5-21.
+ * TimeLineService, return DataType is List<ListArticleObject>
  */
 public class TimeLineService extends BaseAPIService {
     public static final String API_TAG = "TimeLine";

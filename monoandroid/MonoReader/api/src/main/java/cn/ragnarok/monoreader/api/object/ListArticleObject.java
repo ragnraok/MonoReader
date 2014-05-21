@@ -13,4 +13,8 @@ public class ListArticleObject {
     public String updated;
     @SerializedName("cover_url")
     public String coverUrl;
+
+    public String toString() {
+        return "ListArticle: " + articleId + " " + title + " " + site + " " + updated + " " + coverUrl;
+    }
 }
