@@ -1,4 +1,4 @@
-package cn.ragnarok.monreader.api.object;
+package cn.ragnarok.monoreader.api.object;
 
 
 import com.google.gson.annotations.SerializedName;
