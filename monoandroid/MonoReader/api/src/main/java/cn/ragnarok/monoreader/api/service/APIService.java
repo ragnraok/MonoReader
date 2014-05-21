@@ -14,6 +14,7 @@ public class APIService {
     private RequestQueue mRequestQueue;
     private Context mContext;
     private boolean mIsInit;
+    private String mHost; // must end with tail slash
 
     private static ArrayList<String> serviceTagList = new ArrayList<String>();
     static {
@@ -40,13 +41,14 @@ public class APIService {
      * @param context
      * @param requestQueue
      */
-    public static void init(Context context, RequestQueue requestQueue) {
+    public static void init(Context context, String host, RequestQueue requestQueue) {
         if (service == null) {
             service = new APIService();
         }
         service.mContext = context;
         service.mRequestQueue = requestQueue;
         service.mIsInit = true;
+        service.mHost = host;
     }
 
     void queueJob(Request request) {
@@ -61,6 +63,12 @@ public class APIService {
         for (String tag : serviceTagList) {
             this.mRequestQueue.cancelAll(tag);
         }
+    }
+
+    public String host() { return mHost; }
+
+    String createURL(String url) {
+        return mHost + url;
     }
 
 }

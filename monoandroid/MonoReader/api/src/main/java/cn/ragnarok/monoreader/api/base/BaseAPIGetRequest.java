@@ -24,6 +24,7 @@ public class BaseAPIGetRequest<DataType> {
         this.mUrl = url;
         this.mDataKey = dataKey;
         this.mResultListener = resultListener;
+        this.mErrorListener = errorListener;
         initResponseListener();
         initRequest();
     }

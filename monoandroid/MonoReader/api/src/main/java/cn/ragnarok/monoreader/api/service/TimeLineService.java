@@ -46,9 +46,11 @@ public class TimeLineService extends BaseAPIService {
         String url = null;
         if (isFav) {
             url = String.format(Constant.URL.FAV_TIMELINE, page);
+            url = APIService.getInstance().createURL(url);
         }
         else {
             url = String.format(Constant.URL.MAIN_TIMELINE, page);
+            url = APIService.getInstance().createURL(url);
         }
         BaseAPIGetRequest<List<ListArticleObject>> timelineRequest =
                 new BaseAPIGetRequest<List<ListArticleObject>>(url, DATA_KEY, errorListener, resultListener);
