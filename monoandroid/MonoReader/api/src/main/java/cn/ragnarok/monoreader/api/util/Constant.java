@@ -23,6 +23,9 @@ public class Constant {
         public static final String LOAD_FAV_ARTICLE_LIST = API_PREFIX + "article/fav_list/%d/";
         public static final String FAV_ARTICLE = API_PREFIX + "article/fav/";
         public static final String UNFAV_ARTICLE = API_PREFIX + "article/unfav/";
+
+        public static final String SUBSCRIBE = API_PREFIX + "subscribe/";
+        public static final String UNSUBSCRIBE = API_PREFIX + "unsubscribe/";
     }
     public static class RequestTAG {
         public static final String TAG = "MonoReader";

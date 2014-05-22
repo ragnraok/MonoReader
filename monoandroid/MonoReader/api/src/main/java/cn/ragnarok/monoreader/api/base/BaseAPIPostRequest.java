@@ -27,7 +27,6 @@ public class BaseAPIPostRequest {
         this.mRequest = new BaseAPIRequest(Request.Method.POST, mUrl, new Response.Listener<String>() {
             @Override
             public void onResponse(String s) {
-
             }
         }, mErrorListener, mPostData);
     }

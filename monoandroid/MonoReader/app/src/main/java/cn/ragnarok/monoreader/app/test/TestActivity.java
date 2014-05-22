@@ -32,12 +32,16 @@ public class TestActivity extends Activity {
 
         prepareTest();
 //        TimelineTest.getTest().testFavTimeline(text, 3);
+
 //        ArticleTest.getTest().testLoadArticle(text, 30);
 //        ArticleTest.getTest().testLoadFavArticle(text, 1);
 //        ArticleTest.getTest().testLoadAllFavArticleList(text);
 //        ArticleTest.getTest().testLoadFavArticleList(text, 2);
 //        ArticleTest.getTest().testFavArticle(text, 1);
 //        ArticleTest.getTest().testUnfavArticle(text, 1);
+
+//        SubscribeTest.getTest().testSubscribe(text, null, "http://www.solidot.org/", null);
+        SubscribeTest.getTest().testUnsubscribe(text, 7);
     }
 
     public void prepareTest() {
