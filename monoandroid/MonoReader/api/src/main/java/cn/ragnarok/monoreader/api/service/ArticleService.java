@@ -5,12 +5,14 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.List;
 
 import cn.ragnarok.monoreader.api.base.APIRawResultListener;
 import cn.ragnarok.monoreader.api.base.APIResultListener;
 import cn.ragnarok.monoreader.api.base.BaseAPIGetRequest;
 import cn.ragnarok.monoreader.api.object.ArticleObject;
+import cn.ragnarok.monoreader.api.object.ListArticleObject;
 import cn.ragnarok.monoreader.api.util.Constant;
 
 /**
@@ -57,17 +59,17 @@ public class ArticleService {
         }
     }
 
-    public void loadAllFavArticleList(final APIResultListener<List<ArticleObject>> resultListener,
+    public void loadAllFavArticleList(final APIResultListener<Collection<ListArticleObject>> resultListener,
                                          final Response.ErrorListener errorListener) {
-        loadFavArticleListInternal(resultListener, errorListener, false, 0);
+        loadFavArticleListInternal(resultListener, errorListener, true, 0);
     }
 
-    public void loadFavArticleList(int page, final APIResultListener<List<ArticleObject>> resultListener,
+    public void loadFavArticleList(int page, final APIResultListener<Collection<ListArticleObject>> resultListener,
                                    final Response.ErrorListener errorListener) {
-        loadFavArticleListInternal(resultListener, errorListener, true, page);
+        loadFavArticleListInternal(resultListener, errorListener, false, page);
     }
 
-    private void loadFavArticleListInternal(final APIResultListener<List<ArticleObject>> resultListener,
+    private void loadFavArticleListInternal(final APIResultListener<Collection<ListArticleObject>> resultListener,
                                             final Response.ErrorListener errorListener, boolean isLoadAll, int page) {
         String url = null;
         if (!isLoadAll) {
@@ -79,8 +81,8 @@ public class ArticleService {
         BaseAPIGetRequest request = new BaseAPIGetRequest(url, ARTICLE_LIST_DATA_KEY, errorListener, new APIRawResultListener() {
             @Override
             public void handleRawJson(String rawJson) {
-                Type resultType = new TypeToken<List<ArticleObject>>() {}.getType();
-                List<ArticleObject> result = new Gson().fromJson(rawJson, resultType);
+                Type resultType = new TypeToken<Collection<ListArticleObject>>() {}.getType();
+                List<ListArticleObject> result = new Gson().fromJson(rawJson, resultType);
                 if (resultListener != null) {
                     resultListener.onResultGet(result);
                 }

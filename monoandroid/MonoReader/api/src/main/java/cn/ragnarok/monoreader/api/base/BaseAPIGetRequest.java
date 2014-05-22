@@ -55,6 +55,7 @@ public class BaseAPIGetRequest {
 //                mResultListener.onResultGet(result);
 
                 try {
+                    Log.d(TAG, s);
                     JSONObject jsonObject = new JSONObject(s);
                     if (jsonObject.isNull(mDataKey)) {
                         //mResultListener.onResultGet(null);
@@ -65,8 +66,7 @@ public class BaseAPIGetRequest {
 //                        Type dataType = new TypeToken<DataType>(){}.getType();
 //                        DataType data = gson.fromJson(dataJson, dataType);
 //                        mResultListener.onResultGet(data);
-                        Object resultJson = jsonObject.getJSONObject(mDataKey);
-                        Log.d(TAG, resultJson.toString());
+                        Object resultJson = jsonObject.get(mDataKey);
                         String dataJson = resultJson.toString();
                         mRawResultListener.handleRawJson(dataJson);
                     }
