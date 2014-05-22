@@ -1,9 +1,14 @@
 package cn.ragnarok.monoreader.api.service;
 
 import com.android.volley.Response;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.List;
 
+import cn.ragnarok.monoreader.api.base.APIRawResultListener;
 import cn.ragnarok.monoreader.api.base.APIResultListener;
 import cn.ragnarok.monoreader.api.base.BaseAPIGetRequest;
 import cn.ragnarok.monoreader.api.base.BaseAPIService;
@@ -25,7 +30,7 @@ public class TimeLineService extends BaseAPIService {
      * @param errorListener
      * may be throw PageSmallThanOneException
      */
-    public void mainTimeline(int page, final APIResultListener<List<ListArticleObject>> resultListener,
+    public void mainTimeline(int page, final APIResultListener<Collection<ListArticleObject>> resultListener,
                              final Response.ErrorListener errorListener) {
        timeline(false, page, resultListener, errorListener);
     }
@@ -37,12 +42,12 @@ public class TimeLineService extends BaseAPIService {
      * @param errorListener
      * may be throw PageSmallThanOneException
      */
-    public void favTimeline(int page, final APIResultListener<List<ListArticleObject>> resultListener,
+    public void favTimeline(int page, final APIResultListener<Collection<ListArticleObject>> resultListener,
                             final Response.ErrorListener errorListener) {
         timeline(true, page, resultListener, errorListener);
     }
 
-    private void timeline(boolean isFav, int page, final APIResultListener<List<ListArticleObject>> resultListener,
+    private void timeline(boolean isFav, int page, final APIResultListener<Collection<ListArticleObject>> resultListener,
                           final Response.ErrorListener errorListener) {
         String url = null;
         if (isFav) {
@@ -53,8 +58,18 @@ public class TimeLineService extends BaseAPIService {
             url = String.format(Constant.URL.MAIN_TIMELINE, page);
             url = APIService.getInstance().createURL(url);
         }
-        BaseAPIGetRequest<List<ListArticleObject>> timelineRequest =
-                new BaseAPIGetRequest<List<ListArticleObject>>(url, DATA_KEY, errorListener, resultListener);
+
+        BaseAPIGetRequest timelineRequest = new BaseAPIGetRequest(url, DATA_KEY, errorListener, new APIRawResultListener() {
+            @Override
+            public void handleRawJson(String rawJson) {
+                Gson gson = new Gson();
+                Type resultType = new TypeToken<Collection<ListArticleObject>>(){}.getType();
+                Collection<ListArticleObject> result = gson.fromJson(rawJson, resultType);
+                if (resultListener != null) {
+                    resultListener.onResultGet(result);
+                }
+            }
+        });
         timelineRequest.get().setTag(API_TAG);
         if (APIService.getInstance().isInit()) {
             APIService.getInstance().queueJob(timelineRequest.get());

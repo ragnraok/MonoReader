@@ -40,7 +40,7 @@ public class BaseAPIRequest extends StringRequest {
             if (errorCode != Constant.ErrorCode.SUCCESS) {
                 return ErrorHelper.handleError(errorCode); // return Response.error here, so that invoke errorListener
             } else {
-                String data = resultObject.getJSONObject("data").toString();
+                String data = resultObject.get("data").toString();
                 return Response.success(data, HttpHeaderParser.parseCacheHeaders(response));
             }
         } catch (UnsupportedEncodingException e) {

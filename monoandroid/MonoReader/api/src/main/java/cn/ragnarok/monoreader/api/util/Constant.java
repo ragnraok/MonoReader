@@ -15,6 +15,9 @@ public class Constant {
         public static final String API_PREFIX = "api/";
         public static final String MAIN_TIMELINE = API_PREFIX + "timeline/%d/";
         public static final String FAV_TIMELINE = API_PREFIX + "fav_site_timeline/%d/";
+
+
+        public static final String LOAD_ARTICLE = API_PREFIX + "article/load/%d/";
     }
     public static class RequestTAG {
         public static final String TAG = "MonoReader";
