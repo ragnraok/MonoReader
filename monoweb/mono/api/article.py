@@ -29,7 +29,7 @@ class ArticleLoadView(BaseAPIGETView):
             article = FavArticle.query.get(article_id)
 
         if article is None:
-            return {}
+            return None
         else:
             if self.is_load_fav:
                 site_title = article.site_title

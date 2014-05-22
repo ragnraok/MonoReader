@@ -33,6 +33,24 @@ public class ArticleTest {
         service.loadArticle(articleId, new APIResultListener<ArticleObject>() {
             @Override
             public void onResultGet(ArticleObject articleObject) {
+                if (articleObject == null) {
+                    text.setText("");
+                } else {
+                    text.setText(articleObject.toString());
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                text.setText(volleyError.toString());
+            }
+        });
+    }
+
+    public void testLoadFavArticle(final TextView text, final int favArticleId) {
+        service.loadFavArticle(favArticleId, new APIResultListener<ArticleObject>() {
+            @Override
+            public void onResultGet(ArticleObject articleObject) {
                 text.setText(articleObject.toString());
             }
         }, new Response.ErrorListener() {

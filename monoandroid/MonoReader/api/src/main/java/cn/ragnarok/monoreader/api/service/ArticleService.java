@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.util.List;
 
 import cn.ragnarok.monoreader.api.base.APIRawResultListener;
 import cn.ragnarok.monoreader.api.base.APIResultListener;
@@ -22,8 +23,23 @@ public class ArticleService {
 
     public void loadArticle(int articleId, final APIResultListener<ArticleObject> resultListener,
                             final Response.ErrorListener errorListener) {
-        String url = String.format(Constant.URL.LOAD_ARTICLE, articleId);
-        url = APIService.getInstance().createURL(url);
+        loaddArticleInternal(articleId, resultListener, errorListener, false);
+    }
+
+    public void loadFavArticle(int favArticleId, final APIResultListener<ArticleObject> resultListener,
+                               final Response.ErrorListener errorListener) {
+        loaddArticleInternal(favArticleId, resultListener, errorListener, true);
+    }
+
+    private void loaddArticleInternal(int articleId, final APIResultListener<ArticleObject> resultListener,
+                                     final Response.ErrorListener errorListener, boolean isLoadFav) {
+        String url = null;
+        if (isLoadFav) {
+            url = APIService.getInstance().createURL(String.format(Constant.URL.LOAD_FAV_ARTICLE, articleId));
+        } else {
+            url = APIService.getInstance().createURL(String.format(Constant.URL.LOAD_ARTICLE, articleId));
+        }
+
         BaseAPIGetRequest request = new BaseAPIGetRequest(url, ARTICLE_OBJECT_DATA_KEY,
                 errorListener, new APIRawResultListener() {
             @Override
@@ -36,6 +52,41 @@ public class ArticleService {
             }
         });
         request.get().setTag(API_TAG);
+        if (APIService.getInstance().isInit()) {
+            APIService.getInstance().queueJob(request.get());
+        }
+    }
+
+    public void loadAllFavArticleList(final APIResultListener<List<ArticleObject>> resultListener,
+                                         final Response.ErrorListener errorListener) {
+        loadFavArticleListInternal(resultListener, errorListener, false, 0);
+    }
+
+    public void loadFavArticleList(int page, final APIResultListener<List<ArticleObject>> resultListener,
+                                   final Response.ErrorListener errorListener) {
+        loadFavArticleListInternal(resultListener, errorListener, true, page);
+    }
+
+    private void loadFavArticleListInternal(final APIResultListener<List<ArticleObject>> resultListener,
+                                            final Response.ErrorListener errorListener, boolean isLoadAll, int page) {
+        String url = null;
+        if (!isLoadAll) {
+            url = APIService.getInstance().createURL(String.format(Constant.URL.LOAD_FAV_ARTICLE_LIST, page));
+        } else {
+            url = APIService.getInstance().createURL(Constant.URL.LOAD_ALL_FAV_ARTICLE_LIST);
+        }
+
+        BaseAPIGetRequest request = new BaseAPIGetRequest(url, ARTICLE_LIST_DATA_KEY, errorListener, new APIRawResultListener() {
+            @Override
+            public void handleRawJson(String rawJson) {
+                Type resultType = new TypeToken<List<ArticleObject>>() {}.getType();
+                List<ArticleObject> result = new Gson().fromJson(rawJson, resultType);
+                if (resultListener != null) {
+                    resultListener.onResultGet(result);
+                }
+            }
+        });
+
         if (APIService.getInstance().isInit()) {
             APIService.getInstance().queueJob(request.get());
         }

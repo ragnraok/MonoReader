@@ -31,8 +31,8 @@ public class TestActivity extends Activity {
         text = (TextView) findViewById(R.id.text);
 
         prepareTest();
-        TimelineTest.getTest().testFavTimeline(text, 2);
-        //ArticleTest.getTest().testLoadArticle(text, 20);
+        //TimelineTest.getTest().testFavTimeline(text, 2);
+        ArticleTest.getTest().testLoadArticle(text, 20);
     }
 
     public void prepareTest() {

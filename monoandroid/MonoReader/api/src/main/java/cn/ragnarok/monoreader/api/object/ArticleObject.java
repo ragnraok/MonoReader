@@ -1,5 +1,6 @@
 package cn.ragnarok.monoreader.api.object;
 
+import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -15,4 +16,9 @@ public class ArticleObject {
     public String url;
     @SerializedName("cover_url")
     public String coverUrl;
+
+    @Override
+    public String toString() {
+        return new Gson().toJson(this);
+    }
 }
