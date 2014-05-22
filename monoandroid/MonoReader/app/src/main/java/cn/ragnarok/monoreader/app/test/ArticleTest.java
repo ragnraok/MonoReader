@@ -6,6 +6,8 @@ import android.widget.TextView;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 
+import org.w3c.dom.Text;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -116,6 +118,24 @@ public class ArticleTest {
             result.append("\n");
         }
         return result.toString();
+    }
+
+    public void testFavArticle(final TextView text, int articleId) {
+        service.favArticle(articleId, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                text.setText(volleyError.toString());
+            }
+        });
+    }
+
+    public void testUnfavArticle(final TextView text, int articleId) {
+        service.unfavArticle(articleId, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                text.setText(volleyError.toString());
+            }
+        });
     }
 
 }

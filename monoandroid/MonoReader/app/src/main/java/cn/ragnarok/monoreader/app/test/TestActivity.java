@@ -31,11 +31,13 @@ public class TestActivity extends Activity {
         text = (TextView) findViewById(R.id.text);
 
         prepareTest();
-        TimelineTest.getTest().testFavTimeline(text, 3);
+//        TimelineTest.getTest().testFavTimeline(text, 3);
 //        ArticleTest.getTest().testLoadArticle(text, 30);
 //        ArticleTest.getTest().testLoadFavArticle(text, 1);
 //        ArticleTest.getTest().testLoadAllFavArticleList(text);
 //        ArticleTest.getTest().testLoadFavArticleList(text, 2);
+//        ArticleTest.getTest().testFavArticle(text, 1);
+//        ArticleTest.getTest().testUnfavArticle(text, 1);
     }
 
     public void prepareTest() {

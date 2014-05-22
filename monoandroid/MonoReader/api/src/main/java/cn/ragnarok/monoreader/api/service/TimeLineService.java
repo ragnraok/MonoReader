@@ -71,9 +71,7 @@ public class TimeLineService extends BaseAPIService {
             }
         });
         timelineRequest.get().setTag(API_TAG);
-        if (APIService.getInstance().isInit()) {
-            APIService.getInstance().queueJob(timelineRequest.get());
-        }
+        APIService.getInstance().queueJob(timelineRequest.get());
     }
 
     @Override
