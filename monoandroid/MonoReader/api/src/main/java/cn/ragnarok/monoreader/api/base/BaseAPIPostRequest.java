@@ -2,6 +2,7 @@ package cn.ragnarok.monoreader.api.base;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.VolleyError;
 
 import org.json.JSONObject;
 
@@ -14,12 +15,12 @@ public class BaseAPIPostRequest {
     private BaseAPIRequest mRequest = null;
     private String mUrl = null;
     private String mPostData = null;
-    private Response.ErrorListener mErrorListener;
+    private APIRequestFinishListener mRequestFinishListener;
 
-    public BaseAPIPostRequest(String url, String postData, Response.ErrorListener errorListener) {
+    public BaseAPIPostRequest(String url, String postData, APIRequestFinishListener requestFinishListener) {
         this.mUrl = url;
         this.mPostData = postData;
-        this.mErrorListener = errorListener;
+        this.mRequestFinishListener = requestFinishListener;
         this.initRequest();
     }
 
@@ -27,8 +28,18 @@ public class BaseAPIPostRequest {
         this.mRequest = new BaseAPIRequest(Request.Method.POST, mUrl, new Response.Listener<String>() {
             @Override
             public void onResponse(String s) {
+                if (mRequestFinishListener != null) {
+                    mRequestFinishListener.onRequestSuccess();
+                }
             }
-        }, mErrorListener, mPostData);
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                if (mRequestFinishListener != null) {
+                    mRequestFinishListener.onRequestFail(volleyError);
+                }
+            }
+        }, mPostData);
     }
 
     public BaseAPIRequest get() {

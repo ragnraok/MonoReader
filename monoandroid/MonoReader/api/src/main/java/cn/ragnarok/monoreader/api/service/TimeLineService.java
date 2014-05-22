@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.List;
 
 import cn.ragnarok.monoreader.api.base.APIRawResultListener;
+import cn.ragnarok.monoreader.api.base.APIRequestFinishListener;
 import cn.ragnarok.monoreader.api.base.APIResultListener;
 import cn.ragnarok.monoreader.api.base.BaseAPIGetRequest;
 import cn.ragnarok.monoreader.api.base.BaseAPIService;
@@ -23,32 +24,28 @@ public class TimeLineService extends BaseAPIService {
     public static final String API_TAG = "TimeLine";
     private static final String DATA_KEY = "articles";
 
+
     /**
-     * get the main timeline
+     *
      * @param page
-     * @param resultListener
-     * @param errorListener
+     * @param requestFinishListener
      * may be throw PageSmallThanOneException
      */
-    public void mainTimeline(int page, final APIResultListener<Collection<ListArticleObject>> resultListener,
-                             final Response.ErrorListener errorListener) {
-       timeline(false, page, resultListener, errorListener);
+    public void mainTimeline(int page, final APIRequestFinishListener<Collection<ListArticleObject>> requestFinishListener) {
+       timeline(false, page, requestFinishListener);
     }
 
     /**
-     * get the fav timeline
+     *
      * @param page
-     * @param resultListener
-     * @param errorListener
+     * @param requestFinishListener
      * may be throw PageSmallThanOneException
      */
-    public void favTimeline(int page, final APIResultListener<Collection<ListArticleObject>> resultListener,
-                            final Response.ErrorListener errorListener) {
-        timeline(true, page, resultListener, errorListener);
+    public void favTimeline(int page, final APIRequestFinishListener<Collection<ListArticleObject>> requestFinishListener) {
+        timeline(true, page, requestFinishListener);
     }
 
-    private void timeline(boolean isFav, int page, final APIResultListener<Collection<ListArticleObject>> resultListener,
-                          final Response.ErrorListener errorListener) {
+    private void timeline(boolean isFav, int page, final APIRequestFinishListener<Collection<ListArticleObject>> requestFinishListener) {
         String url = null;
         if (isFav) {
             url = String.format(Constant.URL.FAV_TIMELINE, page);
@@ -59,14 +56,16 @@ public class TimeLineService extends BaseAPIService {
             url = APIService.getInstance().createURL(url);
         }
 
-        BaseAPIGetRequest timelineRequest = new BaseAPIGetRequest(url, DATA_KEY, errorListener, new APIRawResultListener() {
+        BaseAPIGetRequest timelineRequest = new BaseAPIGetRequest(url, DATA_KEY,
+                requestFinishListener,
+                new APIRawResultListener() {
             @Override
             public void handleRawJson(String rawJson) {
                 Gson gson = new Gson();
                 Type resultType = new TypeToken<Collection<ListArticleObject>>(){}.getType();
                 Collection<ListArticleObject> result = gson.fromJson(rawJson, resultType);
-                if (resultListener != null) {
-                    resultListener.onResultGet(result);
+                if (requestFinishListener != null) {
+                    requestFinishListener.onGetResult(result);
                 }
             }
         });

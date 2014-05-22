@@ -5,6 +5,7 @@ import android.widget.TextView;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 
+import cn.ragnarok.monoreader.api.base.APIRequestFinishListener;
 import cn.ragnarok.monoreader.api.service.SubscribeService;
 
 /**
@@ -28,19 +29,40 @@ public class SubscribeTest {
     }
 
     public void testSubscribe(final TextView text, String title, String url, String category) {
-        service.subscribe(title, url, category, new Response.ErrorListener() {
+        text.setText("");
+        service.subscribe(title, url, category, new APIRequestFinishListener() {
             @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                text.setText(volleyError.toString());
+            public void onRequestSuccess() {
+                text.append("success\n");
+            }
+
+            @Override
+            public void onRequestFail(VolleyError error) {
+                text.append(error.toString() + "\n");
+            }
+
+            @Override
+            public void onGetResult(Object result) {
+
             }
         });
     }
 
     public void testUnsubscribe(final TextView text, int siteId) {
-        service.unsubscribe(siteId, new Response.ErrorListener() {
+        service.unsubscribe(siteId, new APIRequestFinishListener() {
             @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                text.setText(volleyError.toString());
+            public void onRequestSuccess() {
+                text.append("success\n");
+            }
+
+            @Override
+            public void onRequestFail(VolleyError error) {
+                text.append(error.toString() + "\n");
+            }
+
+            @Override
+            public void onGetResult(Object result) {
+
             }
         });
     }

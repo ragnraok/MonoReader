@@ -11,6 +11,7 @@ import org.w3c.dom.Text;
 import java.util.Collection;
 import java.util.List;
 
+import cn.ragnarok.monoreader.api.base.APIRequestFinishListener;
 import cn.ragnarok.monoreader.api.base.APIResultListener;
 import cn.ragnarok.monoreader.api.object.ArticleObject;
 import cn.ragnarok.monoreader.api.object.ListArticleObject;
@@ -37,45 +38,65 @@ public class ArticleTest {
     }
 
     public void testLoadArticle(final TextView text, final int articleId) {
-        service.loadArticle(articleId, new APIResultListener<ArticleObject>() {
+        service.loadArticle(articleId, new APIRequestFinishListener<ArticleObject>() {
             @Override
-            public void onResultGet(ArticleObject articleObject) {
+            public void onRequestSuccess() {
+
+            }
+
+            @Override
+            public void onRequestFail(VolleyError volleyError) {
+                text.setText(volleyError.toString());
+            }
+
+            @Override
+            public void onGetResult(ArticleObject articleObject) {
                 if (articleObject == null) {
                     text.setText("");
                 } else {
                     text.setText(articleObject.toString());
                 }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                text.setText(volleyError.toString());
             }
         });
     }
 
     public void testLoadFavArticle(final TextView text, final int favArticleId) {
-        service.loadFavArticle(favArticleId, new APIResultListener<ArticleObject>() {
+        service.loadFavArticle(favArticleId, new APIRequestFinishListener<ArticleObject>() {
             @Override
-            public void onResultGet(ArticleObject articleObject) {
+            public void onRequestSuccess() {
+
+            }
+
+            @Override
+            public void onRequestFail(VolleyError volleyError) {
+                text.setText(volleyError.toString());
+            }
+
+            @Override
+            public void onGetResult(ArticleObject articleObject) {
                 if (articleObject == null) {
                     text.setText("");
                 } else {
                     text.setText(articleObject.toString());
                 }
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                text.setText(volleyError.toString());
-            }
         });
     }
 
     public void testLoadAllFavArticleList(final TextView text) {
-        service.loadAllFavArticleList(new APIResultListener<Collection<ListArticleObject>>() {
+        service.loadAllFavArticleList(new APIRequestFinishListener<Collection<ListArticleObject>>() {
             @Override
-            public void onResultGet(Collection<ListArticleObject> articleObjects) {
+            public void onRequestSuccess() {
+
+            }
+
+            @Override
+            public void onRequestFail(VolleyError volleyError) {
+                text.setText(volleyError.toString());
+            }
+
+            @Override
+            public void onGetResult(Collection<ListArticleObject> articleObjects) {
                 if (articleObjects == null) {
                     text.setText("");
                 } else {
@@ -83,30 +104,29 @@ public class ArticleTest {
                     text.append(dumpArticleList(articleObjects));
                 }
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                text.setText(volleyError.toString());
-            }
         });
     }
 
     public void testLoadFavArticleList(final TextView text, int page) {
-        service.loadFavArticleList(page, new APIResultListener<Collection<ListArticleObject>>() {
+        service.loadFavArticleList(page, new APIRequestFinishListener<Collection<ListArticleObject>>() {
             @Override
-            public void onResultGet(Collection<ListArticleObject> listArticleObjects) {
-                Log.d(TAG, listArticleObjects.toString() + " " + listArticleObjects.size());
-                if (listArticleObjects == null) {
+            public void onRequestSuccess() {
+
+            }
+
+            @Override
+            public void onRequestFail(VolleyError volleyError) {
+                text.setText(volleyError.toString());
+            }
+
+            @Override
+            public void onGetResult(Collection<ListArticleObject> articleObjects) {
+                if (articleObjects == null) {
                     text.setText("");
                 } else {
-                    text.setText(listArticleObjects.size() + "\n");
-                    text.append(dumpArticleList(listArticleObjects));
+                    text.setText(articleObjects.size() + "\n");
+                    text.append(dumpArticleList(articleObjects));
                 }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                text.setText(volleyError.toString());
             }
         });
     }
@@ -121,19 +141,42 @@ public class ArticleTest {
     }
 
     public void testFavArticle(final TextView text, int articleId) {
-        service.favArticle(articleId, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                text.setText(volleyError.toString());
-            }
-        });
+       text.setText("");
+       service.favArticle(articleId, new APIRequestFinishListener() {
+
+           @Override
+           public void onRequestSuccess() {
+                text.append("success\n");
+           }
+
+           @Override
+           public void onRequestFail(VolleyError error) {
+               text.append(error.toString() + "\n");
+           }
+
+           @Override
+           public void onGetResult(Object result) {
+
+           }
+       });
     }
 
     public void testUnfavArticle(final TextView text, int articleId) {
-        service.unfavArticle(articleId, new Response.ErrorListener() {
+        service.unfavArticle(articleId, new APIRequestFinishListener() {
+
             @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                text.setText(volleyError.toString());
+            public void onRequestSuccess() {
+                text.append("success\n");
+            }
+
+            @Override
+            public void onRequestFail(VolleyError error) {
+                text.append(error.toString() + "\n");
+            }
+
+            @Override
+            public void onGetResult(Object result) {
+
             }
         });
     }

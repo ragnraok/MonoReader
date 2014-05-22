@@ -31,7 +31,7 @@ public class TestActivity extends Activity {
         text = (TextView) findViewById(R.id.text);
 
         prepareTest();
-//        TimelineTest.getTest().testFavTimeline(text, 3);
+        TimelineTest.getTest().testFavTimeline(text, 1);
 
 //        ArticleTest.getTest().testLoadArticle(text, 30);
 //        ArticleTest.getTest().testLoadFavArticle(text, 1);
@@ -41,7 +41,7 @@ public class TestActivity extends Activity {
 //        ArticleTest.getTest().testUnfavArticle(text, 1);
 
 //        SubscribeTest.getTest().testSubscribe(text, null, "http://www.solidot.org/", null);
-        SubscribeTest.getTest().testUnsubscribe(text, 7);
+//        SubscribeTest.getTest().testUnsubscribe(text, 7);
     }
 
     public void prepareTest() {

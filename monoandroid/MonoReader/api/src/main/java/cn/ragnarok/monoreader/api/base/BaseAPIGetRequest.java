@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -27,16 +28,15 @@ public class BaseAPIGetRequest {
     private Response.Listener<String> mResponseListener = null;
     private BaseAPIRequest mRequest;
     private String mUrl;
-    private Response.ErrorListener mErrorListener;
-    //private APIResultListener<DataType> mResultListener;
     private APIRawResultListener mRawResultListener;
+    private APIRequestFinishListener mRequesFinishListener;
 
-    public BaseAPIGetRequest(String url, String dataKey, Response.ErrorListener errorListener, APIRawResultListener rawResultListener) {
+    public BaseAPIGetRequest(String url, String dataKey, APIRequestFinishListener requestFinishListener,
+                             APIRawResultListener rawResultListener) {
         this.mUrl = url;
         this.mDataKey = dataKey;
-        //this.mResultListener = resultListener;
         this.mRawResultListener = rawResultListener;
-        this.mErrorListener = errorListener;
+        this.mRequesFinishListener = requestFinishListener;
         initResponseListener();
         initRequest();
     }
@@ -54,6 +54,9 @@ public class BaseAPIGetRequest {
 //                Collection<ListArticleObject> result = gson.fromJson(dataJson, resultType);
 //                mResultListener.onResultGet(result);
 
+                if (mRequesFinishListener != null) {
+                    mRequesFinishListener.onRequestSuccess();
+                }
                 try {
                     Log.d(TAG, s);
                     JSONObject jsonObject = new JSONObject(s);
@@ -61,11 +64,6 @@ public class BaseAPIGetRequest {
                         //mResultListener.onResultGet(null);
                         mRawResultListener.handleRawJson(null);
                     } else {
-//                        Gson gson = new Gson();
-//                        String dataJson = resultJson.toString();
-//                        Type dataType = new TypeToken<DataType>(){}.getType();
-//                        DataType data = gson.fromJson(dataJson, dataType);
-//                        mResultListener.onResultGet(data);
                         Object resultJson = jsonObject.get(mDataKey);
                         String dataJson = resultJson.toString();
                         mRawResultListener.handleRawJson(dataJson);
@@ -78,7 +76,14 @@ public class BaseAPIGetRequest {
     }
 
     private void initRequest() {
-        mRequest = new BaseAPIRequest(Request.Method.GET, mUrl, mResponseListener, mErrorListener);
+        mRequest = new BaseAPIRequest(Request.Method.GET, mUrl, mResponseListener, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                if (mRequesFinishListener != null) {
+                    mRequesFinishListener.onRequestFail(volleyError);
+                }
+            }
+        });
     }
 
     public BaseAPIRequest get() {

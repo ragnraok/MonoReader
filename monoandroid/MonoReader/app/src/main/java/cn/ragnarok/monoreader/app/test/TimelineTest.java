@@ -9,6 +9,7 @@ import com.android.volley.VolleyError;
 import java.util.Collection;
 import java.util.List;
 
+import cn.ragnarok.monoreader.api.base.APIRequestFinishListener;
 import cn.ragnarok.monoreader.api.base.APIResultListener;
 import cn.ragnarok.monoreader.api.object.ListArticleObject;
 import cn.ragnarok.monoreader.api.service.TimeLineService;
@@ -39,38 +40,45 @@ public class TimelineTest {
     }
 
     public void testMainTimelin(final TextView text, int page) {
-        mTimelineService.mainTimeline(page, new APIResultListener<Collection<ListArticleObject>>() {
+        mTimelineService.mainTimeline(page, new APIRequestFinishListener<Collection<ListArticleObject>>() {
             @Override
-            public void onResultGet(Collection<ListArticleObject> articleList) {
-                Log.d(TAG, articleList.size() + "");
+            public void onRequestSuccess() {
+
+            }
+
+            @Override
+            public void onRequestFail(VolleyError volleyError) {
+                Log.d(TAG, volleyError.toString());
+                text.setText(volleyError.toString());
+            }
+
+            @Override
+            public void onGetResult(Collection<ListArticleObject> articleList) {
                 text.setText("");
                 text.append("size: " + articleList.size() + "\n");
                 text.append(dumpArticleList(articleList));
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                Log.d(TAG, volleyError.toString());
-                text.setText(volleyError.toString());
             }
         });
     }
 
     public void testFavTimeline(final TextView text, int page) {
-        mTimelineService.favTimeline(page, new APIResultListener<Collection<ListArticleObject>>() {
+        mTimelineService.favTimeline(page, new APIRequestFinishListener<Collection<ListArticleObject>>() {
             @Override
-            public void onResultGet(Collection<ListArticleObject> articleList) {
-                Log.d(TAG, articleList.size() + "");
+            public void onRequestSuccess() {
+
+            }
+
+            @Override
+            public void onRequestFail(VolleyError volleyError) {
+                Log.d(TAG, volleyError.toString());
+                text.setText(volleyError.toString());
+            }
+
+            @Override
+            public void onGetResult(Collection<ListArticleObject> articleList) {
                 text.setText("");
                 text.append("size: " + articleList.size() + "\n");
                 text.append(dumpArticleList(articleList));
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                Log.d(TAG, volleyError.toString());
-                text.setText(volleyError.toString());
             }
         });
     }
