@@ -134,6 +134,7 @@ class SitesListView(BaseSiteListView):
                                     site object
                                 ]
                             }
+                            ...
                         ]
                     }
                 }
