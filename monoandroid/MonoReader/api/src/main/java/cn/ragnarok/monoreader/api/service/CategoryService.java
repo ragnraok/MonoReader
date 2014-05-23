@@ -28,17 +28,8 @@ public class CategoryService extends BaseAPIService {
 
     public void loadAllCategoryList(final APIRequestFinishListener<Collection<CategoryObject>> requestFinishListener) {
         String url = APIService.getInstance().createURL(Constant.URL.GET_ALL_CATEGORY);
-        BaseAPIGetRequest request = new BaseAPIGetRequest(url, DATA_KEY, requestFinishListener, new APIRawResultListener() {
-            @Override
-            public void handleRawJson(String rawJson) {
-                Gson gson = new Gson();
-                Type resultType = new TypeToken<Collection<CategoryObject>>() {}.getType();
-                Collection<CategoryObject> categoryList = gson.fromJson(rawJson, resultType);
-                if (requestFinishListener != null) {
-                    requestFinishListener.onGetResult(categoryList);
-                }
-            }
-        });
+        Type resultType = new TypeToken<Collection<CategoryObject>>() {}.getType();
+        BaseAPIGetRequest request = new BaseAPIGetRequest(url, DATA_KEY, resultType, requestFinishListener);
         request.get().setTag(API_TAG);
 
         APIService.getInstance().queueJob(request.get());

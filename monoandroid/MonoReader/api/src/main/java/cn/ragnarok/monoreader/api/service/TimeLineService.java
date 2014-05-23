@@ -6,6 +6,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import cn.ragnarok.monoreader.api.base.APIRawResultListener;
@@ -56,19 +57,8 @@ public class TimeLineService extends BaseAPIService {
             url = APIService.getInstance().createURL(url);
         }
 
-        BaseAPIGetRequest timelineRequest = new BaseAPIGetRequest(url, DATA_KEY,
-                requestFinishListener,
-                new APIRawResultListener() {
-            @Override
-            public void handleRawJson(String rawJson) {
-                Gson gson = new Gson();
-                Type resultType = new TypeToken<Collection<ListArticleObject>>(){}.getType();
-                Collection<ListArticleObject> result = gson.fromJson(rawJson, resultType);
-                if (requestFinishListener != null) {
-                    requestFinishListener.onGetResult(result);
-                }
-            }
-        });
+        Type resultType = new TypeToken<Collection<ListArticleObject>>(){}.getType();
+        BaseAPIGetRequest timelineRequest = new BaseAPIGetRequest(url, DATA_KEY, resultType, requestFinishListener);
         timelineRequest.get().setTag(API_TAG);
         APIService.getInstance().queueJob(timelineRequest.get());
     }

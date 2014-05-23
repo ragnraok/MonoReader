@@ -1,5 +1,7 @@
 package cn.ragnarok.monoreader.api.util;
 
+import cn.ragnarok.monoreader.api.service.APIService;
+
 /**
  * Created by ragnarok on 14-5-21.
  */
@@ -30,6 +32,13 @@ public class Constant {
         public static final String GET_ALL_CATEGORY = API_PREFIX + "category/get_all/";
         public static final String SET_CATEGORY = API_PREFIX + "category/set/";
         public static final String UNSET_CATEGORY = API_PREFIX + "category/unset/";
+
+        public static final String LOAD_SITE_ALL_ARTICLE = API_PREFIX + "site/%d/articles/";
+        public static final String LOAD_SITE_ARTICLE = API_PREFIX + "site/%d/articles/%d/";
+        public static final String LOAD_ALL_SITE = API_PREFIX + "site/get_all/";
+        public static final String LOAD_ALL_SITE_BY_CATEGORY = API_PREFIX + "site/get_all_by_category/";
+        public static final String LOAD_ALL_SITE_IN_CATEGORY = API_PREFIX + "site/get_by_category/%s/";
+        public static final String FAV_STIE = API_PREFIX + "site/fav_set/";
     }
     public static class RequestTAG {
         public static final String TAG = "MonoReader";

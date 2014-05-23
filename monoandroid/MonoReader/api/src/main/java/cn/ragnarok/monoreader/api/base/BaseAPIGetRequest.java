@@ -1,23 +1,16 @@
 package cn.ragnarok.monoreader.api.base;
 
-import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
 
-import cn.ragnarok.monoreader.api.object.ListArticleObject;
-import cn.ragnarok.monoreader.api.util.ErrorHelper;
 
 /**
  * Created by ragnarok on 14-5-21.
@@ -28,15 +21,14 @@ public class BaseAPIGetRequest {
     private Response.Listener<String> mResponseListener = null;
     private BaseAPIRequest mRequest;
     private String mUrl;
-    private APIRawResultListener mRawResultListener;
     private APIRequestFinishListener mRequesFinishListener;
+    private Type mDataType;
 
-    public BaseAPIGetRequest(String url, String dataKey, APIRequestFinishListener requestFinishListener,
-                             APIRawResultListener rawResultListener) {
+    public BaseAPIGetRequest(String url, String dataKey, Type dataType, APIRequestFinishListener requestFinishListener) {
         this.mUrl = url;
         this.mDataKey = dataKey;
-        this.mRawResultListener = rawResultListener;
         this.mRequesFinishListener = requestFinishListener;
+        this.mDataType = dataType;
         initResponseListener();
         initRequest();
     }
@@ -50,8 +42,8 @@ public class BaseAPIGetRequest {
 //                        new TypeToken<Map<String, DataType>>(){}.getType());
 //                String dataJson = resultJson.get(mDataKey).toString();
 //                Log.d(TAG, dataJson);
-//                Type resultType = new TypeToken<Collection<ListArticleObject>>(){}.getType();
-//                Collection<ListArticleObject> result = gson.fromJson(dataJson, resultType);
+//                Type resultType = new TypeToken<DataType>(){}.getType();
+//                DataType result = gson.fromJson(dataJson, resultType);
 //                mResultListener.onResultGet(result);
 
                 if (mRequesFinishListener != null) {
@@ -61,11 +53,11 @@ public class BaseAPIGetRequest {
                     JSONObject jsonObject = new JSONObject(s);
                     if (jsonObject.isNull(mDataKey)) {
                         //mResultListener.onResultGet(null);
-                        mRawResultListener.handleRawJson(null);
+                        mRequesFinishListener.onGetResult(null);
                     } else {
                         Object resultJson = jsonObject.get(mDataKey);
                         String dataJson = resultJson.toString();
-                        mRawResultListener.handleRawJson(dataJson);
+                        mRequesFinishListener.onGetResult(new Gson().fromJson(dataJson, mDataType));
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

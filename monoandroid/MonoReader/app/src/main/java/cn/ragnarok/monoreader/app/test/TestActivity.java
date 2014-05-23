@@ -2,20 +2,11 @@ package cn.ragnarok.monoreader.app.test;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.TextView;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 
-import java.util.List;
-
-import cn.ragnarok.monoreader.api.base.APIResultListener;
-import cn.ragnarok.monoreader.api.object.ListArticleObject;
 import cn.ragnarok.monoreader.api.service.APIService;
-import cn.ragnarok.monoreader.api.service.ArticleService;
-import cn.ragnarok.monoreader.api.service.TimeLineService;
 import cn.ragnarok.monoreader.app.R;
 
 
@@ -44,8 +35,18 @@ public class TestActivity extends Activity {
 //        SubscribeTest.getTest().testUnsubscribe(text, 8);
 
 //        CategoryTest.getTest().testGetAllCategory(text);
-//        CategoryTest.getTest().testSetCategory(text, 6, "test");
-        CategoryTest.getTest().testUnsetCategory(text, 6);
+//        CategoryTest.getTest().testSetCategory(text, 10, "test");
+//        CategoryTest.getTest().testUnsetCategory(text, 6);
+
+//        SiteTest.getTest().testLoadAllSiteArticleList(text, 2);
+//        SiteTest.getTest().testLoadSiteArticleList(text, 2, 1);
+
+//        SiteTest.getTest().testLoadAllSite(text);
+//        SiteTest.getTest().testLoadAllSiteInCategory(text, "test");
+
+//        SiteTest.getTest().testFavSite(text, 2);
+//        SiteTest.getTest().testUnFavSite(text, 1);
+        SiteTest.getTest().testLoadAllSiteByCategory(text);
     }
 
     public void prepareTest() {

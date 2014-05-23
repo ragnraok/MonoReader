@@ -1,6 +1,7 @@
 package cn.ragnarok.monoreader.api.object;
 
 
+import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -17,4 +18,9 @@ public class SiteObject {
     @SerializedName("article_count")
     public int articleCount;
     public String url;
+
+    @Override
+    public String toString() {
+        return new Gson().toJson(this);
+    }
 }

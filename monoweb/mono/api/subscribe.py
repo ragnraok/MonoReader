@@ -1,6 +1,7 @@
 from apibase import BaseAPIPOSTView
 from utils import DATA_FORMAT_ERROR, SITE_NOT_EXIST
 from mono.models import Site, Category
+from mono.task.worker import add_update_task
 
 class SiteSubscribeView(BaseAPIPOSTView):
     def __init__(self, is_subscribe=True, **kwargs):
@@ -36,7 +37,8 @@ class SiteSubscribeView(BaseAPIPOSTView):
             else:
                 new_site.unset_category()
 
-            new_site.update_site()
+            #new_site.update_site()
+            add_update_task(new_site)
         else:
             site_id = data.get('site_id', None)
             if site_id is None:

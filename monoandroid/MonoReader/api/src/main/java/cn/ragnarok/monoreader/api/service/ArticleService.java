@@ -1,6 +1,5 @@
 package cn.ragnarok.monoreader.api.service;
 
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONException;
@@ -8,9 +7,7 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.Collection;
-import java.util.List;
 
-import cn.ragnarok.monoreader.api.base.APIRawResultListener;
 import cn.ragnarok.monoreader.api.base.APIRequestFinishListener;
 import cn.ragnarok.monoreader.api.base.BaseAPIGetRequest;
 import cn.ragnarok.monoreader.api.base.BaseAPIPostRequest;
@@ -43,17 +40,8 @@ public class ArticleService extends BaseAPIService {
             url = APIService.getInstance().createURL(String.format(Constant.URL.LOAD_ARTICLE, articleId));
         }
 
-        BaseAPIGetRequest request = new BaseAPIGetRequest(url, ARTICLE_OBJECT_DATA_KEY,
-                requestFinishListener, new APIRawResultListener() {
-            @Override
-            public void handleRawJson(String rawJson) {
-                Type articleType = new TypeToken<ArticleObject>() {}.getType();
-                ArticleObject result = new Gson().fromJson(rawJson, articleType);
-                if (requestFinishListener != null) {
-                    requestFinishListener.onGetResult(result);
-                }
-            }
-        });
+        Type articleType = new TypeToken<ArticleObject>() {}.getType();
+        BaseAPIGetRequest request = new BaseAPIGetRequest(url, ARTICLE_OBJECT_DATA_KEY, articleType, requestFinishListener);
         request.get().setTag(API_TAG);
         APIService.getInstance().queueJob(request.get());
     }
@@ -74,16 +62,8 @@ public class ArticleService extends BaseAPIService {
             url = APIService.getInstance().createURL(Constant.URL.LOAD_ALL_FAV_ARTICLE_LIST);
         }
 
-        BaseAPIGetRequest request = new BaseAPIGetRequest(url, ARTICLE_LIST_DATA_KEY, requestFinishListener, new APIRawResultListener() {
-            @Override
-            public void handleRawJson(String rawJson) {
-                Type resultType = new TypeToken<Collection<ListArticleObject>>() {}.getType();
-                List<ListArticleObject> result = new Gson().fromJson(rawJson, resultType);
-                if (requestFinishListener != null) {
-                    requestFinishListener.onGetResult(result);
-                }
-            }
-        });
+        Type resultType = new TypeToken<Collection<ListArticleObject>>() {}.getType();
+        BaseAPIGetRequest request = new BaseAPIGetRequest(url, ARTICLE_LIST_DATA_KEY, resultType, requestFinishListener);
 
         request.get().setTag(API_TAG);
         APIService.getInstance().queueJob(request.get());
