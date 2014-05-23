@@ -52,7 +52,6 @@ public class BaseAPIGetRequest {
                 try {
                     JSONObject jsonObject = new JSONObject(s);
                     if (jsonObject.isNull(mDataKey)) {
-                        //mResultListener.onResultGet(null);
                         mRequesFinishListener.onGetResult(null);
                     } else {
                         Object resultJson = jsonObject.get(mDataKey);

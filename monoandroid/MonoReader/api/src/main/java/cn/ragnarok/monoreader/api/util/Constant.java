@@ -1,7 +1,5 @@
 package cn.ragnarok.monoreader.api.util;
 
-import cn.ragnarok.monoreader.api.service.APIService;
-
 /**
  * Created by ragnarok on 14-5-21.
  */

@@ -21,6 +21,7 @@ public class APIService {
         serviceTagList.add(TimeLineService.API_TAG);
         serviceTagList.add(ArticleService.API_TAG);
         serviceTagList.add(SubscribeService.API_TAG);
+        serviceTagList.add(SiteService.API_TAG);
     }
 
     private static APIService service;
