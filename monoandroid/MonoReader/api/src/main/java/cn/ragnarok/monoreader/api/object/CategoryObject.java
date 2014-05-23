@@ -1,5 +1,6 @@
 package cn.ragnarok.monoreader.api.object;
 
+import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -11,4 +12,9 @@ public class CategoryObject {
     public String name;
     @SerializedName("is_un_classified")
     public boolean isUnClassified;
+
+    @Override
+    public String toString() {
+        return new Gson().toJson(this);
+    }
 }

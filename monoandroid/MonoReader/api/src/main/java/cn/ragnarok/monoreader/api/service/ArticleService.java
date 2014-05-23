@@ -1,6 +1,5 @@
 package cn.ragnarok.monoreader.api.service;
 
-import com.android.volley.Response;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -13,7 +12,6 @@ import java.util.List;
 
 import cn.ragnarok.monoreader.api.base.APIRawResultListener;
 import cn.ragnarok.monoreader.api.base.APIRequestFinishListener;
-import cn.ragnarok.monoreader.api.base.APIResultListener;
 import cn.ragnarok.monoreader.api.base.BaseAPIGetRequest;
 import cn.ragnarok.monoreader.api.base.BaseAPIPostRequest;
 import cn.ragnarok.monoreader.api.base.BaseAPIService;

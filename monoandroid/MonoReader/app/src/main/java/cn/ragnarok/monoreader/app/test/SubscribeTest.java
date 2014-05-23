@@ -33,12 +33,12 @@ public class SubscribeTest {
         service.subscribe(title, url, category, new APIRequestFinishListener() {
             @Override
             public void onRequestSuccess() {
-                text.append("success\n");
+                text.setText("success\n");
             }
 
             @Override
             public void onRequestFail(VolleyError error) {
-                text.append(error.toString() + "\n");
+                text.setText(error.toString() + "\n");
             }
 
             @Override
@@ -52,12 +52,12 @@ public class SubscribeTest {
         service.unsubscribe(siteId, new APIRequestFinishListener() {
             @Override
             public void onRequestSuccess() {
-                text.append("success\n");
+                text.setText("success\n");
             }
 
             @Override
             public void onRequestFail(VolleyError error) {
-                text.append(error.toString() + "\n");
+                text.setText(error.toString() + "\n");
             }
 
             @Override

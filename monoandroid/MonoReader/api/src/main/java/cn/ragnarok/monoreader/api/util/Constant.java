@@ -26,6 +26,10 @@ public class Constant {
 
         public static final String SUBSCRIBE = API_PREFIX + "subscribe/";
         public static final String UNSUBSCRIBE = API_PREFIX + "unsubscribe/";
+
+        public static final String GET_ALL_CATEGORY = API_PREFIX + "category/get_all/";
+        public static final String SET_CATEGORY = API_PREFIX + "category/set/";
+        public static final String UNSET_CATEGORY = API_PREFIX + "category/unset/";
     }
     public static class RequestTAG {
         public static final String TAG = "MonoReader";

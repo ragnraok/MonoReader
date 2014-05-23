@@ -146,12 +146,12 @@ public class ArticleTest {
 
            @Override
            public void onRequestSuccess() {
-                text.append("success\n");
+                text.setText("success\n");
            }
 
            @Override
            public void onRequestFail(VolleyError error) {
-               text.append(error.toString() + "\n");
+               text.setText(error.toString() + "\n");
            }
 
            @Override
@@ -166,12 +166,12 @@ public class ArticleTest {
 
             @Override
             public void onRequestSuccess() {
-                text.append("success\n");
+                text.setText("success\n");
             }
 
             @Override
             public void onRequestFail(VolleyError error) {
-                text.append(error.toString() + "\n");
+                text.setText(error.toString() + "\n");
             }
 
             @Override

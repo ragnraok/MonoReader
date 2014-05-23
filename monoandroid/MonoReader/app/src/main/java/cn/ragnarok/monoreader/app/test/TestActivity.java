@@ -31,17 +31,21 @@ public class TestActivity extends Activity {
         text = (TextView) findViewById(R.id.text);
 
         prepareTest();
-        TimelineTest.getTest().testFavTimeline(text, 1);
+//        TimelineTest.getTest().testFavTimeline(text, 1);
 
 //        ArticleTest.getTest().testLoadArticle(text, 30);
 //        ArticleTest.getTest().testLoadFavArticle(text, 1);
 //        ArticleTest.getTest().testLoadAllFavArticleList(text);
 //        ArticleTest.getTest().testLoadFavArticleList(text, 2);
-//        ArticleTest.getTest().testFavArticle(text, 1);
-//        ArticleTest.getTest().testUnfavArticle(text, 1);
-
+//        ArticleTest.getTest().testFavArticle(text, 30);
+//        ArticleTest.getTest().testUnfavArticle(text, 5);
+//
 //        SubscribeTest.getTest().testSubscribe(text, null, "http://www.solidot.org/", null);
-//        SubscribeTest.getTest().testUnsubscribe(text, 7);
+//        SubscribeTest.getTest().testUnsubscribe(text, 8);
+
+//        CategoryTest.getTest().testGetAllCategory(text);
+//        CategoryTest.getTest().testSetCategory(text, 6, "test");
+        CategoryTest.getTest().testUnsetCategory(text, 6);
     }
 
     public void prepareTest() {
