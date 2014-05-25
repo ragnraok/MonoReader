@@ -1,6 +1,10 @@
 package cn.ragnarok.monoreader.app.ui.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.text.Layout;
+import android.util.Log;
+import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +12,14 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
+
+import java.util.ArrayList;
+import java.util.Collection;
+
+import cn.ragnarok.monoreader.api.object.ListArticleObject;
+import cn.ragnarok.monoreader.api.service.APIService;
 import cn.ragnarok.monoreader.app.R;
 
 /**
@@ -15,25 +27,53 @@ import cn.ragnarok.monoreader.app.R;
  */
 public class TimelineListAdapter extends BaseAdapter {
 
+    public static final String TAG = "Mono.TimelineListAdapter";
+
     private Context mContext;
     private boolean mIsFavTimeline;
 
     private int[] mDefaultColorArray = new int[]{R.color.timeline_item_color1, R.color.timeline_item_color2, R.color.timeline_item_color3,
             R.color.timeline_item_color4, R.color.timeline_item_color5};
 
+    private ArrayList<ListArticleObject> mData;
+    private ImageLoader mImageLoader;
+    private LruCache<String, Bitmap> mImageCache;
+
+//    private static final int ITEM_TYPE_HAS_COVER = false;
+
     public TimelineListAdapter(Context context, boolean isFavTimeline) {
         this.mContext = context;
         this.mIsFavTimeline = isFavTimeline;
+
+        mData = new ArrayList<ListArticleObject>();
+
+        mImageCache = new LruCache<String, Bitmap>(20);
+        mImageLoader = new ImageLoader(APIService.getInstance().getQueue(), new ImageLoader.ImageCache() {
+            @Override
+            public Bitmap getBitmap(String s) {
+                return mImageCache.get(s);
+            }
+
+            @Override
+            public void putBitmap(String s, Bitmap bitmap) {
+                mImageCache.put(s, bitmap);
+            }
+        });
+    }
+
+    public TimelineListAdapter(Context context, boolean isFavTimeline, Collection<ListArticleObject> initData) {
+        this(context, isFavTimeline);
+        mData.addAll(initData);
     }
 
     @Override
     public int getCount() {
-        return 10;
+       return mData.size();
     }
 
     @Override
     public Object getItem(int i) {
-        return i;
+        return mData.get(i);
     }
 
     @Override
@@ -41,31 +81,74 @@ public class TimelineListAdapter extends BaseAdapter {
         return i;
     }
 
+    public void appendData(Collection<ListArticleObject> newData) {
+        this.mData.addAll(newData);
+        this.notifyDataSetChanged();
+    }
+
+
+    @Override
+    public int getItemViewType(int position) {
+        return super.getItemViewType(position);
+    }
+
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
-        if (view == null) {
-            if (i % 2 == 0) {
+        ListArticleObject article = mData.get(i);
+        if (view == null || ((ViewHolder)view.getTag()).article.equals(article) == false) {
+            boolean isHasCover = article.coverUrl != null;
+            if (isHasCover) {
                 view = LayoutInflater.from(mContext).inflate(R.layout.timeline_item, viewGroup, false);
-                ViewHolder holder = new ViewHolder();
-                holder.mBackgroundImageView = (ImageView) view.findViewById(R.id.item_background_image);
-                holder.mTitleView = (TextView) view.findViewById(R.id.article_title);
-                holder.mSiteTitleView = (TextView) view.findViewById(R.id.site);
-                holder.mBackgroundImageView.setImageResource(mDefaultColorArray[i % mDefaultColorArray.length]);
-                view.setTag(holder);
             } else {
                 view = LayoutInflater.from(mContext).inflate(R.layout.timeline_item_without_cover, viewGroup, false);
-                ViewHolder holder = new ViewHolder();
-                holder.mBackgroundImageView = null;
-                holder.mTitleView = (TextView) view.findViewById(R.id.article_title);
-                holder.mSiteTitleView = (TextView) view.findViewById(R.id.site);
             }
+            ViewHolder holder = new ViewHolder();
+            holder.article = article;
+            if (isHasCover) {
+                holder.mBackgroundImageView = (ImageView) view.findViewById(R.id.item_background_image);
+                holder.mBackgroundImageView.setTag(article.coverUrl);
+            } else {
+                holder.mBackgroundImageView = null;
+            }
+            holder.mTitleView = (TextView) view.findViewById(R.id.article_title);
+            holder.mSiteTitleView = (TextView) view.findViewById(R.id.site);
+            view.setTag(holder);
         }
+        ViewHolder holder = (ViewHolder) view.getTag();
+        holder.mTitleView.setText(article.title);
+        holder.mSiteTitleView.setText(article.site);
+        if (holder.mBackgroundImageView != null && article.coverUrl != null) {
+            loadItemCover(holder.mBackgroundImageView, article.coverUrl);
+        }
+
         return view;
+    }
+
+    private void loadItemCover(final ImageView imageView, String url) {
+        ImageLoader.ImageListener imageListener = new ImageLoader.ImageListener() {
+            @Override
+            public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
+                Log.d(TAG, "imageLoader, onResponse");
+                if (imageContainer.getBitmap() != null) {
+                    if (imageView.getTag().toString().equals(imageContainer.getRequestUrl())) {
+                        Log.d(TAG, "imageLoader, setBitmap, url=" + imageContainer.getRequestUrl());
+                        imageView.setImageBitmap(imageContainer.getBitmap());
+                    }
+                }
+            }
+
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+
+            }
+        };
+        mImageLoader.get(url, imageListener);
     }
 
     private class ViewHolder {
         ImageView mBackgroundImageView;
         TextView mTitleView;
         TextView mSiteTitleView;
+        ListArticleObject article;
     }
 }

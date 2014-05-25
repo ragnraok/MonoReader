@@ -18,4 +18,14 @@ public class ListArticleObject {
     public String toString() {
         return new Gson().toJson(this);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof ListArticleObject) {
+            return this.articleId == ((ListArticleObject)o).articleId;
+        } else {
+            return false;
+        }
+
+    }
 }

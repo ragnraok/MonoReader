@@ -10,6 +10,7 @@
         android:layout_height="match_parent"
         android:id="@+id/item_background_image"
         android:src="@android:color/transparent"
+        android:background="@android:color/transparent"
         android:scaleType="centerCrop"/>
 
     <ImageView

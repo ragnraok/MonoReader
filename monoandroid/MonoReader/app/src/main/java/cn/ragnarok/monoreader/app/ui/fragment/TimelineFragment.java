@@ -3,11 +3,20 @@ package cn.ragnarok.monoreader.app.ui.fragment;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
+import com.android.volley.VolleyError;
+
+import java.util.Collection;
+
+import cn.ragnarok.monoreader.api.base.APIRequestFinishListener;
+import cn.ragnarok.monoreader.api.object.ListArticleObject;
+import cn.ragnarok.monoreader.api.service.TimeLineService;
 import cn.ragnarok.monoreader.app.R;
 import cn.ragnarok.monoreader.app.ui.adapter.TimelineListAdapter;
 
@@ -21,7 +30,11 @@ public class TimelineFragment extends Fragment {
     private boolean mIsFavTimeline = false;
 
     private ListView mTimelineList;
+    private ProgressBar mLoadingProgress;
     private View mTimelineView;
+    private TimeLineService mTimelineService;
+    private APIRequestFinishListener<Collection<ListArticleObject>> mRequestFinishListener;
+    private TimelineListAdapter mTimelineAdapter;
 
     public static TimelineFragment newInstance(boolean isFavTimeline) {
         TimelineFragment fragment = new TimelineFragment();
@@ -33,6 +46,7 @@ public class TimelineFragment extends Fragment {
 
 
     public TimelineFragment() {
+        mTimelineService = new TimeLineService();
 
     }
 
@@ -42,14 +56,45 @@ public class TimelineFragment extends Fragment {
         if (getArguments() != null) {
             mIsFavTimeline = getArguments().getBoolean(IS_FAV_TIMELINE);
         }
+        Log.d(TAG, "onCreate");
+        if (mTimelineAdapter == null) {
+            mTimelineAdapter = new TimelineListAdapter(getActivity(), mIsFavTimeline);
+        }
+
+        if (mRequestFinishListener == null) {
+            mRequestFinishListener = new APIRequestFinishListener<Collection<ListArticleObject>>() {
+                @Override
+                public void onRequestSuccess() {
+
+                }
+
+                @Override
+                public void onRequestFail(VolleyError error) {
+
+                }
+
+                @Override
+                public void onGetResult(Collection<ListArticleObject> result) {
+                    mTimelineAdapter.appendData(result);
+                    if (mTimelineList.getVisibility() == View.GONE) {
+                        mTimelineList.setVisibility(View.VISIBLE);
+                        mLoadingProgress.setVisibility(View.GONE);
+                    }
+                }
+            };
+        }
     }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        Log.d(TAG, "onCreateView");
         mTimelineView = inflater.inflate(R.layout.fragment_timeline, container, false);
         mTimelineList = (ListView) mTimelineView.findViewById(R.id.timeline_list);
+        mLoadingProgress = (ProgressBar) mTimelineView.findViewById(R.id.loading_progress);
 
         initTimelineList();
 
@@ -57,7 +102,16 @@ public class TimelineFragment extends Fragment {
     }
 
     private void initTimelineList() {
-        mTimelineList.setAdapter(new TimelineListAdapter(getActivity(), false));
+        mTimelineList.setVisibility(View.GONE);
+        mLoadingProgress.setVisibility(View.VISIBLE);
+
+        mTimelineList.setAdapter(mTimelineAdapter);
+
+        if (mIsFavTimeline) {
+            mTimelineService.favTimeline(1, mRequestFinishListener);
+        } else {
+            mTimelineService.mainTimeline(1, mRequestFinishListener);
+        }
     }
 
     @Override
