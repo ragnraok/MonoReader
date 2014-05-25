@@ -1,9 +1,8 @@
 package cn.ragnarok.monoreader.app.ui.adapter;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.text.Layout;
-import android.util.Log;
 import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +20,7 @@ import java.util.Collection;
 import cn.ragnarok.monoreader.api.object.ListArticleObject;
 import cn.ragnarok.monoreader.api.service.APIService;
 import cn.ragnarok.monoreader.app.R;
+import cn.ragnarok.monoreader.app.cache.BitmapCache;
 
 /**
  * Created by ragnarok on 14-5-25.
@@ -28,6 +28,8 @@ import cn.ragnarok.monoreader.app.R;
 public class TimelineListAdapter extends BaseAdapter {
 
     public static final String TAG = "Mono.TimelineListAdapter";
+
+    private static final int RATE = 8;
 
     private Context mContext;
     private boolean mIsFavTimeline;
@@ -37,7 +39,7 @@ public class TimelineListAdapter extends BaseAdapter {
 
     private ArrayList<ListArticleObject> mData;
     private ImageLoader mImageLoader;
-    private LruCache<String, Bitmap> mImageCache;
+    private BitmapCache mImageCache;
 
 //    private static final int ITEM_TYPE_HAS_COVER = false;
 
@@ -47,18 +49,11 @@ public class TimelineListAdapter extends BaseAdapter {
 
         mData = new ArrayList<ListArticleObject>();
 
-        mImageCache = new LruCache<String, Bitmap>(20);
-        mImageLoader = new ImageLoader(APIService.getInstance().getQueue(), new ImageLoader.ImageCache() {
-            @Override
-            public Bitmap getBitmap(String s) {
-                return mImageCache.get(s);
-            }
-
-            @Override
-            public void putBitmap(String s, Bitmap bitmap) {
-                mImageCache.put(s, bitmap);
-            }
-        });
+        ActivityManager manager = (ActivityManager) context
+                .getSystemService(Context.ACTIVITY_SERVICE);
+        int maxSize = manager.getMemoryClass() / RATE;
+        mImageCache = new BitmapCache(mContext, 512 * 512 * maxSize);
+        mImageLoader = new ImageLoader(APIService.getInstance().getQueue(), mImageCache);
     }
 
     public TimelineListAdapter(Context context, boolean isFavTimeline, Collection<ListArticleObject> initData) {
@@ -68,7 +63,7 @@ public class TimelineListAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-       return mData.size();
+        return mData.size();
     }
 
     @Override
@@ -95,7 +90,7 @@ public class TimelineListAdapter extends BaseAdapter {
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         ListArticleObject article = mData.get(i);
-        if (view == null || ((ViewHolder)view.getTag()).article.equals(article) == false) {
+        if (view == null || ((ViewHolder) view.getTag()).article.equals(article) == false) {
             boolean isHasCover = article.coverUrl != null;
             if (isHasCover) {
                 view = LayoutInflater.from(mContext).inflate(R.layout.timeline_item, viewGroup, false);
@@ -128,10 +123,9 @@ public class TimelineListAdapter extends BaseAdapter {
         ImageLoader.ImageListener imageListener = new ImageLoader.ImageListener() {
             @Override
             public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
-                Log.d(TAG, "imageLoader, onResponse");
+
                 if (imageContainer.getBitmap() != null) {
                     if (imageView.getTag().toString().equals(imageContainer.getRequestUrl())) {
-                        Log.d(TAG, "imageLoader, setBitmap, url=" + imageContainer.getRequestUrl());
                         imageView.setImageBitmap(imageContainer.getBitmap());
                     }
                 }

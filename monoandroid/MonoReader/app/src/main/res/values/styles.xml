@@ -13,7 +13,7 @@
     </style>
 
     <style name="action_title_text_style" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
-        <item name="android:textColor">#8E8E8E</item>
+        <item name="android:textColor">#424242</item>
         <item name="android:shadowColor">#C1C1C1</item>
         <item name="android:shadowDx">1.5</item>
         <item name="android:shadowDy">1.5</item>
