@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:text="LinuxTOY"
             android:id="@+id/site"
-            android:layout_below="@id/article_title"/>
+            android:layout_alignParentBottom="true"/>
         </RelativeLayout>
 
 </RelativeLayout>

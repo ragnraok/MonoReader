@@ -40,7 +40,7 @@
     </style>
 
     <style name="timeline_item_title_without_cover" parent="timeline_item_text">
-        <item name="android:textSize">25dp</item>
+        <item name="android:textSize">27dp</item>
         <item name="android:textColor">#424242</item>
     </style>
 

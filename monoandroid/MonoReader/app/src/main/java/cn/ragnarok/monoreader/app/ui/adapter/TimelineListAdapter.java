@@ -54,6 +54,10 @@ public class TimelineListAdapter extends BaseAdapter {
                 view.setTag(holder);
             } else {
                 view = LayoutInflater.from(mContext).inflate(R.layout.timeline_item_without_cover, viewGroup, false);
+                ViewHolder holder = new ViewHolder();
+                holder.mBackgroundImageView = null;
+                holder.mTitleView = (TextView) view.findViewById(R.id.article_title);
+                holder.mSiteTitleView = (TextView) view.findViewById(R.id.site);
             }
         }
         return view;
