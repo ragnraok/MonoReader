@@ -44,14 +44,27 @@ public class APIService {
      * @param context
      * @param requestQueue
      */
-    public static void init(Context context, String host, RequestQueue requestQueue) {
+    public static void init(Context context, RequestQueue requestQueue) {
         if (service == null) {
             service = new APIService();
         }
         service.mContext = context;
         service.mRequestQueue = requestQueue;
         service.mIsInit = true;
+    }
+
+    public static void init(Context context, String host, RequestQueue requestQueue) {
+        if (service == null) {
+            service = new APIService();
+        }
+        service.mContext = context;
+        service.mRequestQueue = requestQueue;
         service.mHost = host;
+        service.mIsInit = true;
+    }
+
+    public void setHost(String host) {
+        this.mHost = host;
     }
 
     void queueJob(Request request) {
