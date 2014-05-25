@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/timeline_item_height"
+    android:background="@color/white">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        style="@style/timeline_item_content_without_cover">
+        <TextView
+            style="@style/timeline_item_title_without_cover"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="用 x86 Mini ITX 主板搭建智能路由"
+            android:id="@+id/article_title"/>
+        <TextView
+            style="@style/timeline_item_site_without_cover"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="LinuxTOY"
+            android:id="@+id/site"
+            android:layout_below="@id/article_title"/>
+        </RelativeLayout>
+
+</RelativeLayout>

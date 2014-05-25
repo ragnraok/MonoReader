@@ -8,8 +8,6 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.Random;
-
 import cn.ragnarok.monoreader.app.R;
 
 /**
@@ -46,13 +44,17 @@ public class TimelineListAdapter extends BaseAdapter {
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         if (view == null) {
-            view = LayoutInflater.from(mContext).inflate(R.layout.timeline_item, viewGroup, false);
-            ViewHolder holder = new ViewHolder();
-            holder.mBackgroundImageView = (ImageView) view.findViewById(R.id.item_background_image);
-            holder.mTitleView = (TextView) view.findViewById(R.id.article_title);
-            holder.mSiteTitleView = (TextView) view.findViewById(R.id.site);
-            holder.mBackgroundImageView.setImageResource(mDefaultColorArray[new Random().nextInt(5)]);
-            view.setTag(holder);
+            if (i % 2 == 0) {
+                view = LayoutInflater.from(mContext).inflate(R.layout.timeline_item, viewGroup, false);
+                ViewHolder holder = new ViewHolder();
+                holder.mBackgroundImageView = (ImageView) view.findViewById(R.id.item_background_image);
+                holder.mTitleView = (TextView) view.findViewById(R.id.article_title);
+                holder.mSiteTitleView = (TextView) view.findViewById(R.id.site);
+                holder.mBackgroundImageView.setImageResource(mDefaultColorArray[i % mDefaultColorArray.length]);
+                view.setTag(holder);
+            } else {
+                view = LayoutInflater.from(mContext).inflate(R.layout.timeline_item_without_cover, viewGroup, false);
+            }
         }
         return view;
     }

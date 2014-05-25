@@ -5,7 +5,7 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="navigation_drawer_width">240dp</dimen>
-    <dimen name="list_divider_height">1dp</dimen>
+    <dimen name="list_divider_height">0.5dp</dimen>
     <dimen name="timeline_item_height">120dp</dimen>
     <dimen name="timeline_item_gradient_height">70dp</dimen>
 
