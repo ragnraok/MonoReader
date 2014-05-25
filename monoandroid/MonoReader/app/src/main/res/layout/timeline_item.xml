@@ -2,7 +2,7 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="120dp"
+    android:layout_height="@dimen/timeline_item_height"
     android:background="#FFFFFF">
 
     <ImageView
@@ -14,31 +14,24 @@
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="@dimen/timeline_item_gradient_height"
         android:src="@drawable/timeline_item_gradient_bg"
         android:layout_alignParentBottom="true"/>
 
     <LinearLayout
+        style="@style/timeline_item_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:paddingBottom="5dp"
         android:id="@+id/item_content"
         android:orientation="vertical">
 
         <TextView
+            style="@style/timeline_item_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="用 x86 Mini ITX 主板搭建智能路由"
-            android:textColor="#F0F8FF"
-            android:textSize="20dp"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="5dp"
-            android:id="@+id/article_title"
-            android:maxLength="30"
-            android:ellipsize="marquee"/>
+            android:id="@+id/article_title"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -46,14 +39,11 @@
             android:orientation="horizontal">
 
             <TextView
+                style="@style/timeline_item_site"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="LinuxTOY"
-                android:maxLength="20"
-                android:textSize="15dp"
-                android:ellipsize="marquee"
-                android:textColor="#F0F8FF"
-                android:id="@+id/title"/>
+                android:id="@+id/site"/>
         </LinearLayout>
 
     </LinearLayout>

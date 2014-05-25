@@ -9,6 +9,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:divider="@drawable/list_divider"
-        android:dividerHeight="1dp"/>
+        android:dividerHeight="@dimen/list_divider_height"/>
 
 </FrameLayout>

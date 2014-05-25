@@ -45,7 +45,7 @@ public class TimelineListAdapter extends BaseAdapter {
             ViewHolder holder = new ViewHolder();
             holder.mBackgroundImageView = (ImageView) view.findViewById(R.id.item_background_image);
             holder.mTitleView = (TextView) view.findViewById(R.id.article_title);
-            holder.mSiteTitleView = (TextView) view.findViewById(R.id.title);
+            holder.mSiteTitleView = (TextView) view.findViewById(R.id.site);
             view.setTag(holder);
         }
         return view;
