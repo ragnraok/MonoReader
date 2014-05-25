@@ -8,5 +8,5 @@
     <dimen name="list_divider_height">0.5dp</dimen>
     <dimen name="timeline_item_height">120dp</dimen>
     <dimen name="timeline_item_gradient_height">70dp</dimen>
-
+    <dimen name="center_progress_size">100dp</dimen>
 </resources>
