@@ -8,6 +8,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.Random;
+
 import cn.ragnarok.monoreader.app.R;
 
 /**
@@ -17,6 +19,9 @@ public class TimelineListAdapter extends BaseAdapter {
 
     private Context mContext;
     private boolean mIsFavTimeline;
+
+    private int[] mDefaultColorArray = new int[]{R.color.timeline_item_color1, R.color.timeline_item_color2, R.color.timeline_item_color3,
+            R.color.timeline_item_color4, R.color.timeline_item_color5};
 
     public TimelineListAdapter(Context context, boolean isFavTimeline) {
         this.mContext = context;
@@ -46,6 +51,7 @@ public class TimelineListAdapter extends BaseAdapter {
             holder.mBackgroundImageView = (ImageView) view.findViewById(R.id.item_background_image);
             holder.mTitleView = (TextView) view.findViewById(R.id.article_title);
             holder.mSiteTitleView = (TextView) view.findViewById(R.id.site);
+            holder.mBackgroundImageView.setImageResource(mDefaultColorArray[new Random().nextInt(5)]);
             view.setTag(holder);
         }
         return view;

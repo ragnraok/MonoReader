@@ -1,9 +1,8 @@
 package cn.ragnarok.monoreader.app.ui.fragment;
 
 import android.app.Activity;
-import android.net.Uri;
-import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +13,8 @@ import cn.ragnarok.monoreader.app.ui.adapter.TimelineListAdapter;
 
 
 public class TimelineFragment extends Fragment {
+
+    public static final String TAG = "Mono.TimelineFragment";
 
     private static final String IS_FAV_TIMELINE = "is_fav_timeline";
 
@@ -29,8 +30,10 @@ public class TimelineFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
+
+
     public TimelineFragment() {
-        // Required empty public constructor
+
     }
 
     @Override
@@ -60,6 +63,7 @@ public class TimelineFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        activity.setTitle("Timeline");
     }
 
     @Override
