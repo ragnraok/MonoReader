@@ -10,10 +10,9 @@ import com.android.volley.Cache;
 import com.android.volley.toolbox.DiskBasedCache;
 import com.android.volley.toolbox.ImageLoader;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.lang.ref.SoftReference;
-import java.util.LinkedHashMap;
 
 /**
  * Created by ragnarok on 14-5-26.
@@ -23,10 +22,16 @@ public class BitmapCache extends LruCache<String, SoftReference<Bitmap>> impleme
     private static final String TAG = "Mono.BitmapCache";
 
     private DiskBasedCache mBitmapDiskCache;
+    private boolean mIsNeedDiskCache;
 
     public BitmapCache(Context context, int maxSize) {
         super(maxSize);
         mBitmapDiskCache = new DiskBasedCache(context.getCacheDir());
+    }
+
+    public BitmapCache(Context context, int maxSize, boolean isNeedDiskCache) {
+        this(context, maxSize);
+        mIsNeedDiskCache = isNeedDiskCache;
     }
 
     @Override
@@ -47,7 +52,7 @@ public class BitmapCache extends LruCache<String, SoftReference<Bitmap>> impleme
         if (softRefBitmap != null) {
             bitmap = softRefBitmap.get();
         }
-        if (bitmap == null) {
+        if (bitmap == null && mIsNeedDiskCache) {
             bitmap = getFromDiskCache(s);
         }
         if (bitmap != null) {
@@ -70,19 +75,33 @@ public class BitmapCache extends LruCache<String, SoftReference<Bitmap>> impleme
     public void putBitmap(String s, Bitmap bitmap) {
         put(s, new SoftReference<Bitmap>(bitmap));
 
-        putDiskCache(s, bitmap);
+        if (mIsNeedDiskCache) {
+            try {
+                putDiskCache(s, bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
     }
 
-    private void putDiskCache(String key, Bitmap bitmap) {
+    private void putDiskCache(String key, Bitmap bitmap) throws IOException {
         Log.d(TAG, "put bitmap to disk, key=" + key);
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-        byte[] byteArray = stream.toByteArray();
+        ByteArrayOutputStream stream = null;
+        try {
+            stream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            byte[] byteArray = stream.toByteArray();
 
-        Cache.Entry entry = new Cache.Entry();
-        entry.data = byteArray;
-        mBitmapDiskCache.put(key, entry);
+            Cache.Entry entry = new Cache.Entry();
+            entry.data = byteArray;
+            mBitmapDiskCache.put(key, entry);
+        }  finally {
+           stream.close();
+        }
+    }
 
+    public void clearCache() {
+        this.mBitmapDiskCache.clear();
     }
 }

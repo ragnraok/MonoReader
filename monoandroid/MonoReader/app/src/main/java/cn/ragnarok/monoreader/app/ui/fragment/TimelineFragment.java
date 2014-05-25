@@ -75,6 +75,7 @@ public class TimelineFragment extends Fragment {
 
                 @Override
                 public void onGetResult(Collection<ListArticleObject> result) {
+//                    Log.d(TAG, "result.size=" + result.size());
                     mTimelineAdapter.appendData(result);
                     if (mTimelineList.getVisibility() == View.GONE) {
                         mTimelineList.setVisibility(View.VISIBLE);

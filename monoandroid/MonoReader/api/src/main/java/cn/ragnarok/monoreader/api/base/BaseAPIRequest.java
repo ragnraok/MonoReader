@@ -78,6 +78,7 @@ public class BaseAPIRequest extends StringRequest {
             final long softExpire = now + cacheHitButRefreshed;
             final long ttl = now + cacheExpired;
 
+            // the cache is available in 30 minutes
             Cache.Entry entry = new Cache.Entry();
             entry.data = response.data;
             entry.softTtl = softExpire;

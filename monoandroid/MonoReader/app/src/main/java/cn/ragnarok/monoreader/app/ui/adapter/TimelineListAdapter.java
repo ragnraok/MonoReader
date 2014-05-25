@@ -52,7 +52,7 @@ public class TimelineListAdapter extends BaseAdapter {
         ActivityManager manager = (ActivityManager) context
                 .getSystemService(Context.ACTIVITY_SERVICE);
         int maxSize = manager.getMemoryClass() / RATE;
-        mImageCache = new BitmapCache(mContext, 512 * 512 * maxSize);
+        mImageCache = new BitmapCache(mContext, 1024 * 1024 * maxSize, false);
         mImageLoader = new ImageLoader(APIService.getInstance().getQueue(), mImageCache);
     }
 
