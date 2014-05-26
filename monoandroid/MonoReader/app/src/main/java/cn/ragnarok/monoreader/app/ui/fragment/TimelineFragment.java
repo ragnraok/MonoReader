@@ -1,5 +1,6 @@
 package cn.ragnarok.monoreader.app.ui.fragment;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
@@ -12,8 +13,10 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.LayoutAnimationController;
 import android.widget.AbsListView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
@@ -61,7 +64,6 @@ public class TimelineFragment extends Fragment {
         return fragment;
     }
 
-
     public TimelineFragment() {
         mTimelineService = new TimeLineService();
 
@@ -69,6 +71,20 @@ public class TimelineFragment extends Fragment {
         mIsLastPage = false;
         mIsLoadingMore = false;
 
+    }
+
+    public void setIsFavTimeline(boolean isFav) {
+        if (isFav != mIsFavTimeline) {
+            mIsFavTimeline = isFav;
+            resetTimeline();
+        }
+    }
+
+    private void resetTimeline() {
+        mPage = 1;
+        mIsLastPage = false;
+        mIsLoadingMore = false;
+        pullTimeline();
     }
 
     @Override
@@ -112,6 +128,27 @@ public class TimelineFragment extends Fragment {
                 }
             };
         }
+
+        initSpinner();
+    }
+
+    private void initSpinner() {
+        String items[] = new String[] {"Timeline", "Fav Sites Timeline"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.spinner_item_layout, items);
+
+        ActionBar actionBar = getActivity().getActionBar();
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+        actionBar.setListNavigationCallbacks(adapter, new ActionBar.OnNavigationListener() {
+            @Override
+            public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+                if (itemPosition == 0) {
+                    setIsFavTimeline(false);
+                } else if (itemPosition == 1) {
+                    setIsFavTimeline(true);
+                }
+                return true;
+            }
+        });
     }
 
 
@@ -221,7 +258,7 @@ public class TimelineFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        activity.setTitle("Timeline");
+        activity.setTitle("");
 
     }
 
