@@ -11,7 +11,7 @@
         android:layout_height="match_parent"
         android:divider="@drawable/list_divider"
         android:dividerHeight="@dimen/list_divider_height"
-        android:animateLayoutChanges="true"/>
+        android:animateLayoutChanges="false"/>
 
     <RelativeLayout
         android:layout_width="match_parent"

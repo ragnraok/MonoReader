@@ -44,10 +44,6 @@ public class TimelineListAdapter extends BaseAdapter {
     private int mLastShowPosition;
     private AnimationSet mItemShowAnimation;
 
-
-    private int[] mDefaultColorArray = new int[]{R.color.timeline_item_color1, R.color.timeline_item_color2, R.color.timeline_item_color3,
-            R.color.timeline_item_color4, R.color.timeline_item_color5};
-
     private ArrayList<ListArticleObject> mData;
     private ImageLoader mImageLoader;
     private BitmapMemeoryCache mImageMemoryCache;
@@ -94,6 +90,7 @@ public class TimelineListAdapter extends BaseAdapter {
 
     public void setLoadingMore(boolean isLoadingMore) {
         this.mIsShowLoadingProgress = isLoadingMore;
+        this.notifyDataSetChanged();
     }
 
     @Override
@@ -181,9 +178,6 @@ public class TimelineListAdapter extends BaseAdapter {
             holder.mBackgroundImageView.setTag(article.coverUrl);
             loadItemCover(holder.mBackgroundImageView, article.coverUrl);
         }
-
-
-
 
         return view;
     }

@@ -31,5 +31,6 @@ public class Utils {
 
     public static boolean isNetworkConnected(Context context) {
         return isMobileConnected(context) || isWifiConnected(context);
+
     }
 }

@@ -37,6 +37,7 @@ public class TimelineFragment extends Fragment {
     public static final String TAG = "Mono.TimelineFragment";
 
     private static final String IS_FAV_TIMELINE = "is_fav_timeline";
+    private static final int PRE_LOAD_ITEM_OFFSET = 2;
 
     private boolean mIsFavTimeline = false;
 
@@ -114,7 +115,6 @@ public class TimelineFragment extends Fragment {
     }
 
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -149,7 +149,7 @@ public class TimelineFragment extends Fragment {
             @Override
             public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 
-                if (firstVisibleItem + visibleItemCount == totalItemCount && totalItemCount > 0
+                if (firstVisibleItem + visibleItemCount == totalItemCount - PRE_LOAD_ITEM_OFFSET && totalItemCount > 0
                         && !mIsLoadingMore && !mIsLastPage) {
                     // reach bottom
 //                    Log.d(TAG, "loading more timeline");
@@ -222,7 +222,6 @@ public class TimelineFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         activity.setTitle("Timeline");
-
 
     }
 
