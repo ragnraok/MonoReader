@@ -7,6 +7,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.TranslateAnimation;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -35,21 +39,23 @@ public class TimelineListAdapter extends BaseAdapter {
     private Context mContext;
     private boolean mIsFavTimeline;
 
+    private int mLastShowPosition;
+    private AnimationSet mItemShowAnimation;
+
     private int[] mDefaultColorArray = new int[]{R.color.timeline_item_color1, R.color.timeline_item_color2, R.color.timeline_item_color3,
             R.color.timeline_item_color4, R.color.timeline_item_color5};
 
     private ArrayList<ListArticleObject> mData;
     private ImageLoader mImageLoader;
     private BitmapMemeoryCache mImageMemoryCache;
-    private BitmapDiskCache mImageDiskCache;
-
-//    private static final int ITEM_TYPE_HAS_COVER = false;
 
     private boolean mIsFling = false;
+
 
     public TimelineListAdapter(Context context, boolean isFavTimeline) {
         this.mContext = context;
         this.mIsFavTimeline = isFavTimeline;
+        mLastShowPosition = -1;
 
         mData = new ArrayList<ListArticleObject>();
 
@@ -57,11 +63,28 @@ public class TimelineListAdapter extends BaseAdapter {
         int maxSize = manager.getMemoryClass() / RATE;
         mImageMemoryCache = new BitmapMemeoryCache(mContext, 1024 * 1024 * maxSize);
         mImageLoader = new ImageLoader(APIService.getInstance().getQueue(), mImageMemoryCache);
+
+        initShowAnimation();
+
     }
 
     public TimelineListAdapter(Context context, boolean isFavTimeline, Collection<ListArticleObject> initData) {
         this(context, isFavTimeline);
         mData.addAll(initData);
+    }
+
+    private void initShowAnimation() {
+        mItemShowAnimation = new AnimationSet(false);
+        Animation alphaAnimation = new AlphaAnimation(0.0f, 1.0f);
+        alphaAnimation.setDuration(500);
+        alphaAnimation.setFillAfter(true);
+        mItemShowAnimation.addAnimation(alphaAnimation);
+
+//        TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 2.0f, Animation.RELATIVE_TO_SELF, 0.0f,
+//                Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 0.0f);
+//        translateAnimation.setDuration(500);
+//        translateAnimation.setFillAfter(true);
+//        mItemShowAnimation.addAnimation(translateAnimation);
     }
 
     @Override
@@ -128,6 +151,12 @@ public class TimelineListAdapter extends BaseAdapter {
             holder.mBackgroundImageView.setTag(article.coverUrl);
             loadItemCover(holder.mBackgroundImageView, article.coverUrl);
         }
+
+        if (i > mLastShowPosition) {
+            view.startAnimation(mItemShowAnimation);
+            mLastShowPosition = i;
+        }
+
 
         return view;
     }

@@ -12,6 +12,7 @@
         android:divider="@drawable/list_divider"
         android:dividerHeight="@dimen/list_divider_height"/>
 
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
