@@ -56,7 +56,6 @@ public class TimelineFragment extends Fragment {
         if (getArguments() != null) {
             mIsFavTimeline = getArguments().getBoolean(IS_FAV_TIMELINE);
         }
-        Log.d(TAG, "onCreate");
         if (mTimelineAdapter == null) {
             mTimelineAdapter = new TimelineListAdapter(getActivity(), mIsFavTimeline);
         }
@@ -70,12 +69,12 @@ public class TimelineFragment extends Fragment {
 
                 @Override
                 public void onRequestFail(VolleyError error) {
-
+                    Log.d(TAG, "request faliled, " + error.toString());
                 }
 
                 @Override
                 public void onGetResult(Collection<ListArticleObject> result) {
-//                    Log.d(TAG, "result.size=" + result.size());
+                    Log.d(TAG, "result.size=" + result.size());
                     mTimelineAdapter.appendData(result);
                     if (mTimelineList.getVisibility() == View.GONE) {
                         mTimelineList.setVisibility(View.VISIBLE);
@@ -92,7 +91,6 @@ public class TimelineFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        Log.d(TAG, "onCreateView");
         mTimelineView = inflater.inflate(R.layout.fragment_timeline, container, false);
         mTimelineList = (ListView) mTimelineView.findViewById(R.id.timeline_list);
         mLoadingProgress = (ProgressBar) mTimelineView.findViewById(R.id.loading_progress);

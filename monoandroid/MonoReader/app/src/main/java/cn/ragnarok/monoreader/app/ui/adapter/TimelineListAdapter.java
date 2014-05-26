@@ -3,7 +3,7 @@ package cn.ragnarok.monoreader.app.ui.adapter;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.util.LruCache;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +20,8 @@ import java.util.Collection;
 import cn.ragnarok.monoreader.api.object.ListArticleObject;
 import cn.ragnarok.monoreader.api.service.APIService;
 import cn.ragnarok.monoreader.app.R;
-import cn.ragnarok.monoreader.app.cache.BitmapCache;
+import cn.ragnarok.monoreader.app.cache.BitmapDiskCache;
+import cn.ragnarok.monoreader.app.cache.BitmapMemeoryCache;
 
 /**
  * Created by ragnarok on 14-5-25.
@@ -39,7 +40,8 @@ public class TimelineListAdapter extends BaseAdapter {
 
     private ArrayList<ListArticleObject> mData;
     private ImageLoader mImageLoader;
-    private BitmapCache mImageCache;
+    private BitmapMemeoryCache mImageMemoryCache;
+    private BitmapDiskCache mImageDiskCache;
 
 //    private static final int ITEM_TYPE_HAS_COVER = false;
 
@@ -49,11 +51,10 @@ public class TimelineListAdapter extends BaseAdapter {
 
         mData = new ArrayList<ListArticleObject>();
 
-        ActivityManager manager = (ActivityManager) context
-                .getSystemService(Context.ACTIVITY_SERVICE);
+        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         int maxSize = manager.getMemoryClass() / RATE;
-        mImageCache = new BitmapCache(mContext, 1024 * 1024 * maxSize, false);
-        mImageLoader = new ImageLoader(APIService.getInstance().getQueue(), mImageCache);
+        mImageMemoryCache = new BitmapMemeoryCache(mContext, 1024 * 1024 * maxSize);
+        mImageLoader = new ImageLoader(APIService.getInstance().getQueue(), mImageMemoryCache);
     }
 
     public TimelineListAdapter(Context context, boolean isFavTimeline, Collection<ListArticleObject> initData) {
@@ -78,6 +79,11 @@ public class TimelineListAdapter extends BaseAdapter {
 
     public void appendData(Collection<ListArticleObject> newData) {
         this.mData.addAll(newData);
+        this.notifyDataSetChanged();
+    }
+
+    public void clearData() {
+        this.mData.clear();
         this.notifyDataSetChanged();
     }
 
@@ -113,6 +119,7 @@ public class TimelineListAdapter extends BaseAdapter {
         holder.mTitleView.setText(article.title);
         holder.mSiteTitleView.setText(article.site);
         if (holder.mBackgroundImageView != null && article.coverUrl != null) {
+            holder.mBackgroundImageView.setTag(article.coverUrl);
             loadItemCover(holder.mBackgroundImageView, article.coverUrl);
         }
 
@@ -126,14 +133,27 @@ public class TimelineListAdapter extends BaseAdapter {
 
                 if (imageContainer.getBitmap() != null) {
                     if (imageView.getTag().toString().equals(imageContainer.getRequestUrl())) {
-                        imageView.setImageBitmap(imageContainer.getBitmap());
+                        Log.d(TAG, "set ImageView bitmap, url = " + imageView.getTag());
+                        Bitmap bitmap = imageContainer.getBitmap();
+                        imageView.setImageBitmap(bitmap);
+
+                        // put to disk cache
+                        if (!BitmapDiskCache.getInstance(mContext).exist(imageView.getTag().toString())) {
+                            BitmapDiskCache.getInstance(mContext).put(imageView.getTag().toString(), bitmap);
+                        }
                     }
                 }
             }
 
             @Override
             public void onErrorResponse(VolleyError volleyError) {
+                Log.d(TAG, "load Bitmap error, " + volleyError.toString() + ", url = " + imageView.getTag());
 
+                boolean exist = BitmapDiskCache.getInstance(mContext).exist(imageView.getTag().toString());
+                if (exist) {
+                    Bitmap bitmap = BitmapDiskCache.getInstance(mContext).get(imageView.getTag().toString());
+                    imageView.setImageBitmap(bitmap);
+                }
             }
         };
         mImageLoader.get(url, imageListener);
