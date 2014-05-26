@@ -54,6 +54,7 @@ public class TimelineListAdapter extends BaseAdapter {
 
     private boolean mIsFling = false;
 
+    private boolean mIsShowLoadingProgress = false;
 
     public TimelineListAdapter(Context context, boolean isFavTimeline) {
         this.mContext = context;
@@ -91,9 +92,18 @@ public class TimelineListAdapter extends BaseAdapter {
 //        mItemShowAnimation.addAnimation(translateAnimation);
     }
 
+    public void setLoadingMore(boolean isLoadingMore) {
+        this.mIsShowLoadingProgress = isLoadingMore;
+    }
+
     @Override
     public int getCount() {
-        return mData.size();
+        if (mIsShowLoadingProgress) {
+            return mData.size() + 1;
+        } else {
+            return mData.size();
+        }
+
     }
 
     @Override
@@ -128,8 +138,12 @@ public class TimelineListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
+        if (mIsShowLoadingProgress && i == getCount() - 1) {
+            View result = LayoutInflater.from(mContext).inflate(R.layout.loading_more_layout, viewGroup, false);
+            return result;
+        }
         ListArticleObject article = mData.get(i);
-        if (view == null || ((ViewHolder) view.getTag()).article.equals(article) == false) {
+        if (view == null || view.getTag() == null ||  ((ViewHolder) view.getTag()).article.equals(article) == false) {
             boolean isHasCover = article.coverUrl != null;
             if (isHasCover) {
                 view = LayoutInflater.from(mContext).inflate(R.layout.timeline_item, viewGroup, false);

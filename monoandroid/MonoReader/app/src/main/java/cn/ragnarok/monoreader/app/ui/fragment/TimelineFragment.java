@@ -7,15 +7,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.LayoutAnimationController;
-import android.view.animation.TranslateAnimation;
 import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 
@@ -26,6 +25,7 @@ import cn.ragnarok.monoreader.api.object.ListArticleObject;
 import cn.ragnarok.monoreader.api.service.TimeLineService;
 import cn.ragnarok.monoreader.app.R;
 import cn.ragnarok.monoreader.app.ui.adapter.TimelineListAdapter;
+import cn.ragnarok.monoreader.app.util.Utils;
 import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
 import uk.co.senab.actionbarpulltorefresh.library.Options;
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
@@ -67,6 +67,7 @@ public class TimelineFragment extends Fragment {
         mPage = 1;
         mIsLastPage = false;
         mIsLoadingMore = false;
+
     }
 
     @Override
@@ -84,17 +85,20 @@ public class TimelineFragment extends Fragment {
                 @Override
                 public void onRequestSuccess() {
                     mPullToRefreshLayout.setRefreshComplete();
+                    mTimelineAdapter.setLoadingMore(false);
                 }
 
                 @Override
                 public void onRequestFail(VolleyError error) {
                     Log.d(TAG, "request faliled, " + error.toString());
                     mPullToRefreshLayout.setRefreshComplete();
+                    Toast.makeText(getActivity(), R.string.connection_failed, Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
                 public void onGetResult(Collection<ListArticleObject> result) {
                     Log.d(TAG, "result.size=" + result.size());
+
                     if (result.size() == 0) {
                         mIsLastPage = true;
                     }
@@ -148,7 +152,8 @@ public class TimelineFragment extends Fragment {
                 if (firstVisibleItem + visibleItemCount == totalItemCount && totalItemCount > 0
                         && !mIsLoadingMore && !mIsLastPage) {
                     // reach bottom
-                    Log.d(TAG, "loading more timeline");
+//                    Log.d(TAG, "loading more timeline");
+//                    Toast.makeText(getActivity(), "Loading More", Toast.LENGTH_SHORT).show();
                     mIsLoadingMore = true;
                     loadMoreTimeline();
                 }
@@ -170,6 +175,9 @@ public class TimelineFragment extends Fragment {
     }
 
     private void pullTimeline() {
+        if (!Utils.isNetworkConnected(getActivity())) {
+            Toast.makeText(getActivity(), R.string.connection_failed, Toast.LENGTH_SHORT).show();
+        }
         mTimelineAdapter.clearData();
         mPullToRefreshLayout.setRefreshing(true);
         if (mIsFavTimeline) {
@@ -180,6 +188,11 @@ public class TimelineFragment extends Fragment {
     }
 
     private void loadMoreTimeline() {
+        if (!Utils.isNetworkConnected(getActivity())) {
+            Toast.makeText(getActivity(), R.string.connection_failed, Toast.LENGTH_SHORT).show();
+        } //else {
+            mTimelineAdapter.setLoadingMore(true);
+        //}
         mPage++;
         if (mIsFavTimeline) {
             mTimelineService.favTimeline(mPage, mRequestFinishListener);
@@ -204,10 +217,13 @@ public class TimelineFragment extends Fragment {
         }).setup(mPullToRefreshLayout);
     }
 
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         activity.setTitle("Timeline");
+
+
     }
 
     @Override
