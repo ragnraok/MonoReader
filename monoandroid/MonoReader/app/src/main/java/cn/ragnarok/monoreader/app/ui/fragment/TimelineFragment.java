@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
@@ -105,6 +106,22 @@ public class TimelineFragment extends Fragment {
         mLoadingProgress.setVisibility(View.VISIBLE);
 
         mTimelineList.setAdapter(mTimelineAdapter);
+        mTimelineList.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView absListView, int state) {
+                if (state == SCROLL_STATE_IDLE) {
+                    mTimelineAdapter.setOnFling(false);
+                    mTimelineAdapter.notifyDataSetChanged();
+                } else {
+                    mTimelineAdapter.setOnFling(true);
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView absListView, int i, int i2, int i3) {
+
+            }
+        });
 
         if (mIsFavTimeline) {
             mTimelineService.favTimeline(1, mRequestFinishListener);

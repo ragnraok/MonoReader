@@ -45,6 +45,8 @@ public class TimelineListAdapter extends BaseAdapter {
 
 //    private static final int ITEM_TYPE_HAS_COVER = false;
 
+    private boolean mIsFling = false;
+
     public TimelineListAdapter(Context context, boolean isFavTimeline) {
         this.mContext = context;
         this.mIsFavTimeline = isFavTimeline;
@@ -85,6 +87,10 @@ public class TimelineListAdapter extends BaseAdapter {
     public void clearData() {
         this.mData.clear();
         this.notifyDataSetChanged();
+    }
+
+    public void setOnFling(boolean isFling) {
+        this.mIsFling = isFling;
     }
 
 
@@ -131,7 +137,7 @@ public class TimelineListAdapter extends BaseAdapter {
             @Override
             public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
 
-                if (imageContainer.getBitmap() != null) {
+                if (!mIsFling && imageContainer.getBitmap() != null) {
                     if (imageView.getTag().toString().equals(imageContainer.getRequestUrl())) {
                         Log.d(TAG, "set ImageView bitmap, url = " + imageView.getTag());
                         Bitmap bitmap = imageContainer.getBitmap();
@@ -149,11 +155,14 @@ public class TimelineListAdapter extends BaseAdapter {
             public void onErrorResponse(VolleyError volleyError) {
                 Log.d(TAG, "load Bitmap error, " + volleyError.toString() + ", url = " + imageView.getTag());
 
-                boolean exist = BitmapDiskCache.getInstance(mContext).exist(imageView.getTag().toString());
-                if (exist) {
-                    Bitmap bitmap = BitmapDiskCache.getInstance(mContext).get(imageView.getTag().toString());
-                    imageView.setImageBitmap(bitmap);
+                if (!mIsFling) {
+                    boolean exist = BitmapDiskCache.getInstance(mContext).exist(imageView.getTag().toString());
+                    if (exist) {
+                        Bitmap bitmap = BitmapDiskCache.getInstance(mContext).get(imageView.getTag().toString());
+                        imageView.setImageBitmap(bitmap);
+                    }
                 }
+
             }
         };
         mImageLoader.get(url, imageListener);
