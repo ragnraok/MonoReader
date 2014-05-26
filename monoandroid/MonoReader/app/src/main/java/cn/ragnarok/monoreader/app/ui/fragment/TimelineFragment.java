@@ -190,9 +190,9 @@ public class TimelineFragment extends Fragment {
     private void loadMoreTimeline() {
         if (!Utils.isNetworkConnected(getActivity())) {
             Toast.makeText(getActivity(), R.string.connection_failed, Toast.LENGTH_SHORT).show();
-        } //else {
+        } else {
             mTimelineAdapter.setLoadingMore(true);
-        //}
+        }
         mPage++;
         if (mIsFavTimeline) {
             mTimelineService.favTimeline(mPage, mRequestFinishListener);
