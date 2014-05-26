@@ -1,5 +1,6 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ptr_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="cn.ragnarok.monoreader.app.ui.fragment.TimelineFragment">
@@ -11,12 +12,17 @@
         android:divider="@drawable/list_divider"
         android:dividerHeight="@dimen/list_divider_height"/>
 
-    <ProgressBar
-        android:id="@+id/loading_progress"
-        android:layout_width="@dimen/center_progress_size"
-        android:layout_height="@dimen/center_progress_size"
-        android:layout_centerInParent="true"
-        android:indeterminate="true"
-        android:visibility="gone"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-</RelativeLayout>
+        <ProgressBar
+            android:id="@+id/loading_progress"
+            android:layout_width="@dimen/center_progress_size"
+            android:layout_height="@dimen/center_progress_size"
+            android:layout_centerInParent="true"
+            android:indeterminate="true"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+</uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout>

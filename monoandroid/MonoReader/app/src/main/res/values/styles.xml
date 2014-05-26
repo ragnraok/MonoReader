@@ -5,6 +5,7 @@
         <!-- Customize your theme here. -->
         <item name="android:actionBarStyle">@style/actionbar_style</item>
         <!--<item name="android:windowActionBarOverlay">true</item>-->
+        <item name="ptrHeaderStyle">@style/custom_ptr_header</item>
     </style>
 
     <style name="actionbar_style" parent="@android:style/Widget.Holo.ActionBar">
@@ -67,6 +68,22 @@
         <item name="android:textSize">15dp</item>
         <item name="android:layout_marginTop">10dp</item>
     </style>
+
+    <style name="ptr_progress_bar_style" parent="SmoothProgressBar">
+        <item name="spb_stroke_separator_length">12dp</item>
+        <item name="spb_sections_count">4</item>
+        <item name="spb_speed">0.7</item>
+        <item name="spb_color">@color/ptr_progress_bar_color</item>
+    </style>
+
+    <style name="custom_ptr_header" parent="android:Widget">
+        <item name="ptrHeaderBackground">@drawable/actionbar_bg</item>
+        <item name="ptrProgressBarColor">@color/ptr_progress_bar_color</item>
+        <item name="ptrPullText">Pull To Refresh</item>
+        <item name="ptrRefreshingText">Loading...</item>
+        <item name="ptrSmoothProgressBarStyle">@style/ptr_progress_bar_style</item>
+    </style>
+
 
 
 </resources>

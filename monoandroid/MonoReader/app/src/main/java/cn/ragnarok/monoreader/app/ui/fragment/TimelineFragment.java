@@ -20,6 +20,10 @@ import cn.ragnarok.monoreader.api.object.ListArticleObject;
 import cn.ragnarok.monoreader.api.service.TimeLineService;
 import cn.ragnarok.monoreader.app.R;
 import cn.ragnarok.monoreader.app.ui.adapter.TimelineListAdapter;
+import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
+import uk.co.senab.actionbarpulltorefresh.library.Options;
+import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
+import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 
 
 public class TimelineFragment extends Fragment {
@@ -36,6 +40,7 @@ public class TimelineFragment extends Fragment {
     private TimeLineService mTimelineService;
     private APIRequestFinishListener<Collection<ListArticleObject>> mRequestFinishListener;
     private TimelineListAdapter mTimelineAdapter;
+    private PullToRefreshLayout mPullToRefreshLayout;
 
     public static TimelineFragment newInstance(boolean isFavTimeline) {
         TimelineFragment fragment = new TimelineFragment();
@@ -65,12 +70,13 @@ public class TimelineFragment extends Fragment {
             mRequestFinishListener = new APIRequestFinishListener<Collection<ListArticleObject>>() {
                 @Override
                 public void onRequestSuccess() {
-
+                    mPullToRefreshLayout.setRefreshComplete();
                 }
 
                 @Override
                 public void onRequestFail(VolleyError error) {
                     Log.d(TAG, "request faliled, " + error.toString());
+                    mPullToRefreshLayout.setRefreshComplete();
                 }
 
                 @Override
@@ -95,7 +101,9 @@ public class TimelineFragment extends Fragment {
         mTimelineView = inflater.inflate(R.layout.fragment_timeline, container, false);
         mTimelineList = (ListView) mTimelineView.findViewById(R.id.timeline_list);
         mLoadingProgress = (ProgressBar) mTimelineView.findViewById(R.id.loading_progress);
+        mPullToRefreshLayout = (PullToRefreshLayout) mTimelineView.findViewById(R.id.ptr_layout);
 
+        initPullToRefreshLayout();
         initTimelineList();
 
         return mTimelineView;
@@ -123,11 +131,32 @@ public class TimelineFragment extends Fragment {
             }
         });
 
+        pullTimeline();
+
+    }
+
+    private void pullTimeline() {
+        mTimelineAdapter.clearData();
+        mPullToRefreshLayout.setRefreshing(true);
         if (mIsFavTimeline) {
             mTimelineService.favTimeline(1, mRequestFinishListener);
         } else {
             mTimelineService.mainTimeline(1, mRequestFinishListener);
         }
+    }
+
+    private void initPullToRefreshLayout() {
+        Options.Builder ptrOptions = Options.create();
+        ptrOptions.refreshOnUp(true);
+        ptrOptions.scrollDistance(0.4f);
+
+        ActionBarPullToRefresh.from(getActivity()).allChildrenArePullable().options(ptrOptions.build()).
+                listener(new OnRefreshListener() {
+            @Override
+            public void onRefreshStarted(View view) {
+                pullTimeline();
+            }
+        }).setup(mPullToRefreshLayout);
     }
 
     @Override
