@@ -21,7 +21,6 @@ public class MonoApplication extends Application {
         super.onCreate();
         APIService.init(this, Volley.newRequestQueue(this));
 
-
         BitmapDiskCache.init(this, MAX_CACHE_ITEM_NUM);
 
     }

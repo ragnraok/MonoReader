@@ -2,6 +2,7 @@ package cn.ragnarok.monoreader.app.cache;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.util.LruCache;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -36,10 +37,14 @@ public class BitmapMemeoryCache extends LruCache<String, SoftReference<Bitmap>> 
 
     @Override
     public Bitmap getBitmap(String s) {
+        Log.d(TAG, "try to getBitmap, key = " + s);
         SoftReference<Bitmap> softRefBitmap = get(s);
         Bitmap bitmap = null;
         if (softRefBitmap != null) {
             bitmap = softRefBitmap.get();
+            if (bitmap != null) {
+                Log.d(TAG, "cache hit for key " + s);
+            }
         }
 
         return bitmap;
@@ -49,6 +54,7 @@ public class BitmapMemeoryCache extends LruCache<String, SoftReference<Bitmap>> 
     public void putBitmap(String s, Bitmap bitmap) {
         if (bitmap != null) {
             put(s, new SoftReference<Bitmap>(bitmap));
+            Log.d(TAG, "putBitmap for key " + s);
         }
 
     }
