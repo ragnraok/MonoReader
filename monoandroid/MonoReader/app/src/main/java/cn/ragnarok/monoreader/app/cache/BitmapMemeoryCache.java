@@ -12,7 +12,7 @@ import java.lang.ref.SoftReference;
 /**
  * Created by ragnarok on 14-5-26.
  */
-public class BitmapMemeoryCache extends LruCache<String, SoftReference<Bitmap>> implements ImageLoader.ImageCache {
+public class BitmapMemeoryCache extends LruCache<String, Bitmap> implements ImageLoader.ImageCache {
 
     public static final String TAG = "Mono.BitmapMemeoryCache";
 
@@ -21,31 +21,29 @@ public class BitmapMemeoryCache extends LruCache<String, SoftReference<Bitmap>> 
     }
 
     @Override
-    protected int sizeOf(String key, SoftReference<Bitmap> value) {
-        Bitmap bitmap = value.get();
+    protected int sizeOf(String key, Bitmap bitmap) {
+
         if (bitmap != null) {
             return bitmap.getRowBytes() * bitmap.getHeight();
         }
-        return super.sizeOf(key, value);
+        return 0;
 
     }
 
     @Override
-    protected void entryRemoved(boolean evicted, String key, SoftReference<Bitmap> oldValue, SoftReference<Bitmap> newValue) {
+    protected void entryRemoved(boolean evicted, String key, Bitmap oldValue, Bitmap newValue) {
         super.entryRemoved(evicted, key, oldValue, newValue);
     }
 
     @Override
     public Bitmap getBitmap(String s) {
         Log.d(TAG, "try to getBitmap, key = " + s);
-        SoftReference<Bitmap> softRefBitmap = get(s);
-        Bitmap bitmap = null;
-        if (softRefBitmap != null) {
-            bitmap = softRefBitmap.get();
-            if (bitmap != null) {
-                Log.d(TAG, "cache hit for key " + s);
-            }
+        Bitmap bitmap = get(s);
+
+        if (bitmap != null) {
+            Log.d(TAG, "cache hit for key " + s);
         }
+
 
         return bitmap;
     }
@@ -53,7 +51,7 @@ public class BitmapMemeoryCache extends LruCache<String, SoftReference<Bitmap>> 
     @Override
     public void putBitmap(String s, Bitmap bitmap) {
         if (bitmap != null) {
-            put(s, new SoftReference<Bitmap>(bitmap));
+            put(s, bitmap);
             Log.d(TAG, "putBitmap for key " + s);
         }
 

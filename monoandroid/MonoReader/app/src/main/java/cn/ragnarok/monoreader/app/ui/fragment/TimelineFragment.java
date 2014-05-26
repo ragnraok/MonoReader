@@ -48,6 +48,10 @@ public class TimelineFragment extends Fragment {
     private TimelineListAdapter mTimelineAdapter;
     private PullToRefreshLayout mPullToRefreshLayout;
 
+    private int mPage;
+    private boolean mIsLastPage;
+    private boolean mIsLoadingMore;
+
     public static TimelineFragment newInstance(boolean isFavTimeline) {
         TimelineFragment fragment = new TimelineFragment();
         Bundle args = new Bundle();
@@ -60,6 +64,9 @@ public class TimelineFragment extends Fragment {
     public TimelineFragment() {
         mTimelineService = new TimeLineService();
 
+        mPage = 1;
+        mIsLastPage = false;
+        mIsLoadingMore = false;
     }
 
     @Override
@@ -88,7 +95,11 @@ public class TimelineFragment extends Fragment {
                 @Override
                 public void onGetResult(Collection<ListArticleObject> result) {
                     Log.d(TAG, "result.size=" + result.size());
+                    if (result.size() == 0) {
+                        mIsLastPage = true;
+                    }
                     mTimelineAdapter.appendData(result);
+                    mIsLoadingMore = false;
                     if (mTimelineList.getVisibility() == View.GONE) {
                         mTimelineList.setVisibility(View.VISIBLE);
                         mLoadingProgress.setVisibility(View.GONE);
@@ -132,20 +143,27 @@ public class TimelineFragment extends Fragment {
             }
 
             @Override
-            public void onScroll(AbsListView absListView, int i, int i2, int i3) {
+            public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 
+                if (firstVisibleItem + visibleItemCount == totalItemCount && totalItemCount > 0
+                        && !mIsLoadingMore && !mIsLastPage) {
+                    // reach bottom
+                    Log.d(TAG, "loading more timeline");
+                    mIsLoadingMore = true;
+                    loadMoreTimeline();
+                }
             }
         });
 
-//        AnimationSet set = new AnimationSet(true);
-//
-//        final Animation alphaAnimation = new AlphaAnimation(0.0f, 1.0f);
-//        alphaAnimation.setDuration(500);
-//        alphaAnimation.setFillAfter(true);
-//        set.addAnimation(alphaAnimation);
+        AnimationSet set = new AnimationSet(true);
 
-//        LayoutAnimationController controller = new LayoutAnimationController(set, 0.5f);
-//        mTimelineList.setLayoutAnimation(controller);
+        final Animation alphaAnimation = new AlphaAnimation(0.0f, 1.0f);
+        alphaAnimation.setDuration(500);
+        alphaAnimation.setFillAfter(true);
+        set.addAnimation(alphaAnimation);
+
+        LayoutAnimationController controller = new LayoutAnimationController(set, 0.5f);
+        mTimelineList.setLayoutAnimation(controller);
 
         pullTimeline();
 
@@ -155,9 +173,18 @@ public class TimelineFragment extends Fragment {
         mTimelineAdapter.clearData();
         mPullToRefreshLayout.setRefreshing(true);
         if (mIsFavTimeline) {
-            mTimelineService.favTimeline(1, mRequestFinishListener);
+            mTimelineService.favTimeline(mPage, mRequestFinishListener);
         } else {
-            mTimelineService.mainTimeline(1, mRequestFinishListener);
+            mTimelineService.mainTimeline(mPage, mRequestFinishListener);
+        }
+    }
+
+    private void loadMoreTimeline() {
+        mPage++;
+        if (mIsFavTimeline) {
+            mTimelineService.favTimeline(mPage, mRequestFinishListener);
+        } else {
+            mTimelineService.mainTimeline(mPage, mRequestFinishListener);
         }
     }
 
@@ -170,6 +197,8 @@ public class TimelineFragment extends Fragment {
                 listener(new OnRefreshListener() {
             @Override
             public void onRefreshStarted(View view) {
+                mPage = 1;
+                mIsLastPage = false;
                 pullTimeline();
             }
         }).setup(mPullToRefreshLayout);

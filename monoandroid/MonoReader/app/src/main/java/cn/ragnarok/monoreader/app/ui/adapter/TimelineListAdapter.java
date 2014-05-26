@@ -36,11 +36,14 @@ public class TimelineListAdapter extends BaseAdapter {
 
     private static final int RATE = 8;
 
+    private static final int MAX_TITLE_LENGTH = 40;
+
     private Context mContext;
     private boolean mIsFavTimeline;
 
     private int mLastShowPosition;
     private AnimationSet mItemShowAnimation;
+
 
     private int[] mDefaultColorArray = new int[]{R.color.timeline_item_color1, R.color.timeline_item_color2, R.color.timeline_item_color3,
             R.color.timeline_item_color4, R.color.timeline_item_color5};
@@ -79,6 +82,7 @@ public class TimelineListAdapter extends BaseAdapter {
         alphaAnimation.setDuration(500);
         alphaAnimation.setFillAfter(true);
         mItemShowAnimation.addAnimation(alphaAnimation);
+        mItemShowAnimation.setFillAfter(true);
 
 //        TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 2.0f, Animation.RELATIVE_TO_SELF, 0.0f,
 //                Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 0.0f);
@@ -142,20 +146,29 @@ public class TimelineListAdapter extends BaseAdapter {
             }
             holder.mTitleView = (TextView) view.findViewById(R.id.article_title);
             holder.mSiteTitleView = (TextView) view.findViewById(R.id.site);
+            holder.mIsShowAnim = false;
             view.setTag(holder);
         }
         ViewHolder holder = (ViewHolder) view.getTag();
-        holder.mTitleView.setText(article.title);
+        String title = article.title;
+        if (title.length() > MAX_TITLE_LENGTH) {
+            title = title.substring(0, MAX_TITLE_LENGTH) + "...";
+        }
+        holder.mTitleView.setText(title);
         holder.mSiteTitleView.setText(article.site);
+
+//        if (i > mLastShowPosition && !holder.mIsShowAnim) {
+//            view.startAnimation(mItemShowAnimation);
+//            mLastShowPosition = i;
+//            holder.mIsShowAnim = true;
+//        }
+
         if (holder.mBackgroundImageView != null && article.coverUrl != null) {
             holder.mBackgroundImageView.setTag(article.coverUrl);
             loadItemCover(holder.mBackgroundImageView, article.coverUrl);
         }
 
-        if (i > mLastShowPosition) {
-            view.startAnimation(mItemShowAnimation);
-            mLastShowPosition = i;
-        }
+
 
 
         return view;
@@ -202,5 +215,6 @@ public class TimelineListAdapter extends BaseAdapter {
         TextView mTitleView;
         TextView mSiteTitleView;
         ListArticleObject article;
+        boolean mIsShowAnim;
     }
 }
