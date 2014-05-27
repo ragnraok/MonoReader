@@ -303,7 +303,12 @@ public class TimelineFragment extends Fragment {
             public void onRefreshStarted(View view) {
                 mPage = 1;
                 mIsLastPage = false;
-                pullTimeline();
+                if (mIsInFavArticle) {
+                    pullFavArticles();
+                } else {
+                    pullTimeline();
+                }
+
             }
         }).setup(mPullToRefreshLayout);
     }
