@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="drawer_menu">
+        <item name="timeline">Timeline</item>
+        <item name="sites">Sites</item>
+        <item name="categories">Categories</item>
+        <item name="setting">Setting</item>
+    </string-array>
+</resources>

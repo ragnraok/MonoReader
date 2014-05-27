@@ -21,7 +21,7 @@ public class MonoApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d(TAG, "onCrete Application");
+        Log.d(TAG, "onCreate Application");
         APIService.init(this, Volley.newRequestQueue(this));
 
         BitmapDiskCache.init(this, MAX_CACHE_ITEM_NUM);
@@ -32,6 +32,6 @@ public class MonoApplication extends Application {
     public void onTerminate() {
         super.onTerminate();
         Log.d(TAG, "onTerminate Application");
-        APIService.getInstance().cancelAllRequest();;
+        APIService.getInstance().cancelAllRequest();
     }
 }

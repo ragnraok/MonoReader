@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="version">0.1</string>
+    <string name="version_format">Version %s</string>
     <string name="app_name">MonoReader</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
@@ -16,5 +18,7 @@
     <string name="connection_failed">Connection Failed</string>
     <string name="main_timeline">Timeline</string>
     <string name="fav_timeline">Favorite Timeline</string>
+    <string name="drawer_open">Open Menu</string>
+    <string name="drawer_close">Close Menu</string>
 
 </resources>
