@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import cn.ragnarok.monoreader.api.service.APIService;
 import cn.ragnarok.monoreader.app.R;
@@ -48,6 +49,9 @@ public class MainActivity extends Activity {
 
         setContentView(R.layout.activity_main);
 
+        getActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getActionBar().setCustomView(R.layout.action_bar_layout);
+
         mTimelineFragment = TimelineFragment.newInstance(false);
         mFragmentList[0] = mTimelineFragment;
 
@@ -75,12 +79,14 @@ public class MainActivity extends Activity {
                 super.onDrawerOpened(drawerView);
                 tempNagiviationMode = getActionBar().getNavigationMode();
                 getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+                setActionBarTitle(getString(R.string.app_name));
             }
 
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
                 getActionBar().setNavigationMode(tempNagiviationMode);
+                setActionBarTitle("");
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
@@ -115,4 +121,14 @@ public class MainActivity extends Activity {
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
+    public void setActionBarTitle(String title) {
+        TextView text = (TextView) getActionBar().getCustomView().findViewById(R.id.title);
+        text.setText(title);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        APIService.getInstance().cancelAllRequest();
+    }
 }

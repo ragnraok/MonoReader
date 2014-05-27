@@ -28,6 +28,7 @@ import cn.ragnarok.monoreader.api.base.APIRequestFinishListener;
 import cn.ragnarok.monoreader.api.object.ListArticleObject;
 import cn.ragnarok.monoreader.api.service.TimeLineService;
 import cn.ragnarok.monoreader.app.R;
+import cn.ragnarok.monoreader.app.ui.activity.MainActivity;
 import cn.ragnarok.monoreader.app.ui.adapter.TimelineListAdapter;
 import cn.ragnarok.monoreader.app.util.Utils;
 import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
@@ -272,7 +273,7 @@ public class TimelineFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         Log.d(TAG, "onAttach");
-        activity.setTitle("");
+        ((MainActivity)activity).setActionBarTitle("");
 
     }
 
