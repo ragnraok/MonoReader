@@ -8,12 +8,15 @@ import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.text.Layout;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -22,6 +25,7 @@ import cn.ragnarok.monoreader.app.R;
 import cn.ragnarok.monoreader.app.test.api.TestUtil;
 import cn.ragnarok.monoreader.app.ui.adapter.DrawerListAdapter;
 import cn.ragnarok.monoreader.app.ui.fragment.TimelineFragment;
+import cn.ragnarok.monoreader.app.util.Utils;
 
 public class MainActivity extends Activity {
 
@@ -52,6 +56,8 @@ public class MainActivity extends Activity {
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
+        ImageView homeIcon = (ImageView) findViewById(android.R.id.home);
+        homeIcon.setPadding(0, 0, (int) Utils.dpToPix(this, getResources().getDimension(R.dimen.home_icon_right_padding)), 0);
         setTitle("");
 
         mTimelineFragment = TimelineFragment.newInstance(false);
@@ -76,19 +82,21 @@ public class MainActivity extends Activity {
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_drawer,
                 R.string.drawer_open, R.string.drawer_close) {
             private int tempNagiviationMode;
+            private String originTitle;
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
                 tempNagiviationMode = getActionBar().getNavigationMode();
+                originTitle = getTitle().toString();
                 getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-
+                setTitle(R.string.app_name);
             }
 
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
                 getActionBar().setNavigationMode(tempNagiviationMode);
-
+                setTitle(originTitle);
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
@@ -133,5 +141,13 @@ public class MainActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         APIService.getInstance().cancelAllRequest();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

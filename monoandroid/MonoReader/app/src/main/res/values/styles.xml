@@ -5,6 +5,7 @@
         <!-- Customize your theme here. -->
         <item name="android:actionBarStyle">@style/actionbar_style</item>
         <!--<item name="android:windowActionBarOverlay">true</item>-->
+
         <item name="ptrHeaderStyle">@style/custom_ptr_header</item>
     </style>
 
