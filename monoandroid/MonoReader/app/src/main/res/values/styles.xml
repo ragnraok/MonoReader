@@ -81,7 +81,10 @@
         <item name="ptrProgressBarColor">@color/ptr_progress_bar_color</item>
         <item name="ptrPullText">Pull To Refresh</item>
         <item name="ptrRefreshingText">Loading...</item>
+        <item name="ptrReleaseText">Release to refresh...</item>
         <item name="ptrSmoothProgressBarStyle">@style/ptr_progress_bar_style</item>
+        <item name="ptrHeaderTitleTextAppearance">@style/action_title_text_style</item>
+
     </style>
 
 
