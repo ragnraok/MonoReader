@@ -26,6 +26,7 @@ import java.util.Collection;
 
 import cn.ragnarok.monoreader.api.base.APIRequestFinishListener;
 import cn.ragnarok.monoreader.api.object.ListArticleObject;
+import cn.ragnarok.monoreader.api.service.ArticleService;
 import cn.ragnarok.monoreader.api.service.TimeLineService;
 import cn.ragnarok.monoreader.app.R;
 import cn.ragnarok.monoreader.app.ui.activity.MainActivity;
@@ -50,6 +51,7 @@ public class TimelineFragment extends Fragment {
     private ProgressBar mLoadingProgress;
     private View mTimelineView;
     private TimeLineService mTimelineService;
+    private ArticleService mArticleService;
     private APIRequestFinishListener<Collection<ListArticleObject>> mRequestFinishListener;
     private TimelineListAdapter mTimelineAdapter;
     private PullToRefreshLayout mPullToRefreshLayout;
@@ -57,6 +59,8 @@ public class TimelineFragment extends Fragment {
     private int mPage;
     private boolean mIsLastPage;
     private boolean mIsLoadingMore;
+
+    private boolean mIsInFavArticle;
 
     public static TimelineFragment newInstance(boolean isFavTimeline) {
         TimelineFragment fragment = new TimelineFragment();
@@ -68,15 +72,17 @@ public class TimelineFragment extends Fragment {
 
     public TimelineFragment() {
         mTimelineService = new TimeLineService();
+        mArticleService = new ArticleService();
 
         mPage = 1;
         mIsLastPage = false;
         mIsLoadingMore = false;
+        mIsInFavArticle = false;
 
     }
 
     public void setIsFavTimeline(boolean isFav) {
-        if (isFav != mIsFavTimeline) {
+        if (isFav != mIsFavTimeline || mIsInFavArticle) {
             mIsFavTimeline = isFav;
             resetTimeline();
         }
@@ -86,10 +92,25 @@ public class TimelineFragment extends Fragment {
         mPage = 1;
         mIsLastPage = false;
         mIsLoadingMore = false;
+        mIsInFavArticle = false;
         mTimelineList.setVisibility(View.GONE);
         mLoadingProgress.setVisibility(View.VISIBLE);
         pullTimeline();
         mTimelineList.smoothScrollToPosition(0);
+    }
+
+    private void pullFavArticles() {
+        mPage = 1;
+        mIsLastPage = false;
+        mIsLoadingMore = false;
+        mIsInFavArticle = true;
+        mIsFavTimeline = false;
+        mTimelineList.setVisibility(View.GONE);
+        mLoadingProgress.setVisibility(View.VISIBLE);
+        mTimelineAdapter.clearData();
+        mPullToRefreshLayout.setRefreshing(true);
+        mTimelineList.smoothScrollToPosition(0);
+        mArticleService.loadFavArticleList(mPage, mRequestFinishListener);
     }
 
     @Override
@@ -138,7 +159,7 @@ public class TimelineFragment extends Fragment {
     }
 
     private void initSpinner() {
-        String items[] = new String[] {getString(R.string.main_timeline), getString(R.string.fav_timeline)};
+        String items[] = new String[] {getString(R.string.main_timeline), getString(R.string.fav_timeline), getString(R.string.fav_article)};
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.spinner_item_layout, items);
 
         ActionBar actionBar = getActivity().getActionBar();
@@ -146,10 +167,14 @@ public class TimelineFragment extends Fragment {
         actionBar.setListNavigationCallbacks(adapter, new ActionBar.OnNavigationListener() {
             @Override
             public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+//                mTimelineService.cancelRequest();
+//                mArticleService.cancelRequest();
                 if (itemPosition == 0) {
                     setIsFavTimeline(false);
                 } else if (itemPosition == 1) {
                     setIsFavTimeline(true);
+                } else if (itemPosition == 2) {
+                    pullFavArticles();
                 }
                 return true;
             }
@@ -197,7 +222,12 @@ public class TimelineFragment extends Fragment {
 //                    Log.d(TAG, "loading more timeline");
 //                    Toast.makeText(getActivity(), "Loading More", Toast.LENGTH_SHORT).show();
                     mIsLoadingMore = true;
-                    loadMoreTimeline();
+                    if (mIsInFavArticle) {
+                        loadMoreFavAritcle();
+                    } else {
+                        loadMoreTimeline();
+                    }
+
                 }
             }
         });
@@ -252,6 +282,16 @@ public class TimelineFragment extends Fragment {
         }
     }
 
+    private void loadMoreFavAritcle() {
+        if (!Utils.isNetworkConnected(getActivity())) {
+            Toast.makeText(getActivity(), R.string.connection_failed, Toast.LENGTH_SHORT).show();
+        } else {
+            mTimelineAdapter.setLoadingMore(true);
+        }
+        mPage++;
+        mArticleService.loadFavArticleList(mPage, mRequestFinishListener);
+    }
+
     private void initPullToRefreshLayout() {
         Options.Builder ptrOptions = Options.create();
         ptrOptions.refreshOnUp(true);
@@ -273,7 +313,7 @@ public class TimelineFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         Log.d(TAG, "onAttach");
-        ((MainActivity)activity).setActionBarTitle("");
+
 
     }
 

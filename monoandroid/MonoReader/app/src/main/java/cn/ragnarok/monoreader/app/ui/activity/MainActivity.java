@@ -49,8 +49,10 @@ public class MainActivity extends Activity {
 
         setContentView(R.layout.activity_main);
 
-        getActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        getActionBar().setCustomView(R.layout.action_bar_layout);
+
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setHomeButtonEnabled(true);
+        setTitle("");
 
         mTimelineFragment = TimelineFragment.newInstance(false);
         mFragmentList[0] = mTimelineFragment;
@@ -79,21 +81,20 @@ public class MainActivity extends Activity {
                 super.onDrawerOpened(drawerView);
                 tempNagiviationMode = getActionBar().getNavigationMode();
                 getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-                setActionBarTitle(getString(R.string.app_name));
+
             }
 
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
                 getActionBar().setNavigationMode(tempNagiviationMode);
-                setActionBarTitle("");
+
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
+
     }
 
     private void initDrawerList() {
@@ -119,12 +120,14 @@ public class MainActivity extends Activity {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         mDrawerToggle.onConfigurationChanged(newConfig);
+
+
     }
 
-    public void setActionBarTitle(String title) {
-        TextView text = (TextView) getActionBar().getCustomView().findViewById(R.id.title);
-        text.setText(title);
-    }
+//    public void setActionBarTitle(String title) {
+//        TextView text = (TextView) getActionBar().getCustomView().findViewById(R.id.title);
+//        text.setText(title);
+//    }
 
     @Override
     protected void onDestroy() {
