@@ -13,6 +13,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.LayoutAnimationController;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -84,7 +85,10 @@ public class TimelineFragment extends Fragment {
         mPage = 1;
         mIsLastPage = false;
         mIsLoadingMore = false;
+        mTimelineList.setVisibility(View.GONE);
+        mLoadingProgress.setVisibility(View.VISIBLE);
         pullTimeline();
+        mTimelineList.smoothScrollToPosition(0);
     }
 
     @Override
@@ -133,7 +137,7 @@ public class TimelineFragment extends Fragment {
     }
 
     private void initSpinner() {
-        String items[] = new String[] {"Timeline", "Fav Sites Timeline"};
+        String items[] = new String[] {getString(R.string.main_timeline), getString(R.string.fav_timeline)};
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.spinner_item_layout, items);
 
         ActionBar actionBar = getActivity().getActionBar();
@@ -207,6 +211,13 @@ public class TimelineFragment extends Fragment {
         LayoutAnimationController controller = new LayoutAnimationController(set, 0.5f);
         mTimelineList.setLayoutAnimation(controller);
 
+        mTimelineList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Toast.makeText(getActivity(), "click " + i, Toast.LENGTH_SHORT).show();
+            }
+        });
+
         pullTimeline();
 
     }
@@ -215,6 +226,8 @@ public class TimelineFragment extends Fragment {
         if (!Utils.isNetworkConnected(getActivity())) {
             Toast.makeText(getActivity(), R.string.connection_failed, Toast.LENGTH_SHORT).show();
         }
+        mTimelineList.setVisibility(View.GONE);
+        mLoadingProgress.setVisibility(View.VISIBLE);
         mTimelineAdapter.clearData();
         mPullToRefreshLayout.setRefreshing(true);
         if (mIsFavTimeline) {

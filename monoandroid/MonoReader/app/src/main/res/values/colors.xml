@@ -2,7 +2,7 @@
 <resources>
     <color name="white">#FFFFFF</color>
     <color name="timeline_item_withou_cover_select_bg">#AAE3E3E3</color>
-    <color name="ptr_progress_bar_color">#D1D1D1</color>
+    <color name="ptr_progress_bar_color">#C4C4C4</color>
 
     <color name="timeline_item_color1">#EBEBEB</color>
     <color name="timeline_item_color2">#E8E8E8</color>

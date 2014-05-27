@@ -38,6 +38,9 @@ public class TimelineListAdapter extends BaseAdapter {
 
     private static final int MAX_TITLE_LENGTH = 40;
 
+    private static final int ITEM_ARTICLE = 1;
+    private static final int ITEM_LOADING_PROGRESS = 2;
+
     private Context mContext;
     private boolean mIsFavTimeline;
 
@@ -105,7 +108,12 @@ public class TimelineListAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int i) {
-        return mData.get(i);
+        if (mIsShowLoadingProgress && i == getCount() - 1) {
+            return ITEM_LOADING_PROGRESS;
+        } else {
+            return mData.get(i);
+        }
+
     }
 
     @Override
@@ -130,7 +138,12 @@ public class TimelineListAdapter extends BaseAdapter {
 
     @Override
     public int getItemViewType(int position) {
-        return super.getItemViewType(position);
+        //return super.getItemViewType(position);
+        if (mIsShowLoadingProgress && position == getCount() - 1) {
+            return ITEM_LOADING_PROGRESS;
+        } else {
+            return ITEM_ARTICLE;
+        }
     }
 
     @Override

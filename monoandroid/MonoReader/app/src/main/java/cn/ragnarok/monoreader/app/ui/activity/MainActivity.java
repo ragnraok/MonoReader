@@ -13,6 +13,8 @@ public class MainActivity extends Activity {
 
     public static final String TAG = "Mono.MainActivity";
 
+    private TimelineFragment mTimelineFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,11 +24,13 @@ public class MainActivity extends Activity {
         // END TEST ONLY CODE
 
 //        requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
+
+        mTimelineFragment = TimelineFragment.newInstance(false);
+
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
-            getFragmentManager().beginTransaction()
-                    .add(R.id.container, TimelineFragment.newInstance(false))
-                    .commit();
+            getFragmentManager().beginTransaction().add(R.id.container, mTimelineFragment).commit();
+            getFragmentManager().beginTransaction().attach(mTimelineFragment).commit();
         }
     }
 }
