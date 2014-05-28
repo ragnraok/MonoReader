@@ -57,7 +57,7 @@ public class MainActivity extends Activity {
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
         ImageView homeIcon = (ImageView) findViewById(android.R.id.home);
-        homeIcon.setPadding(0, 0, (int) Utils.dpToPix(this, getResources().getDimension(R.dimen.home_icon_right_padding)), 0);
+//        homeIcon.setPadding(0, 0, (int) Utils.dpToPix(this, getResources().getDimension(R.dimen.home_icon_right_padding)), 0);
         setTitle("");
 
         mTimelineFragment = TimelineFragment.newInstance(false);

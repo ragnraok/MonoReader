@@ -13,7 +13,7 @@ manager = Manager(mono_app)
 
 @manager.shell
 def shell():
-    from mono.models import Site, Article, Category, FavArticle
+    from mono.models import Site, Article, Category, FavArticle, TestModel
     return dict(
             app=mono_app,
             db=db,
@@ -22,6 +22,7 @@ def shell():
             Article=Article,
             Category=Category,
             FavArticle=FavArticle,
+            TestModel=TestModel,
             update_all_site=update_all_site
             )
 

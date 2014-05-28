@@ -26,6 +26,7 @@ import cn.ragnarok.monoreader.api.service.APIService;
 import cn.ragnarok.monoreader.app.R;
 import cn.ragnarok.monoreader.app.cache.BitmapDiskCache;
 import cn.ragnarok.monoreader.app.cache.BitmapMemeoryCache;
+import cn.ragnarok.monoreader.app.util.Utils;
 
 /**
  * Created by ragnarok on 14-5-25.
@@ -196,6 +197,16 @@ public class TimelineListAdapter extends BaseAdapter {
     }
 
     private void loadItemCover(final ImageView imageView, String url) {
+        if (!Utils.isNetworkConnected(mContext) && !mIsFling) {
+            Log.d(TAG, "network is down, set ImageView bitmap from diskcache, url = " + url);
+            boolean exist = BitmapDiskCache.getInstance(mContext).exist(imageView.getTag().toString());
+            if (exist) {
+                Bitmap bitmap = BitmapDiskCache.getInstance(mContext).get(imageView.getTag().toString());
+                imageView.setImageBitmap(bitmap);
+            }
+
+            return;
+        }
         ImageLoader.ImageListener imageListener = new ImageLoader.ImageListener() {
             @Override
             public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {

@@ -21,5 +21,6 @@
     <string name="fav_article">Favorite Articles</string>
     <string name="drawer_open">Open Menu</string>
     <string name="drawer_close">Close Menu</string>
+    <string name="title_activity_article">ArticleActivity</string>
 
 </resources>

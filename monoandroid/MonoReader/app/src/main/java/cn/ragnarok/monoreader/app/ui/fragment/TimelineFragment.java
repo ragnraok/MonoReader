@@ -3,6 +3,7 @@ package cn.ragnarok.monoreader.app.ui.fragment;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,10 +26,12 @@ import com.android.volley.VolleyError;
 import java.util.Collection;
 
 import cn.ragnarok.monoreader.api.base.APIRequestFinishListener;
+import cn.ragnarok.monoreader.api.object.ArticleObject;
 import cn.ragnarok.monoreader.api.object.ListArticleObject;
 import cn.ragnarok.monoreader.api.service.ArticleService;
 import cn.ragnarok.monoreader.api.service.TimeLineService;
 import cn.ragnarok.monoreader.app.R;
+import cn.ragnarok.monoreader.app.ui.activity.ArticleActivity;
 import cn.ragnarok.monoreader.app.ui.activity.MainActivity;
 import cn.ragnarok.monoreader.app.ui.adapter.TimelineListAdapter;
 import cn.ragnarok.monoreader.app.util.Utils;
@@ -167,13 +170,14 @@ public class TimelineFragment extends Fragment {
         actionBar.setListNavigationCallbacks(adapter, new ActionBar.OnNavigationListener() {
             @Override
             public boolean onNavigationItemSelected(int itemPosition, long itemId) {
-//                mTimelineService.cancelRequest();
-//                mArticleService.cancelRequest();
                 if (itemPosition == 0) {
+                    mArticleService.cancelRequest();
                     setIsFavTimeline(false);
                 } else if (itemPosition == 1) {
+                    mArticleService.cancelRequest();
                     setIsFavTimeline(true);
                 } else if (itemPosition == 2) {
+                    mTimelineService.cancelRequest();
                     pullFavArticles();
                 }
                 return true;
@@ -245,7 +249,11 @@ public class TimelineFragment extends Fragment {
         mTimelineList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(getActivity(), "click " + i, Toast.LENGTH_SHORT).show();
+                ListArticleObject article = (ListArticleObject) mTimelineAdapter.getItem(i);
+                Intent articleIntent = new Intent(getActivity(), ArticleActivity.class);
+                articleIntent.putExtra(ArticleActivity.ARTICLE_ID, article.articleId);
+                articleIntent.putExtra(ArticleActivity.IS_FAV_ARTICLE, mIsInFavArticle);
+                startActivity(articleIntent);
             }
         });
 

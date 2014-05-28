@@ -154,3 +154,7 @@ class FavArticle(db.Model, ModelMixin):
 
     def __repr__(self):
         return "<FavArticle: %s, updated at %s>" % (self.title.encode('utf-8'), self.updated)
+
+class TestModel(db.Model):
+    id = db.Column(db.String(120), primary_key=True)
+    test = db.Column(db.Text, nullable=True)

@@ -46,4 +46,36 @@ public class Utils {
         float scale = context.getResources().getDisplayMetrics().density;
         return pix * scale + 0.5f;
     }
+
+    public static final String ASSET_DIR = "file:///android_asset/";
+
+    // title, site-title, article-date, article-content
+    public static final String ARTICLE_HTML_FORMAT = "<html>\n" +
+            "  <head>\n" +
+            "    <link rel=\"stylesheet\" href=\"css/bootstrap.min.css\" />\n" +
+            "    <link rel=\"stylesheet\" href=\"css/style.css\" />\n" +
+            "    <!--\n" +
+            "    <meta name=\"viewport\" content=\"width=320, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\" />\n" +
+            "    <meta name=\"viewport\" content=\"width=device-width, target-densityDpi=medium-dpi\"/>\n" +
+            "    -->\n" +
+            "    <meta name=\"viewport\" content=\"width=device-width; initial-scale=1.0; maximum-scale=1.0; minimum-scale=1.0; user-scalable=0;\"/>\n" +
+            "  </head>\n" +
+            "  <body>\n" +
+            "    <div id=\"article-header\" class=\"page-header\">\n" +
+            "      <div id=\"article-title\">%s</div>\n" +
+            "      <div id=\"article-info\">\n" +
+            "        <span id=\"site-title\">%s</span> <span id=\"site-date-gap\"> | </span> <span id=\"article-date\">%s</span>\n" +
+            "      </div>\n" +
+            "    </div>\n" +
+            "    </div>\n" +
+            "    <div id=\"article-content\">\n" +
+            "       %s\n" +
+            "    </div>\n" +
+            "<!--\n" +
+            "<div class=\"btn btn-default\" id=\"show-source-button\" >\n" +
+            "  <a href=\"\">View Source</a>\n" +
+            "</div>\n" +
+            "-->\n" +
+            "  </body>\n" +
+            "</html>\n";
 }
