@@ -1,0 +1,39 @@
+<p>广告帖，可飘过。<span id="more-8555"></span></p>
+
+<p>目前我处于待雇状态，如果你对此感兴趣，欢迎与我联系。
+底下是我曾经做过的事情，希望你能从中对我有一些了解。</p>
+
+<ul>
+<li><p>从 2005 年完全转用 Linux 开始，折腾过许多的 Linux
+发行版，既有热门主流，也有偏门冷僻。如今使用 Linux
+快 10 年了，平时用 Funtoo（Gentoo 的变体），服务器
+用 Debian，而在工作中管理的服务器是 CentOS。</p></li>
+<li><p>自 2008 年起先后自学了 Shell Scripting、Perl、Ruby、
+Python、JavaScript 等编程语言，并用它们写了各种各样
+的小工具。</p></li>
+<li><p>平时爱关注 Linux 及开源动向，喜尝试新奇事物，包括
+软件、工具、服务等。</p></li>
+</ul>
+
+<p>此外，也可参考我的<a href="http://resume.linuxtoy.org/">在线简历</a>，
+或其他链接：</p>
+
+<ul>
+<li><a href="http://toy.linuxtoy.org/">Blog</a></li>
+<li><a href="https://github.com/xuxiaodong">GitHub</a></li>
+<li><a href="https://twitter.com/xuxiaodong">Twitter</a></li>
+<li><a href="http://www.linkedin.com/pub/xiaodong-xu/62/319/7">LinkedIn</a></li>
+</ul>
+
+<p>我在北京，来电来邮均可，谢谢。</p>
+
+<ul>
+<li>手机：182-0109-6917</li>
+<li>电邮：xxdlhy [at] gmail.com (请将 [at] 换成 @)</li>
+</ul>
+	<p></p>
+	<p>分类: <a href="https://linuxtoy.org/category/sitelog" rel="category tag" title="查看 Sitelog 中的全部文章">Sitelog</a> | 
+	<a href="https://linuxtoy.org/archives/log-6.html">永久链接</a> |
+	<a href="mailto:?Subject=Check This Out&amp;body=I think you'll like this: https://linuxtoy.org/archives/log-6.html">Email 给好友</a> | 
+    <a href="https://linuxtoy.org/archives/log-6.html#comments">1 评论</a> |
+    <a href="http://linuxtoy.org/faq/donate">捐助本站</a></p>
