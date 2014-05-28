@@ -18,8 +18,10 @@ import android.widget.TextView;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import cn.ragnarok.monoreader.api.object.ListArticleObject;
 import cn.ragnarok.monoreader.api.service.APIService;
@@ -95,6 +97,10 @@ public class TimelineListAdapter extends BaseAdapter {
     public void setLoadingMore(boolean isLoadingMore) {
         this.mIsShowLoadingProgress = isLoadingMore;
         this.notifyDataSetChanged();
+    }
+
+    public ArrayList<ListArticleObject> getData() {
+        return mData;
     }
 
     @Override

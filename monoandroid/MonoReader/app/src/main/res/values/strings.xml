@@ -27,5 +27,6 @@
     <string name="share_article">Share</string>
     <string name="scroll_to_top">Scroll Top</string>
     <string name="wait_request_finsih">Please wait for request finish...</string>
+    <string name="refresh">Refresh</string>
 
 </resources>

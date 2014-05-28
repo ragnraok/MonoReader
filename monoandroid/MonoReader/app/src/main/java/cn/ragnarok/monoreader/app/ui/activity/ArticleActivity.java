@@ -71,7 +71,7 @@ public class ArticleActivity extends Activity {
         mIsFavArticle = getIntent().getBooleanExtra(IS_FAV_ARTICLE, false);
 
         setProgressBarIndeterminate(true);
-        setProgressBarVisibility(true);
+
 
         initWebViewSetting();
         initRequestListener();
@@ -218,6 +218,7 @@ public class ArticleActivity extends Activity {
 
     private void loadArticleObject() {
         if (mArticleId != -1) {
+            setProgressBarVisibility(true);
             if (mIsFavArticle) {
                 mArticleService.loadFavArticle(mArticleId, mLoadArticleListener);
             } else {
@@ -291,6 +292,8 @@ public class ArticleActivity extends Activity {
         } else if (id == R.id.action_scroll_top) {
             mWebView.scrollTo(0, 0);
             return true;
+        } else if (id == R.id.action_refresh) {
+            loadArticleObject();
         }
         return super.onOptionsItemSelected(item);
     }
