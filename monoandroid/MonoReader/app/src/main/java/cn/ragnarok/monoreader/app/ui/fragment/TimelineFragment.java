@@ -253,12 +253,30 @@ public class TimelineFragment extends Fragment {
                 Intent articleIntent = new Intent(getActivity(), ArticleActivity.class);
                 articleIntent.putExtra(ArticleActivity.ARTICLE_ID, article.articleId);
                 articleIntent.putExtra(ArticleActivity.IS_FAV_ARTICLE, mIsInFavArticle);
-                startActivity(articleIntent);
+                //startActivity(articleIntent);
+                startActivityForResult(articleIntent, ArticleActivity.FAV_SET);
             }
         });
 
         pullTimeline();
 
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == ArticleActivity.FAV_SET) {
+            if (resultCode == Activity.RESULT_OK) {
+                boolean isFav = data.getBooleanExtra(ArticleActivity.IS_FAV_ARTICLE, false);
+                int articleId = data.getIntExtra(ArticleActivity.ARTICLE_ID, 0);
+//                if (mIsInFavArticle) {
+//                    pullFavArticles();
+//                } else {
+//
+//                }
+                mTimelineAdapter.updateArticleFav(articleId, isFav, mIsInFavArticle);
+            }
+        }
     }
 
     private void pullTimeline() {

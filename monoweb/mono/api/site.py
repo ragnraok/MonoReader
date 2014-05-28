@@ -36,7 +36,8 @@ class SiteArticleListView(BaseArticleListView):
         result = []
         for article in article_list:
             result.append(fill_list_article_object(article.id, article.title,
-                article.site.title, article.updated, article.first_image_url))
+                article.site.title, article.updated, article.first_image_url,
+                article.is_fav))
         return result
 
 class SiteList(object):

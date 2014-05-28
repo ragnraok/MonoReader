@@ -25,8 +25,10 @@ class ArticleLoadView(BaseAPIGETView):
         article_id = kwargs.get('article_id', 1)
         if not self.is_load_fav:
             article = Article.query.get(article_id)
+            is_fav = article.is_fav
         else:
             article = FavArticle.query.get(article_id)
+            is_fav = True
 
         if article is None:
             raise ValueError(ARTICLE_NOT_EXIST)
@@ -37,7 +39,7 @@ class ArticleLoadView(BaseAPIGETView):
                 site_title = article.site.title
             return fill_article_object(article_id=article.id, title=article.title,
                     site=site_title, updated=article.updated, content=article.content,
-                    url=article.url, cover_url=article.first_image_url)
+                    url=article.url, cover_url=article.first_image_url, is_fav=is_fav)
 
 class ArticleFavSetView(BaseAPIPOSTView):
     def __init__(self, is_fav=True, **kwargs):
@@ -49,29 +51,43 @@ class ArticleFavSetView(BaseAPIPOSTView):
             """
             post data format:
                 {
-                    article_id: article_id
+                    article_id: article_id,
+                    is_get_from_fav_article: boolean(optional, default is False)
                 }
             """
             article_id = data.get('article_id', None)
+            is_get_from_fav_article = data.get('is_get_from_fav_article', False)
             if article_id is None:
                 raise ValueError(DATA_FORMAT_ERROR)
             article = Article.query.get(article_id)
             if article is None:
-                raise ValueError(ARTICLE_NOT_EXIST)
+                if is_get_from_fav_article:
+                    fav_article = FavArticle.query.get(article_id)
+                    if fav_article:
+                        article = Article.query.filter_by(title=fav_article.title)
+                else:
+                    raise ValueError(ARTICLE_NOT_EXIST)
             article.fav()
         else:
             """
             post data format:
                 {
-                    fav_article_id: fav_article_id
+                    fav_article_id: fav_article_id,
+                    is_get_from_article: boolean(optional, default is False)
                 }
             """
             fav_article_id = data.get('fav_article_id', None)
+            is_get_from_article = data.get('is_get_from_article', False)
             if fav_article_id is None:
                 raise ValueError(DATA_FORMAT_ERROR)
             fav_article = FavArticle.query.get(fav_article_id)
             if fav_article is None:
-                raise ValueError(ARTICLE_NOT_EXIST)
+                if is_get_from_article:
+                    article = Article.query.get(fav_article_id)
+                    if article:
+                        fav_article = FavArticle.query.filter_by(title=article.title)
+                else:
+                    raise ValueError(ARTICLE_NOT_EXIST)
             fav_article.delete()
 
 class FavArticleListView(BaseArticleListView):
@@ -103,5 +119,6 @@ class FavArticleListView(BaseArticleListView):
         result = []
         for article in article_list:
             result.append(fill_list_article_object(article.id, article.title,
-                article.site_title, article.updated, article.first_image_url))
+                article.site_title, article.updated, article.first_image_url,
+                True))
         return result

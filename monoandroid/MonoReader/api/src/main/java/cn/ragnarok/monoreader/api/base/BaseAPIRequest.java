@@ -51,7 +51,7 @@ public class BaseAPIRequest extends StringRequest {
                 return ErrorHelper.handleError(errorCode); // return Response.error here, so that invoke errorListener
             } else {
                 String data = resultObject.get("data").toString();
-                return Response.success(data, makeCacheEntry(response));
+                return Response.success(data, HttpHeaderParser.parseCacheHeaders(response));
             }
         } catch (JSONException e) {
             e.printStackTrace();

@@ -16,6 +16,8 @@ public class ArticleObject {
     public String url;
     @SerializedName("cover_url")
     public String coverUrl;
+    @SerializedName("is_fav")
+    public boolean isFav = false;
 
     @Override
     public String toString() {

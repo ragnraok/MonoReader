@@ -25,5 +25,7 @@
     <string name="open_in_browser">Open In Browser</string>
     <string name="fav_an_article">Favorite</string>
     <string name="share_article">Share</string>
+    <string name="scroll_to_top">Scroll Top</string>
+    <string name="wait_request_finsih">Please wait for request finish...</string>
 
 </resources>

@@ -5,10 +5,14 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
@@ -31,16 +35,27 @@ public class ArticleActivity extends Activity {
     private boolean mIsFavArticle;
     private ArticleService mArticleService;
     private ScrollableWebView mWebView;
-    private APIRequestFinishListener<ArticleObject> mRequestFinishListener;
-
+    private View mMainLayout;
+    private APIRequestFinishListener<ArticleObject> mLoadArticleListener;
+    private APIRequestFinishListener mFavListener;
+    private MenuItem mFavItem;
     private boolean mIsInImmersive = false;
+    private boolean mIsInFavProcess = false;
 
     private static final int SCROLL_THREADSHOLD = 100;
     private int mPreScrollY = -1;
 
+    private Handler mWebViewClickHandler = null;
+    private static final int CLICK_DELAY_MESSAGE = 1;
+    private static final int CLICK_TIMEOUT = 300;
+
+    public static final int FAV_SET = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_PROGRESS);
+
         setContentView(R.layout.activity_article);
 
         mArticleService = new ArticleService();
@@ -50,10 +65,13 @@ public class ArticleActivity extends Activity {
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
         mWebView = (ScrollableWebView) findViewById(R.id.article_views);
-
+        mMainLayout = findViewById(R.id.article_layout);
 
         mArticleId = getIntent().getIntExtra(ARTICLE_ID, -1);
         mIsFavArticle = getIntent().getBooleanExtra(IS_FAV_ARTICLE, false);
+
+        setProgressBarIndeterminate(true);
+        setProgressBarVisibility(true);
 
         initWebViewSetting();
         initRequestListener();
@@ -68,8 +86,12 @@ public class ArticleActivity extends Activity {
             @Override
             public void onScrollChange(int currHoriScroll, int currVertiScroll, int oldHoriScroll, int oldVertiScroll) {
 //                Log.d(TAG, "currVertiScroll: " + currVertiScroll + ", oldVertiScroll: " + oldVertiScroll);
+//                mWebViewClickHandler.removeMessages(CLICK_DELAY_MESSAGE);
                 if (mPreScrollY == -1) {
                     mPreScrollY = currVertiScroll;
+                    return;
+                }
+                if (currVertiScroll >=  Math.floor(mWebView.getContentHeight() * mWebView.getScale())) { // detect if in bottom
                     return;
                 }
                 if (currVertiScroll - mPreScrollY > SCROLL_THREADSHOLD) {
@@ -85,6 +107,39 @@ public class ArticleActivity extends Activity {
                 }
             }
         });
+
+        mWebViewClickHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                if (msg.what == 1) {
+                    //Toast.makeText(ArticleActivity.this, "click Webview", Toast.LENGTH_SHORT).show();
+                    mWebViewClickHandler.removeMessages(CLICK_DELAY_MESSAGE);
+//                    Log.d(TAG, "handle immersive message");
+                    if (mIsInImmersive) {
+                        exitImmersive();
+                    } else {
+                        enterImmersive();
+                    }
+                }
+            }
+        };
+
+        mWebView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+//                    Log.d(TAG, "send immersive message");
+                    mWebViewClickHandler.removeMessages(CLICK_DELAY_MESSAGE);
+                    mWebViewClickHandler.sendEmptyMessageDelayed(CLICK_DELAY_MESSAGE, CLICK_TIMEOUT);
+                } else if (motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
+                    mWebViewClickHandler.removeMessages(CLICK_DELAY_MESSAGE);
+                }
+
+                return false;
+            }
+        });
+
+
 
     }
 
@@ -108,7 +163,7 @@ public class ArticleActivity extends Activity {
     }
 
     private void initRequestListener() {
-        mRequestFinishListener = new APIRequestFinishListener<ArticleObject>() {
+        mLoadArticleListener = new APIRequestFinishListener<ArticleObject>() {
             @Override
             public void onRequestSuccess() {
 
@@ -116,23 +171,57 @@ public class ArticleActivity extends Activity {
 
             @Override
             public void onRequestFail(VolleyError error) {
+                Log.d(TAG, "load article failed, error: " + error.toString() + ", mIsFavArticle: " + mIsFavArticle);
                 Toast.makeText(ArticleActivity.this, R.string.connection_failed, Toast.LENGTH_SHORT).show();
+                setProgressBarVisibility(false);
             }
 
             @Override
             public void onGetResult(ArticleObject result) {
+                setProgressBarVisibility(false);
                 mArticle = result;
+                mIsFavArticle = mArticle.isFav;
+                Log.d(TAG, "finish load article , isFav: " + mArticle.isFav);
+                initFavMenuItem();
                 loadArticleHtml();
             }
         };
+
+        mFavListener = new APIRequestFinishListener() {
+            @Override
+            public void onRequestSuccess() {
+                mIsInFavProcess = false;
+                mIsFavArticle = !mIsFavArticle;
+                setFavResult();
+                Log.d(TAG, "fav set success");
+
+            }
+
+            @Override
+            public void onRequestFail(VolleyError error) {
+                Log.d(TAG, "fav set fail, error: " + error.toString() + ", articleId: " + mArticleId);
+            }
+
+            @Override
+            public void onGetResult(Object result) {
+
+            }
+        };
+    }
+
+    private void setFavResult() {
+        Intent intent = new Intent();
+        intent.putExtra(IS_FAV_ARTICLE, mIsFavArticle);
+        intent.putExtra(ARTICLE_ID, mArticleId);
+        setResult(RESULT_OK, intent);
     }
 
     private void loadArticleObject() {
         if (mArticleId != -1) {
             if (mIsFavArticle) {
-                mArticleService.loadFavArticle(mArticleId, mRequestFinishListener);
+                mArticleService.loadFavArticle(mArticleId, mLoadArticleListener);
             } else {
-                mArticleService.loadArticle(mArticleId, mRequestFinishListener);
+                mArticleService.loadArticle(mArticleId, mLoadArticleListener);
             }
         }
     }
@@ -145,11 +234,23 @@ public class ArticleActivity extends Activity {
         }
     }
 
+    private void initFavMenuItem() {
+        if (mFavItem != null) {
+            if (mIsFavArticle) {
+                mFavItem.setIcon(R.drawable.ic_rating_important);
+            } else {
+                mFavItem.setIcon(R.drawable.ic_rating_not_important);
+            }
+        }
+
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.article, menu);
+        mFavItem = menu.findItem(R.id.action_fav_article);
+        initFavMenuItem();
         return true;
     }
 
@@ -164,8 +265,32 @@ public class ArticleActivity extends Activity {
             return true;
         } else if (id == R.id.action_open_in_browser) {
             openInBrowser();
+            return true;
         } else if (id == android.R.id.home) {
             finish();
+            return true;
+        } else if (id == R.id.action_fav_article) {
+            if (mIsInFavProcess) {
+                Toast.makeText(this, R.string.wait_request_finsih, Toast.LENGTH_SHORT).show();
+                return true;
+            }
+            mIsInFavProcess = true;
+            if (mIsFavArticle) {
+                if (mFavItem != null) {
+                    mFavItem.setIcon(R.drawable.ic_rating_not_important);
+                }
+                mArticleService.unfavArticle(mArticleId, mFavListener);
+            } else {
+                if (mFavItem != null) {
+                    mFavItem.setIcon(R.drawable.ic_rating_important);
+                }
+                mArticleService.favArticle(mArticleId, mFavListener);
+            }
+            return true;
+
+        } else if (id == R.id.action_scroll_top) {
+            mWebView.scrollTo(0, 0);
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }

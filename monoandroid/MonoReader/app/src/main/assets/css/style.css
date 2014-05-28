@@ -34,6 +34,13 @@ pre {
   word-wrap: normal;
   word-break: normal;
 }
+code {
+  word-wrap: break-word;
+  word-break: break-all;
+  white-space: normal;
+  display: inline-block;
+  max-width: 250px;
+}
 table {
   overflow: scroll;
   word-wrap: normal;

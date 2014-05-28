@@ -99,25 +99,28 @@ class Article(db.Model, ModelMixin):
     url = db.Column(db.String(120), nullable=False)
     site_id = db.Column(db.Integer, db.ForeignKey('site.id'))
     first_image_url = db.Column(db.Text, nullable=True)
+    is_fav = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
         return "<Article: %s, updated at %s>" % (self.title.encode('utf-8'), self.updated)
 
     def fav(self):
-        if not self.is_fav():
+        if not self.is_fav:
             fav_article = FavArticle(title=self.title, content=self.content,
                     updated=self.updated, url=self.url, site_title=self.site.title,
                     first_image_url=self.first_image_url)
             fav_article.save()
+            self.is_fav = True
+            self.save()
 
-    def is_fav(self):
-        if hasattr(self, "_is_fav"):
-            return self._is_fav
-        if FavArticle.query.is_fav(self.title):
-            self._is_fav = True
-        else:
-            self._is_fav = False
-        return self._is_fav
+    #def is_fav(self):
+    #    if hasattr(self, "_is_fav"):
+    #        return self._is_fav
+    #    if FavArticle.query.is_fav(self.title):
+    #        self._is_fav = True
+    #    else:
+    #        self._is_fav = False
+    #    return self._is_fav
 
 
 #category_site = db.Table('category_site',
@@ -154,6 +157,13 @@ class FavArticle(db.Model, ModelMixin):
 
     def __repr__(self):
         return "<FavArticle: %s, updated at %s>" % (self.title.encode('utf-8'), self.updated)
+
+    def delete(self):
+        article = Article.query.filter_by(title=self.title).first()
+        if article:
+            article.is_fav = False
+            article.save()
+        super(FavArticle, self).delete()
 
 class TestModel(db.Model):
     id = db.Column(db.String(120), primary_key=True)

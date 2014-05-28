@@ -75,6 +75,7 @@ public class ArticleService extends BaseAPIService {
         JSONObject data = new JSONObject();
         try {
             data.put("article_id", articleId);
+            data.put("is_get_from_fav_article", true);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -91,6 +92,7 @@ public class ArticleService extends BaseAPIService {
         JSONObject data = new JSONObject();
         try {
             data.put("fav_article_id", articleId);
+            data.put("is_get_from_article", true);
         } catch (JSONException e) {
             e.printStackTrace();
         }

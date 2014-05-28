@@ -14,6 +14,8 @@ public class ListArticleObject {
     public String updated;
     @SerializedName("cover_url")
     public String coverUrl;
+    @SerializedName("is_fav")
+    public boolean isFav = false;
 
     public String toString() {
         return new Gson().toJson(this);

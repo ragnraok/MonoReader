@@ -2,7 +2,7 @@
 API object specification and correspond methods
 """
 
-def fill_list_article_object(article_id, title, site, updated, cover_url):
+def fill_list_article_object(article_id, title, site, updated, cover_url, is_fav):
     """
     list article object:
         {
@@ -11,13 +11,16 @@ def fill_list_article_object(article_id, title, site, updated, cover_url):
             site: site_title,
             updated: YYYY-MM-DD,
             cover_url: url, may be None
+            is_fav: is_fav, boolean
         }
     """
     result = dict(article_id=article_id, title=title, site=site,
-            updated=updated.strftime("%Y-%m-%d"), cover_url=cover_url)
+            updated=updated.strftime("%Y-%m-%d"), cover_url=cover_url,
+            is_fav=is_fav)
     return result
 
-def fill_article_object(article_id, title, site, updated, content, url, cover_url):
+def fill_article_object(article_id, title, site, updated, content, url, cover_url,
+        is_fav):
     """
     article object:
         {
@@ -28,11 +31,12 @@ def fill_article_object(article_id, title, site, updated, content, url, cover_ur
             content: html content,
             url: origin article url,
             cover_url: url, may be null
+            is_fav: is_fav, boolean
         }
     """
     return dict(article_id=article_id, title=title, site=site,
             updated=updated.strftime("%Y-%M-%d"), content=content, url=url,
-            cover_url=cover_url)
+            cover_url=cover_url, is_fav=is_fav)
 
 def fill_site_object(site_id, title, updated, url, category, is_read_daily, article_count):
     """

@@ -104,7 +104,6 @@ public class TimelineListAdapter extends BaseAdapter {
         } else {
             return mData.size();
         }
-
     }
 
     @Override
@@ -113,6 +112,24 @@ public class TimelineListAdapter extends BaseAdapter {
             return ITEM_LOADING_PROGRESS;
         } else {
             return mData.get(i);
+        }
+    }
+
+    public void updateArticleFav(int articleId, boolean isFav, boolean isInFavArticleList) {
+        synchronized (mData) {
+            ListArticleObject removeArticle = null;
+            for (ListArticleObject article : mData) {
+                if (article.articleId == articleId) {
+                    article.isFav = isFav;
+                }
+                if (isInFavArticleList) {
+                    removeArticle = article;
+                }
+            }
+            if (removeArticle != null) {
+                mData.remove(removeArticle);
+            }
+            notifyDataSetChanged();
         }
 
     }
@@ -123,13 +140,19 @@ public class TimelineListAdapter extends BaseAdapter {
     }
 
     public void appendData(Collection<ListArticleObject> newData) {
-        this.mData.addAll(newData);
-        this.notifyDataSetChanged();
+        synchronized (mData) {
+            this.mData.addAll(newData);
+            this.notifyDataSetChanged();
+        }
+
     }
 
     public void clearData() {
-        this.mData.clear();
-        this.notifyDataSetChanged();
+        synchronized (mData) {
+            this.mData.clear();
+            this.notifyDataSetChanged();
+        }
+
     }
 
     public void setOnFling(boolean isFling) {
