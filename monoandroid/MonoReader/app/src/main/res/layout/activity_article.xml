@@ -3,9 +3,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context="cn.ragnarok.monoreader.app.ui.activity.ArticleActivity">
+    tools:context="cn.ragnarok.monoreader.app.ui.activity.ArticleActivity"
+    android:fitsSystemWindows="true"
+    android:id="@+id/article_layout">
 
-    <WebView
+    <cn.ragnarok.monoreader.app.ui.view.ScrollableWebView
         android:id="@+id/article_views"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
