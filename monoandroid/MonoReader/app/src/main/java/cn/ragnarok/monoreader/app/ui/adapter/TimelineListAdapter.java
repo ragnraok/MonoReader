@@ -123,19 +123,23 @@ public class TimelineListAdapter extends BaseAdapter {
 
     public void updateArticleFav(int articleId, boolean isFav, boolean isInFavArticleList) {
         synchronized (mData) {
-            ListArticleObject removeArticle = null;
-            for (ListArticleObject article : mData) {
+            Log.d(TAG, "updateArticleFav");
+            int removeIndex = -1;
+            for (int i = 0; i < mData.size(); i++) {
+                ListArticleObject article = mData.get(i);
                 if (article.articleId == articleId) {
                     article.isFav = isFav;
+                    if (isInFavArticleList) {
+                        removeIndex = i;
+                    }
+                    break;
                 }
-                if (isInFavArticleList) {
-                    removeArticle = article;
-                }
+
             }
-            if (removeArticle != null) {
-                mData.remove(removeArticle);
+            if (removeIndex != -1) {
+                mData.remove(removeIndex);
             }
-            notifyDataSetChanged();
+            notifyDataSetInvalidated();
         }
 
     }
