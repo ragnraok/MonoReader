@@ -22,5 +22,8 @@
     <string name="drawer_open">Open Menu</string>
     <string name="drawer_close">Close Menu</string>
     <string name="title_activity_article">ArticleActivity</string>
+    <string name="open_in_browser">Open In Browser</string>
+    <string name="fav_an_article">Favorite</string>
+    <string name="share_article">Share</string>
 
 </resources>

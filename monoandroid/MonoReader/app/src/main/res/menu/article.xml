@@ -1,9 +1,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="cn.ragnarok.monoreader.app.ui.activity.ArticleActivity" >
-    <item android:id="@+id/action_settings"
-        android:title="@string/action_settings"
-        android:orderInCategory="100"
-        app:showAsAction="never" />
+    <item android:id="@+id/action_share"
+        android:title="@string/share_article"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_social_share"/>
+    <item android:id="@+id/action_open_in_browser"
+        android:title="@string/open_in_browser"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_location_web_site"
+        />
+    <item android:id="@+id/action_fav_article"
+        android:title="@string/fav_an_article"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_rating_not_important"
+        />
 </menu>
