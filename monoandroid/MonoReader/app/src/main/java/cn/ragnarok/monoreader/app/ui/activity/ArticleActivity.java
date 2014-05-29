@@ -86,7 +86,7 @@ public class ArticleActivity extends Activity {
             @Override
             public void onScrollChange(int currHoriScroll, int currVertiScroll, int oldHoriScroll, int oldVertiScroll) {
 //                Log.d(TAG, "currVertiScroll: " + currVertiScroll + ", oldVertiScroll: " + oldVertiScroll);
-//                mWebViewClickHandler.removeMessages(CLICK_DELAY_MESSAGE);
+                mWebViewClickHandler.removeMessages(CLICK_DELAY_MESSAGE);
                 if (mPreScrollY == -1) {
                     mPreScrollY = currVertiScroll;
                     return;
@@ -131,8 +131,8 @@ public class ArticleActivity extends Activity {
 //                    Log.d(TAG, "send immersive message");
                     mWebViewClickHandler.removeMessages(CLICK_DELAY_MESSAGE);
                     mWebViewClickHandler.sendEmptyMessageDelayed(CLICK_DELAY_MESSAGE, CLICK_TIMEOUT);
-                } else if (motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
-                    mWebViewClickHandler.removeMessages(CLICK_DELAY_MESSAGE);
+                } else if (motionEvent.getAction() == MotionEvent.ACTION_MOVE || motionEvent.getAction() == MotionEvent.ACTION_CANCEL) {
+                   // mWebViewClickHandler.removeMessages(CLICK_DELAY_MESSAGE);
                 }
 
                 return false;
