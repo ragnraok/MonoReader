@@ -7,6 +7,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
@@ -119,6 +122,7 @@ public class TimelineFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         if (getArguments() != null) {
             mIsFavTimeline = getArguments().getBoolean(IS_FAV_TIMELINE);
         }
@@ -355,4 +359,27 @@ public class TimelineFragment extends Fragment {
         mTimelineService.cancelRequest();
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.timeline, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.action_scroll_top:
+                mTimelineList.smoothScrollToPosition(0);
+                break;
+            case R.id.action_refresh:
+                if (mIsInFavArticle) {
+                    pullFavArticles();
+                } else {
+                    resetTimeline();
+                }
+                break;
+        }
+
+        return true;
+    }
 }

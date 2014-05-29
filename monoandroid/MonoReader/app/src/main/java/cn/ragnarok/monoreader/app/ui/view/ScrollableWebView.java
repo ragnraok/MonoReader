@@ -15,7 +15,7 @@ public class ScrollableWebView extends WebView {
     public static final String TAG = "Mono.ScrollableWebView";
 
     private static final int SMOOTH_SCROLL_MESSAGE_DEALY = 50;
-    private static final int SCROLL_OFFSET = 300;
+    private static final int SCROLL_OFFSET = 500;
 
     public interface OnScrollChangeListener {
         void onScrollChange(int currHoriScroll, int currVertiScroll, int oldHoriScroll, int oldVertiScroll);
