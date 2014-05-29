@@ -290,7 +290,8 @@ public class ArticleActivity extends Activity {
             return true;
 
         } else if (id == R.id.action_scroll_top) {
-            mWebView.scrollTo(0, 0);
+//            mWebView.scrollTo(0, 0);
+            mWebView.smoothScrollToTop();
             return true;
         } else if (id == R.id.action_refresh) {
             loadArticleObject();
