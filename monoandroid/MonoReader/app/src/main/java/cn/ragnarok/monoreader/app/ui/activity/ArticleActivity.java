@@ -28,11 +28,13 @@ public class ArticleActivity extends Activity {
 
     public static final String TAG ="Mono.ArticleActivity";
     public static final String ARTICLE_ID = "articleId";
+    public static final String IS_FROM_FAV_ARTICLE_LIST = "isFromArticleList";
     public static final String IS_FAV_ARTICLE = "isFavArticle";
 
     private ArticleObject mArticle;
     private int mArticleId;
     private boolean mIsFavArticle;
+    private boolean mIsFromFavArticleList;
     private ArticleService mArticleService;
     private ScrollableWebView mWebView;
     private View mMainLayout;
@@ -68,7 +70,7 @@ public class ArticleActivity extends Activity {
         mMainLayout = findViewById(R.id.article_layout);
 
         mArticleId = getIntent().getIntExtra(ARTICLE_ID, -1);
-        mIsFavArticle = getIntent().getBooleanExtra(IS_FAV_ARTICLE, false);
+        mIsFromFavArticleList = getIntent().getBooleanExtra(IS_FROM_FAV_ARTICLE_LIST, false);
 
         setProgressBarIndeterminate(true);
 
@@ -131,8 +133,6 @@ public class ArticleActivity extends Activity {
 //                    Log.d(TAG, "send immersive message");
                     mWebViewClickHandler.removeMessages(CLICK_DELAY_MESSAGE);
                     mWebViewClickHandler.sendEmptyMessageDelayed(CLICK_DELAY_MESSAGE, CLICK_TIMEOUT);
-                } else if (motionEvent.getAction() == MotionEvent.ACTION_MOVE || motionEvent.getAction() == MotionEvent.ACTION_CANCEL) {
-                   // mWebViewClickHandler.removeMessages(CLICK_DELAY_MESSAGE);
                 }
 
                 return false;
@@ -219,7 +219,7 @@ public class ArticleActivity extends Activity {
     private void loadArticleObject() {
         if (mArticleId != -1) {
             setProgressBarVisibility(true);
-            if (mIsFavArticle) {
+            if (mIsFromFavArticleList) {
                 mArticleService.loadFavArticle(mArticleId, mLoadArticleListener);
             } else {
                 mArticleService.loadArticle(mArticleId, mLoadArticleListener);
@@ -251,7 +251,7 @@ public class ArticleActivity extends Activity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.article, menu);
         mFavItem = menu.findItem(R.id.action_fav_article);
-        initFavMenuItem();
+        //initFavMenuItem();
         return true;
     }
 

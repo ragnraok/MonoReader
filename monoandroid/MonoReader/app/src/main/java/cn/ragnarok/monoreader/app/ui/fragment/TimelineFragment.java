@@ -252,7 +252,7 @@ public class TimelineFragment extends Fragment {
                 ListArticleObject article = (ListArticleObject) mTimelineAdapter.getItem(i);
                 Intent articleIntent = new Intent(getActivity(), ArticleActivity.class);
                 articleIntent.putExtra(ArticleActivity.ARTICLE_ID, article.articleId);
-                articleIntent.putExtra(ArticleActivity.IS_FAV_ARTICLE, mIsInFavArticle);
+                articleIntent.putExtra(ArticleActivity.IS_FROM_FAV_ARTICLE_LIST, mIsInFavArticle);
                 //startActivity(articleIntent);
                 startActivityForResult(articleIntent, ArticleActivity.FAV_SET);
             }
