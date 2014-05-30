@@ -1,12 +1,29 @@
 package cn.ragnarok.monoreader.app.cache;
 
 import android.content.Context;
+import android.util.Base64;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import cn.ragnarok.monoreader.api.object.ListArticleObject;
@@ -53,7 +70,11 @@ public class TimelineCache {
         mFavArticleListMemCache = new HashMap<Integer, ArrayList<ListArticleObject>>();
         mFavTimelineMemCache = new HashMap<Integer, ArrayList<ListArticleObject>>();
 
+        readLastUpdateFromCache();
 
+        getAllFavArticleListFromDisk();
+        getAllFavTimelineFromDisk();
+        getAllMainTimelineFromDisk();
     }
 
     private void readLastUpdateFromCache() {
@@ -135,27 +156,62 @@ public class TimelineCache {
     }
 
     private void getAllMainTimelineFromDisk() {
-
+        readDiskCacheInternal(mMainTimelineMemCache, mMainTimelineCacheDir);
     }
 
     private void getAllFavTimelineFromDisk() {
-
+        readDiskCacheInternal(mFavTimelineMemCache, mFavTimelineCacheDir);
     }
 
     private void getAllFavArticleListFromDisk() {
+        readDiskCacheInternal(mFavArticleListMemCache, mFavArticleListCacheDir);
+    }
 
+    private void readDiskCacheInternal(Map<Integer, ArrayList<ListArticleObject>> cacheData, File cacheDir) {
+        cacheData.clear();
+        File[] allCache = cacheDir.listFiles();
+        for (File file : allCache) {
+            try {
+                InputStreamReader isr = new InputStreamReader(new FileInputStream(file));
+                BufferedReader reader = new BufferedReader(isr);
+
+                String line = "";
+                StringBuilder content = new StringBuilder("");
+                while (line != null) {
+                    line = reader.readLine();
+                    content.append(line);
+                }
+
+                reader.close();
+
+                String decodeContent = new String(Base64.decode(content.toString().getBytes(), Base64.DEFAULT));
+                Collection<TimelineCacheObject> cacheContent = new Gson().fromJson(decodeContent,
+                        new TypeToken<Collection<TimelineCacheObject>>() {}.getType());
+                if (cacheContent != null) {
+                    for (TimelineCacheObject timelineCache : cacheContent) {
+                        ArrayList<ListArticleObject> data = new ArrayList<ListArticleObject>();
+                        data.addAll(Arrays.asList(timelineCache.articles));
+                        cacheData.put(timelineCache.page, data);
+                    }
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public Collection<ListArticleObject> getMainTimeline(int page) {
-        return null;
+        return mMainTimelineMemCache.get(page);
     }
 
     public Collection<ListArticleObject> getFavTimeline(int page) {
-        return null;
+        return mFavTimelineMemCache.get(page);
     }
 
     public Collection<ListArticleObject> getFavArticleList(int page) {
-        return null;
+        return mFavArticleListMemCache.get(page);
     }
 
     public long getMainTimelineLastUpdate() {
@@ -170,9 +226,45 @@ public class TimelineCache {
         return mFavArticleListLastUpdate;
     }
 
-    public void flushMainTimelineCacheToDisk() {
+    private void flushCacheToDiskInternal(Map<Integer, ArrayList<ListArticleObject>> memCache, File dir) {
         String fileName = String.valueOf(System.currentTimeMillis());
-        File cacheFile = new File(mMainTimelineCacheDir + File.separator + fileName);
-        FileOutputStream fos = null;
+        File cacheFile = new File(dir + File.separator + fileName);
+        FileWriter fileWriter = null;
+        PrintWriter printWriter = null;
+        try {
+            cacheFile.createNewFile();
+            fileWriter = new FileWriter(cacheFile);
+            printWriter = new PrintWriter(fileWriter);
+
+
+            ArrayList<TimelineCacheObject> cacheContent = new ArrayList<TimelineCacheObject>();
+            for (int page : memCache.keySet()) {
+                Collection<ListArticleObject> articles = memCache.get(page);
+                TimelineCacheObject cacheObject = new TimelineCacheObject();
+                cacheObject.page = page;
+                cacheObject.articles = (ListArticleObject[]) articles.toArray();
+                cacheContent.add(cacheObject);
+            }
+            String cacheStr = new Gson().toJson(cacheContent.toArray(), TimelineCacheObject[].class);
+            printWriter.print(Base64.encodeToString(cacheStr.toString().getBytes(), Base64.DEFAULT));
+            printWriter.flush();
+
+            fileWriter.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void flushMainTimelineCacheToDisk() {
+        flushCacheToDiskInternal(mMainTimelineMemCache, mMainTimelineCacheDir);
+    }
+
+    public void flushFavTimelineCacheToDisk() {
+        flushCacheToDiskInternal(mFavTimelineMemCache, mFavTimelineCacheDir);
+    }
+
+    public void flushFavArticleListCacheToDisk() {
+        flushCacheToDiskInternal(mFavArticleListMemCache, mFavArticleListCacheDir);
     }
 }
