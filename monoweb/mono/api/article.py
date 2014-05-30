@@ -68,7 +68,7 @@ class ArticleFavSetView(BaseAPIPOSTView):
                 if is_get_from_fav_article:
                     fav_article = FavArticle.query.get(article_id)
                     if fav_article:
-                        article = Article.query.filter_by(title=fav_article.title)
+                        article = Article.query.filter_by(title=fav_article.title).first()
                 else:
                     raise ValueError(ARTICLE_NOT_EXIST)
             article.fav()
@@ -89,9 +89,10 @@ class ArticleFavSetView(BaseAPIPOSTView):
                 if is_get_from_article:
                     article = Article.query.get(fav_article_id)
                     if article:
-                        fav_article = FavArticle.query.filter_by(title=article.title)
+                        fav_article = FavArticle.query.filter_by(title=article.title).first()
                 else:
                     raise ValueError(ARTICLE_NOT_EXIST)
+            print fav_article
             fav_article.delete()
 
 class FavArticleListView(BaseArticleListView):
