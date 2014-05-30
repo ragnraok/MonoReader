@@ -20,3 +20,8 @@ REDIS_URL = "redis://localhost:6379"
 # logging
 LOG_FILE = "monoreader.log"
 TASK_LOG_FILE = "monoreader_task.log"
+
+# cache
+MAIN_TIMELINE_UPDATE_CACHE_KEY = "timeline_update"
+FAV_TIMELINE_UPDATE_CACHE_KEY = "fav_timeline_udpate"
+FAV_ARTICLE_LIST_UPDATE_CACHE_KEY = "fav_article_list_update"

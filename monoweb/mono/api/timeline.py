@@ -2,9 +2,13 @@ from flask import current_app
 from sqlalchemy.sql.expression import desc, select
 
 from utils import PAGE_SMALL_THAN_ONE
-from apibase import BaseArticleListView
+from apibase import BaseArticleListView, BaseAPIPOSTView, BaseDataChangeCheckView
 from mono.models import Article, Site
-from objects import fill_list_article_object
+from objects import fill_list_article_object, fill_change_date_object
+from mono import cache
+
+import datetime
+import calendar
 
 class MainTimelineView(BaseArticleListView):
     """
@@ -63,3 +67,23 @@ class DailyReadTimelineView(BaseArticleListView):
             result.append(fill_list_article_object(article.id, article.title, article.site.title,
                 article.updated, article.first_image_url, article.is_fav))
         return result
+
+class TimelineCheckView(BaseDataChangeCheckView):
+    def __init__(self, is_daily_read_timeline=False, **kwargs):
+        super(TimelineCheckView, self).__init__()
+        self.is_daily_read_timeline = is_daily_read_timeline
+
+    def get_data(self):
+        if self.is_daily_read_timeline:
+            key = current_app.config['FAV_TIMELINE_UPDATE_CACHE_KEY']
+        else:
+            key = current_app.config['MAIN_TIMELINE_UPDATE_CACHE_KEY']
+        update = cache[key]
+        if update:
+            print "check timeline, update is not null"
+            return fill_change_date_object(update)
+        else:
+            print "check timeline, update is null"
+            now_timestamp = calendar.timegm(datetime.datetime.utcnow().utctimetuple())
+            return fill_change_date_object(now_timestamp)
+

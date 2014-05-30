@@ -65,3 +65,12 @@ def fill_category_object(category_id, name, is_un_classified):
         }
     """
     return dict(category_id=category_id, name=name, is_un_classified=is_un_classified)
+
+def fill_change_date_object(timestamp):
+    """
+    change date object:
+        {
+            timestamp: timestamp
+        }
+    """
+    return dict(timestamp=timestamp)

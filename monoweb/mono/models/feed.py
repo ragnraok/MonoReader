@@ -1,10 +1,12 @@
 from flask import current_app
 
+from mono import cache
 from mono.database import db
 from mono.feed import FeedDataFetcher
 from modelbase import ModelMixin, MonoQuery, FavArticleQuery, SiteQuery
 
 import datetime
+import calendar
 
 class Site(db.Model, ModelMixin):
     __tablename__ = 'site'
@@ -27,6 +29,7 @@ class Site(db.Model, ModelMixin):
     def update_site(self):
         data_fetcher = FeedDataFetcher(self.url, False)
         updated = data_fetcher.fetch_site_updated_time()
+        is_new_article = False
         if updated > self.updated or self.articles.count() == 0:
             #self.delete_all_articles()
             if self.title is None:
@@ -34,8 +37,10 @@ class Site(db.Model, ModelMixin):
             self.__update_articles_from_fetcher(data_fetcher)
             self.url = data_fetcher.url
             self.updated = updated
+            is_new_article = True
 
         self.save()
+        return is_new_article
 
     def __update_articles_from_fetcher(self, data_fetcher):
         articles_list = data_fetcher.fetch_articles()
@@ -110,6 +115,8 @@ class Article(db.Model, ModelMixin):
                     updated=self.updated, url=self.url, site_title=self.site.title,
                     first_image_url=self.first_image_url)
             fav_article.save()
+            now_timestamp = calendar.timegm(datetime.datetime.utcnow().utctimetuple())
+            cache[current_app.config['FAV_ARTICLE_LIST_UPDATE_CACHE_KEY']] = now_timestamp
             self.is_fav = True
             self.save()
 
@@ -163,6 +170,8 @@ class FavArticle(db.Model, ModelMixin):
         if article:
             article.is_fav = False
             article.save()
+        now_timestamp = calendar.timegm(datetime.datetime.utcnow().utctimetuple())
+        cache[current_app.config['FAV_ARTICLE_LIST_UPDATE_CACHE_KEY']] = now_timestamp
         super(FavArticle, self).delete()
 
 class TestModel(db.Model):

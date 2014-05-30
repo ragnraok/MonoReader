@@ -67,3 +67,9 @@ class BaseSiteListView(BaseAPIGETView):
 
     def get_sites(self, **kwargs):
         raise NotImplementedError()
+
+class BaseDataChangeCheckView(BaseAPIGETView):
+    def __init__(self):
+        super(BaseDataChangeCheckView, self).__init__()
+        self.data_key = 'change'
+

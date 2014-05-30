@@ -2,9 +2,13 @@ from flask import current_app
 from sqlalchemy.sql.expression import desc
 
 from utils import SITE_NOT_EXIST, ARTICLE_NOT_EXIST, PAGE_SMALL_THAN_ONE
-from objects import fill_article_object, fill_list_article_object
+from objects import fill_article_object, fill_list_article_object, fill_change_date_object
 from mono.models import Site, Article, FavArticle
-from apibase import BaseAPIGETView, BaseAPIPOSTView, BaseArticleListView
+from apibase import BaseAPIGETView, BaseAPIPOSTView, BaseArticleListView, BaseDataChangeCheckView
+from mono import cache
+
+import datetime
+import calendar
 
 class ArticleLoadView(BaseAPIGETView):
     def __init__(self, is_load_fav=False, **kwargs):
@@ -122,3 +126,15 @@ class FavArticleListView(BaseArticleListView):
                 article.site_title, article.updated, article.first_image_url,
                 True))
         return result
+
+class FavArticleListCheckView(BaseDataChangeCheckView):
+    def get_data(self):
+        key = current_app.config['FAV_ARTICLE_LIST_UPDATE_CACHE_KEY']
+        update = cache[key]
+        if update:
+            print "check fav article list, update is not null"
+            return fill_change_date_object(update)
+        else:
+            print "check fav article list, update is null"
+            now_timestamp = calendar.timegm(datetime.datetime.utcnow().utctimetuple())
+            return fill_change_date_object(now_timestamp)
