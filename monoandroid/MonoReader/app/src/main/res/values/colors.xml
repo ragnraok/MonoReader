@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="white">#FFFFFF</color>
-    <color name="timeline_item_withou_cover_select_bg">#AAE3E3E3</color>
+    <color name="timeline_item_without_cover_select_bg">#AAE3E3E3</color>
     <color name="ptr_progress_bar_color">#C4C4C4</color>
 
     <color name="timeline_item_color1">#EBEBEB</color>

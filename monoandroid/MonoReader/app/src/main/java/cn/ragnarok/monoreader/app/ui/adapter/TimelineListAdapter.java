@@ -240,6 +240,15 @@ public class TimelineListAdapter extends BaseAdapter {
 
             return;
         }
+        if (!mIsFling) {
+            boolean exist = BitmapDiskCache.getInstance(mContext).exist(imageView.getTag().toString());
+            if (exist) {
+                Bitmap bitmap = BitmapDiskCache.getInstance(mContext).get(imageView.getTag().toString());
+                imageView.setImageBitmap(bitmap);
+                return;
+            }
+        }
+
         ImageLoader.ImageListener imageListener = new ImageLoader.ImageListener() {
             @Override
             public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {

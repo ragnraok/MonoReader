@@ -200,6 +200,14 @@ public class ArticleActivity extends Activity {
             @Override
             public void onRequestFail(VolleyError error) {
                 Log.d(TAG, "fav set fail, error: " + error.toString() + ", articleId: " + mArticleId);
+                if (mIsFavArticle) {
+                    Toast.makeText(ArticleActivity.this, R.string.unfav_fail, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(ArticleActivity.this, R.string.fav_fail, Toast.LENGTH_SHORT).show();
+                }
+                mIsInFavProcess = false; 
+                initFavMenuItem();
+
             }
 
             @Override
