@@ -199,14 +199,26 @@ public class TimelineCache {
 
     public void clearMainTiemelineCache() {
         mMainTimelineMemCache.clear();
+        File[] mainTimelineCacheFile = mMainTimelineCacheDir.listFiles();
+        for (File f : mainTimelineCacheFile) {
+            f.delete();
+        }
     }
 
     public void clearFavTimelineCache() {
         mFavTimelineMemCache.clear();
+        File[] cacheFiles = mFavTimelineCacheDir.listFiles();
+        for (File f : cacheFiles) {
+            f.delete();
+        }
     }
 
     public void clearFavArticleListCache() {
         mFavTimelineMemCache.clear();
+        File[] cacheFiles = mFavArticleListCacheDir.listFiles();
+        for (File f : cacheFiles) {
+            f.delete();
+        }
     }
 
     public ArrayList<ListArticleObject> getMainTimeline() {

@@ -275,10 +275,10 @@ public class ArticleActivity extends Activity {
 
     private void loadArticleHtml() {
         if (mArticle != null) {
-            setProgressBarVisibility(false);
             mWebView.loadDataWithBaseURL(Utils.ASSET_DIR,
                     String.format(Utils.ARTICLE_HTML_FORMAT, mArticle.title, mArticle.site, mArticle.updated, mArticle.content),
                     "text/html", "UTF-8", null);
+            setProgressBarVisibility(false);
         }
     }
 
