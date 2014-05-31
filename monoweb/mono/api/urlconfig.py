@@ -6,8 +6,8 @@ def config_api_url():
     from timeline import MainTimelineView, DailyReadTimelineView, TimelineCheckView
     api_app.add_url_rule("/timeline/<int:page>/", view_func=MainTimelineView.as_view("timeline"))
     api_app.add_url_rule("/fav_site_timeline/<int:page>/", view_func=DailyReadTimelineView.as_view("daily_read_timeline"))
-    main_timeline_check_view = TimelineCheckView.as_view("timeline_check", is_read_daily=False)
-    fav_timeline_check_view = TimelineCheckView.as_view("fav_timeline_check", is_read_daily=True)
+    main_timeline_check_view = TimelineCheckView.as_view("timeline_check", is_daily_read_timeline=False)
+    fav_timeline_check_view = TimelineCheckView.as_view("fav_timeline_check", is_daily_read_timeline=True)
     api_app.add_url_rule("/timeline/check_update/", view_func=main_timeline_check_view)
     api_app.add_url_rule("/fav_site_timeline/check_update/", view_func=fav_timeline_check_view)
 

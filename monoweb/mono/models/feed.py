@@ -179,6 +179,7 @@ class FavArticle(db.Model, ModelMixin):
         cache[current_app.config['MAIN_TIMELINE_UPDATE_CACHE_KEY']] = now_timestamp
         site = Site.query.filter_by(title=self.site_title).first()
         if site is not None and site.is_read_daily:
+            print site
             cache[current_app.config['FAV_TIMELINE_UPDATE_CACHE_KEY']] = now_timestamp
         super(FavArticle, self).delete()
 
