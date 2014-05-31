@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
@@ -21,6 +22,7 @@ import cn.ragnarok.monoreader.api.base.APIRequestFinishListener;
 import cn.ragnarok.monoreader.api.object.ArticleObject;
 import cn.ragnarok.monoreader.api.service.ArticleService;
 import cn.ragnarok.monoreader.app.R;
+import cn.ragnarok.monoreader.app.cache.ArticleContentCache;
 import cn.ragnarok.monoreader.app.ui.view.ScrollableWebView;
 import cn.ragnarok.monoreader.app.util.Utils;
 
@@ -53,6 +55,10 @@ public class ArticleActivity extends Activity {
 
     public static final int FAV_SET = 1;
 
+    private ArticleContentCache mArticleContentCache = null;
+    private Handler mHandler = new Handler();
+    private Handler mUiHandler = new Handler(Looper.getMainLooper());
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +80,7 @@ public class ArticleActivity extends Activity {
 
         setProgressBarIndeterminate(true);
 
+        mArticleContentCache = ArticleContentCache.getInstance(this);
 
         initWebViewSetting();
         initRequestListener();
@@ -178,8 +185,14 @@ public class ArticleActivity extends Activity {
 
             @Override
             public void onGetResult(ArticleObject result) {
-                setProgressBarVisibility(false);
                 mArticle = result;
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mArticleContentCache.putArticle(mArticle, mIsFromFavArticleList);
+                    }
+                });
+
                 mIsFavArticle = mArticle.isFav;
                 Log.d(TAG, "finish load article , isFav: " + mArticle.isFav);
                 initFavMenuItem();
@@ -192,6 +205,13 @@ public class ArticleActivity extends Activity {
             public void onRequestSuccess() {
                 mIsInFavProcess = false;
                 mIsFavArticle = !mIsFavArticle;
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mArticleContentCache.updateArticleFav(mArticleId, mIsFavArticle, mIsFromFavArticleList);
+                    }
+                });
+
                 setFavResult();
                 Log.d(TAG, "fav set success");
 
@@ -228,15 +248,34 @@ public class ArticleActivity extends Activity {
         if (mArticleId != -1) {
             setProgressBarVisibility(true);
             if (mIsFromFavArticleList) {
-                mArticleService.loadFavArticle(mArticleId, mLoadArticleListener);
+                mArticle = mArticleContentCache.getArticle(mArticleId, mIsFromFavArticleList);
+                if (mArticle != null) {
+                    mIsFavArticle = mArticle.isFav;
+                    Log.d(TAG, "load article from cache, mIsFavArticle: " + mIsFavArticle);
+                    initFavMenuItem();
+                    loadArticleHtml();
+                } else {
+                    mArticleService.loadFavArticle(mArticleId, mLoadArticleListener);
+                }
             } else {
-                mArticleService.loadArticle(mArticleId, mLoadArticleListener);
+                mArticle = mArticleContentCache.getArticle(mArticleId, mIsFromFavArticleList);
+                if (mArticle != null) {
+                    mIsFavArticle = mArticle.isFav;
+                    Log.d(TAG, "load article from cache, mIsFavArticle: " + mIsFavArticle);
+
+                    initFavMenuItem();
+                    loadArticleHtml();
+                } else {
+                    mArticleService.loadArticle(mArticleId, mLoadArticleListener);
+                }
+
             }
         }
     }
 
     private void loadArticleHtml() {
         if (mArticle != null) {
+            setProgressBarVisibility(false);
             mWebView.loadDataWithBaseURL(Utils.ASSET_DIR,
                     String.format(Utils.ARTICLE_HTML_FORMAT, mArticle.title, mArticle.site, mArticle.updated, mArticle.content),
                     "text/html", "UTF-8", null);
@@ -245,6 +284,7 @@ public class ArticleActivity extends Activity {
 
     private void initFavMenuItem() {
         if (mFavItem != null) {
+            Log.d(TAG, "initFavMenuItem, favItem is not null");
             if (mIsFavArticle) {
                 mFavItem.setIcon(R.drawable.ic_rating_important);
             } else {
@@ -259,7 +299,7 @@ public class ArticleActivity extends Activity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.article, menu);
         mFavItem = menu.findItem(R.id.action_fav_article);
-        //initFavMenuItem();
+        initFavMenuItem();
         return true;
     }
 

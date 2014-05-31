@@ -9,7 +9,7 @@ def config_api_url():
     main_timeline_check_view = TimelineCheckView.as_view("timeline_check", is_read_daily=False)
     fav_timeline_check_view = TimelineCheckView.as_view("fav_timeline_check", is_read_daily=True)
     api_app.add_url_rule("/timeline/check_update/", view_func=main_timeline_check_view)
-    api_app.add_url_rule("/fav_site_timeline/check_update", view_func=fav_timeline_check_view)
+    api_app.add_url_rule("/fav_site_timeline/check_update/", view_func=fav_timeline_check_view)
 
     from site import SiteArticleListView, SitesListView, FavSiteSetView
     site_article_listview = SiteArticleListView.as_view('site_article_list')
