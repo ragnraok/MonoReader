@@ -216,7 +216,7 @@ public class TimelineCache {
     }
 
     public void clearFavArticleListCache() {
-        mFavTimelineMemCache.clear();
+        mFavArticleListMemCache.clear();
         File[] cacheFiles = mFavArticleListCacheDir.listFiles();
         for (File f : cacheFiles) {
             f.delete();

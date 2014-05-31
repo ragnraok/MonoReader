@@ -93,7 +93,8 @@ class ArticleFavSetView(BaseAPIPOSTView):
                 else:
                     raise ValueError(ARTICLE_NOT_EXIST)
             print fav_article
-            fav_article.delete()
+            if fav_article:
+                fav_article.delete()
 
 class FavArticleListView(BaseArticleListView):
     """
