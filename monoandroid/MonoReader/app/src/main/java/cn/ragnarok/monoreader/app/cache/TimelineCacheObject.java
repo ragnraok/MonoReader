@@ -10,7 +10,7 @@ import cn.ragnarok.monoreader.api.object.ListArticleObject;
  * Created by ragnarok on 14-5-31.
  */
 public class TimelineCacheObject {
-    public int page;
+    public int lastpage;
     public ListArticleObject[] articles;
 
     @Override

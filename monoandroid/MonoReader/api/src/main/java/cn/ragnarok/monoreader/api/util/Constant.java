@@ -15,6 +15,8 @@ public class Constant {
         public static final String API_PREFIX = "api/";
         public static final String MAIN_TIMELINE = API_PREFIX + "timeline/%d/";
         public static final String FAV_TIMELINE = API_PREFIX + "fav_site_timeline/%d/";
+        public static final String MAIN_TIMELINE_CHECK_UPDATE = API_PREFIX + "timeline/check_update/";
+        public static final String FAV_TIMELINE_CHECK_UPDATE = API_PREFIX + "fav_site_timeline/check_update/";
 
 
         public static final String LOAD_ARTICLE = API_PREFIX + "article/load/%d/";
@@ -23,6 +25,7 @@ public class Constant {
         public static final String LOAD_FAV_ARTICLE_LIST = API_PREFIX + "article/fav_list/%d/";
         public static final String FAV_ARTICLE = API_PREFIX + "article/fav/";
         public static final String UNFAV_ARTICLE = API_PREFIX + "article/unfav/";
+        public static final String FAV_ARTICLE_LIST_CHECK_UPDATE = API_PREFIX + "article/fav_list/check_update/";
 
         public static final String SUBSCRIBE = API_PREFIX + "subscribe/";
         public static final String UNSUBSCRIBE = API_PREFIX + "unsubscribe/";

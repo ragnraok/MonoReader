@@ -80,10 +80,8 @@ class TimelineCheckView(BaseDataChangeCheckView):
             key = current_app.config['MAIN_TIMELINE_UPDATE_CACHE_KEY']
         update = cache[key]
         if update:
-            print "check timeline, update is not null"
             return fill_change_date_object(update)
         else:
-            print "check timeline, update is null"
             now_timestamp = calendar.timegm(datetime.datetime.utcnow().utctimetuple())
             return fill_change_date_object(now_timestamp)
 

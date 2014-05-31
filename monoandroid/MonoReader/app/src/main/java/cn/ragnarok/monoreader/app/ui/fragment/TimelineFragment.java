@@ -26,14 +26,18 @@ import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import cn.ragnarok.monoreader.api.base.APIRequestFinishListener;
 import cn.ragnarok.monoreader.api.object.ArticleObject;
+import cn.ragnarok.monoreader.api.object.ChangeDateObject;
 import cn.ragnarok.monoreader.api.object.ListArticleObject;
 import cn.ragnarok.monoreader.api.service.ArticleService;
 import cn.ragnarok.monoreader.api.service.TimeLineService;
 import cn.ragnarok.monoreader.app.R;
+import cn.ragnarok.monoreader.app.cache.TimelineCache;
 import cn.ragnarok.monoreader.app.ui.activity.ArticleActivity;
 import cn.ragnarok.monoreader.app.ui.activity.MainActivity;
 import cn.ragnarok.monoreader.app.ui.adapter.TimelineListAdapter;
@@ -59,6 +63,7 @@ public class TimelineFragment extends Fragment {
     private TimeLineService mTimelineService;
     private ArticleService mArticleService;
     private APIRequestFinishListener<Collection<ListArticleObject>> mRequestFinishListener;
+    private APIRequestFinishListener<ChangeDateObject> mDataChangeReuqestFinishListener;
     private TimelineListAdapter mTimelineAdapter;
     private PullToRefreshLayout mPullToRefreshLayout;
 
@@ -67,6 +72,14 @@ public class TimelineFragment extends Fragment {
     private boolean mIsLoadingMore;
 
     private boolean mIsInFavArticle;
+
+    private TimelineCache mTimelineCache;
+    private int mMainTimeCacheLastPage = 1;
+    private int mFavTimelineCacheLastPage = 1;
+    private int mFavArticleListCacheLastPage = 1;
+    private boolean mIsNeedToFlushMainTimeline = false;
+    private boolean mIsNeedToFlushFavTimeline = false;
+    private boolean mIsNeedToFlushFavArticleList = false;
 
     public static TimelineFragment newInstance(boolean isFavTimeline) {
         TimelineFragment fragment = new TimelineFragment();
@@ -85,6 +98,7 @@ public class TimelineFragment extends Fragment {
         mIsLoadingMore = false;
         mIsInFavArticle = false;
 
+
     }
 
     public void setIsFavTimeline(boolean isFav) {
@@ -95,7 +109,7 @@ public class TimelineFragment extends Fragment {
     }
 
     private void resetTimeline() {
-        mPage = 1;
+        initPageFromCache();
         mIsLastPage = false;
         mIsLoadingMore = false;
         mIsInFavArticle = false;
@@ -106,7 +120,13 @@ public class TimelineFragment extends Fragment {
     }
 
     private void pullFavArticles() {
-        mPage = 1;
+        initPageFromCache();
+        if (!Utils.isNetworkConnected(getActivity())) {
+            Toast.makeText(getActivity(), R.string.connection_failed, Toast.LENGTH_SHORT).show();
+            loadTimelineFramCache();
+            mPullToRefreshLayout.setRefreshComplete();
+            return;
+        }
         mIsLastPage = false;
         mIsLoadingMore = false;
         mIsInFavArticle = true;
@@ -116,7 +136,8 @@ public class TimelineFragment extends Fragment {
         mTimelineAdapter.clearData();
         mPullToRefreshLayout.setRefreshing(true);
         mTimelineList.smoothScrollToPosition(0);
-        mArticleService.loadFavArticleList(mPage, mRequestFinishListener);
+//        mArticleService.loadFavArticleList(mPage, mRequestFinishListener);
+        mArticleService.favArticldListUpdateCheck(mDataChangeReuqestFinishListener);
     }
 
     @Override
@@ -131,38 +152,130 @@ public class TimelineFragment extends Fragment {
         }
 
         if (mRequestFinishListener == null) {
-            mRequestFinishListener = new APIRequestFinishListener<Collection<ListArticleObject>>() {
-                @Override
-                public void onRequestSuccess() {
-                    mPullToRefreshLayout.setRefreshComplete();
-                    mTimelineAdapter.setLoadingMore(false);
-                }
-
-                @Override
-                public void onRequestFail(VolleyError error) {
-                    Log.d(TAG, "request faliled, " + error.toString());
-                    mPullToRefreshLayout.setRefreshComplete();
-                    Toast.makeText(getActivity(), R.string.connection_failed, Toast.LENGTH_SHORT).show();
-                }
-
-                @Override
-                public void onGetResult(Collection<ListArticleObject> result) {
-                    Log.d(TAG, "result.size=" + result.size());
-
-                    if (result.size() == 0) {
-                        mIsLastPage = true;
-                    }
-                    mTimelineAdapter.appendData(result);
-                    mIsLoadingMore = false;
-                    if (mTimelineList.getVisibility() == View.GONE) {
-                        mTimelineList.setVisibility(View.VISIBLE);
-                        mLoadingProgress.setVisibility(View.GONE);
-                    }
-                }
-            };
+            initTimelineRequestListener();
         }
 
+        if (mDataChangeReuqestFinishListener == null) {
+            initDataChangeRequestListener();
+        }
+
+
         initSpinner();
+    }
+
+    private void initTimelineRequestListener() {
+        mRequestFinishListener = new APIRequestFinishListener<Collection<ListArticleObject>>() {
+            @Override
+            public void onRequestSuccess() {
+                mPullToRefreshLayout.setRefreshComplete();
+                mTimelineAdapter.setLoadingMore(false);
+            }
+
+            @Override
+            public void onRequestFail(VolleyError error) {
+                Log.d(TAG, "request faliled, " + error.toString());
+                mPullToRefreshLayout.setRefreshComplete();
+                Toast.makeText(getActivity(), R.string.connection_failed, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onGetResult(Collection<ListArticleObject> result) {
+                Log.d(TAG, "result.size=" + result.size());
+
+                if (result.size() == 0) {
+                    mIsLastPage = true;
+                }
+                mTimelineAdapter.appendData(result);
+                if (mIsInFavArticle) {
+                    mTimelineCache.putFavArticleListCache(result, mPage);
+                    mIsNeedToFlushFavArticleList = true;
+                } else if (mIsFavTimeline) {
+                    mTimelineCache.putFavTimelineCache(result, mPage);
+                    mIsNeedToFlushFavTimeline = true;
+                } else {
+                    mTimelineCache.putMainTimelineCache(result, mPage);
+                    mIsNeedToFlushMainTimeline = true;
+                }
+
+                mIsLoadingMore = false;
+                if (mTimelineList.getVisibility() == View.GONE) {
+                    mTimelineList.setVisibility(View.VISIBLE);
+                    mLoadingProgress.setVisibility(View.GONE);
+                }
+            }
+        };
+    }
+
+    private void initDataChangeRequestListener() {
+        mDataChangeReuqestFinishListener = new APIRequestFinishListener<ChangeDateObject>() {
+            @Override
+            public void onRequestSuccess() {
+
+            }
+
+            @Override
+            public void onRequestFail(VolleyError error) {
+                Log.d(TAG, "dataChangeRequest fail, erro: " + error.toString());
+                boolean isSuccess = loadTimelineFramCache();
+                if (!isSuccess) {
+                    mPage = 1;
+                    if (mIsInFavArticle) {
+                        mArticleService.loadFavArticleList(mPage, mRequestFinishListener);
+                    } else if (mIsFavTimeline) {
+                        mTimelineService.favTimeline(mPage, mRequestFinishListener);
+                    } else {
+                        mTimelineService.mainTimeline(mPage, mRequestFinishListener);
+                    }
+                } else {
+                    mPullToRefreshLayout.setRefreshComplete();
+                }
+
+            }
+
+            @Override
+            public void onGetResult(ChangeDateObject result) {
+                long timestamp = result.timestamp;
+                long lastUpdateTimestamp = 0;
+                if (mIsInFavArticle) {
+                    lastUpdateTimestamp = mTimelineCache.getFavArticleListLastUpdate();
+                } else if (mIsFavTimeline) {
+                    lastUpdateTimestamp = mTimelineCache.getFavTimelineLastUpdate();
+                } else {
+                    lastUpdateTimestamp = mTimelineCache.getMainTimelineLastUpdate();
+                }
+                Log.d(TAG, "dataChangeRequest, lastUpdateTimestamp: " + lastUpdateTimestamp + ", newTimestamp: " + timestamp);
+                if (timestamp > lastUpdateTimestamp) {
+                    mPage = 1;
+                    if (mIsInFavArticle) {
+                        mTimelineCache.clearFavArticleListCache();
+                        mTimelineCache.setFavArticleListLastUpdate(timestamp);
+                        mArticleService.loadFavArticleList(mPage, mRequestFinishListener);
+                    } else if (mIsFavTimeline) {
+                        mTimelineCache.clearFavTimelineCache();
+                        mTimelineCache.setFavTimelineLastUpdate(timestamp);
+                        mTimelineService.favTimeline(mPage, mRequestFinishListener);
+                    } else {
+                        mTimelineCache.clearMainTiemelineCache();
+                        mTimelineCache.setMainTimelineLastUpdate(timestamp);
+                        mTimelineService.mainTimeline(mPage, mRequestFinishListener);
+                    }
+                } else {
+                    boolean isSuccess = loadTimelineFramCache();
+                    if (!isSuccess) {
+                        mPage = 1;
+                        if (mIsInFavArticle) {
+                            mArticleService.loadFavArticleList(mPage, mRequestFinishListener);
+                        } else if (mIsFavTimeline) {
+                            mTimelineService.favTimeline(mPage, mRequestFinishListener);
+                        } else {
+                            mTimelineService.mainTimeline(mPage, mRequestFinishListener);
+                        }
+                    } else {
+                        mPullToRefreshLayout.setRefreshComplete();
+                    }
+                }
+            }
+        };
     }
 
     private void initSpinner() {
@@ -283,19 +396,77 @@ public class TimelineFragment extends Fragment {
         }
     }
 
+    private boolean loadTimelineFramCache() {
+        mTimelineAdapter.clearData();
+        ArrayList<ListArticleObject> articles;
+        if (mIsInFavArticle) {
+            articles = mTimelineCache.getFavArticleList();
+            mPage = mFavArticleListCacheLastPage;
+        }
+        else if (mIsFavTimeline) {
+            articles = mTimelineCache.getFavTimeline();
+            mPage = mFavTimelineCacheLastPage;
+        } else {
+            articles = mTimelineCache.getMainTimeline();
+            mPage = mMainTimeCacheLastPage;
+        }
+        boolean result = false;
+        if (articles.size() > 0) {
+            mTimelineAdapter.appendData(articles);
+            result = true;
+        }
+        Log.d(TAG, "loadTimelineFromCache, mPage: " + mPage + ", articles.size: " + articles.size());
+        mTimelineList.setVisibility(View.VISIBLE);
+        mLoadingProgress.setVisibility(View.GONE);
+        //mPullToRefreshLayout.setRefreshComplete();
+        return result;
+    }
+
+    private ArrayList<ListArticleObject> getTimelineFromCache() {
+        ArrayList<ListArticleObject> articles;
+        if (mIsInFavArticle) {
+            articles = mTimelineCache.getFavArticleList();
+        }
+        else if (mIsFavTimeline) {
+            articles = mTimelineCache.getFavTimeline();
+        } else {
+            articles = mTimelineCache.getMainTimeline();
+        }
+        return articles;
+    }
+
+    private void initPageFromCache() {
+        if (mIsInFavArticle) {
+            mPage = mFavArticleListCacheLastPage;
+        }
+        else if (mIsFavTimeline) {
+            mPage = mFavTimelineCacheLastPage;
+        } else {
+            mPage = mMainTimeCacheLastPage;
+        }
+    }
+
     private void pullTimeline() {
+        mPullToRefreshLayout.setRefreshing(true);
         if (!Utils.isNetworkConnected(getActivity())) {
             Toast.makeText(getActivity(), R.string.connection_failed, Toast.LENGTH_SHORT).show();
+            loadTimelineFramCache();
+            mPullToRefreshLayout.setRefreshComplete();
+            return;
         }
         mTimelineList.setVisibility(View.GONE);
         mLoadingProgress.setVisibility(View.VISIBLE);
         mTimelineAdapter.clearData();
-        mPullToRefreshLayout.setRefreshing(true);
         if (mIsFavTimeline) {
-            mTimelineService.favTimeline(mPage, mRequestFinishListener);
+            mTimelineService.favTimelineUpdateCheck(mDataChangeReuqestFinishListener);
         } else {
-            mTimelineService.mainTimeline(mPage, mRequestFinishListener);
+            mTimelineService.mainTimelineUpdateCheck(mDataChangeReuqestFinishListener);
         }
+//        if (mIsFavTimeline) {
+//            mTimelineService.favTimeline(mPage, mRequestFinishListener);
+//        } else {
+//            mTimelineService.mainTimeline(mPage, mRequestFinishListener);
+//        }
     }
 
     private void loadMoreTimeline() {
@@ -331,7 +502,8 @@ public class TimelineFragment extends Fragment {
                 listener(new OnRefreshListener() {
             @Override
             public void onRefreshStarted(View view) {
-                mPage = 1;
+//                mPage = 1;
+                initPageFromCache();
                 mIsLastPage = false;
                 if (mIsInFavArticle) {
                     pullFavArticles();
@@ -348,8 +520,30 @@ public class TimelineFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         Log.d(TAG, "onAttach");
+        mTimelineCache = TimelineCache.getInstance(activity);
+        mMainTimeCacheLastPage = mTimelineCache.getMainTimelineCacheLastPage();
+        mFavTimelineCacheLastPage = mTimelineCache.getFavTimelineLastPage();
+        mFavArticleListCacheLastPage = mTimelineCache.getFavArticleListLastPage();
+        mTimelineCache.init();
 
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        //mTimelineCache.flushCacheToDisk();
     }
 
     @Override
@@ -357,6 +551,18 @@ public class TimelineFragment extends Fragment {
         super.onDetach();
         Log.d(TAG, "onDetach");
         mTimelineService.cancelRequest();
+        if (mIsNeedToFlushMainTimeline) {
+            mTimelineCache.flushMainTimelineCacheToDisk();
+            mIsNeedToFlushMainTimeline = false;
+        }
+        if (mIsNeedToFlushFavTimeline) {
+            mTimelineCache.flushFavTimelineCacheToDisk();
+            mIsNeedToFlushFavTimeline = false;
+        }
+        if (mIsNeedToFlushFavArticleList) {
+            mTimelineCache.flushFavArticleListCacheToDisk();
+            mIsNeedToFlushFavArticleList = false;
+        }
     }
 
     @Override

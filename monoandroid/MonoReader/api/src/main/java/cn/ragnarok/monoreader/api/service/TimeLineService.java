@@ -14,6 +14,7 @@ import cn.ragnarok.monoreader.api.base.APIRequestFinishListener;
 import cn.ragnarok.monoreader.api.base.APIResultListener;
 import cn.ragnarok.monoreader.api.base.BaseAPIGetRequest;
 import cn.ragnarok.monoreader.api.base.BaseAPIService;
+import cn.ragnarok.monoreader.api.object.ChangeDateObject;
 import cn.ragnarok.monoreader.api.object.ListArticleObject;
 import cn.ragnarok.monoreader.api.util.Constant;
 
@@ -24,7 +25,7 @@ import cn.ragnarok.monoreader.api.util.Constant;
 public class TimeLineService extends BaseAPIService {
     public static final String API_TAG = "TimeLine";
     private static final String DATA_KEY = "articles";
-
+    private static final String CHECK_UPDATE_DATA_KEY = "change";
 
     /**
      *
@@ -61,6 +62,28 @@ public class TimeLineService extends BaseAPIService {
         BaseAPIGetRequest timelineRequest = new BaseAPIGetRequest(url, DATA_KEY, resultType, requestFinishListener);
         timelineRequest.get().setTag(API_TAG);
         APIService.getInstance().queueJob(timelineRequest.get());
+    }
+
+    public void mainTimelineUpdateCheck(APIRequestFinishListener<ChangeDateObject> requestFinishListener) {
+        timelineCheckInternal(false, requestFinishListener);
+    }
+
+    public void favTimelineUpdateCheck(APIRequestFinishListener<ChangeDateObject> requestFinishListener) {
+        timelineCheckInternal(true, requestFinishListener);
+    }
+
+    private void timelineCheckInternal(boolean isFav, APIRequestFinishListener<ChangeDateObject> requestFinishListener) {
+        String url = null;
+        if (isFav) {
+            url = APIService.getInstance().createURL(Constant.URL.FAV_TIMELINE_CHECK_UPDATE);
+        } else {
+            url = APIService.getInstance().createURL(Constant.URL.MAIN_TIMELINE_CHECK_UPDATE);
+        }
+
+        Type resultType = new TypeToken<ChangeDateObject>(){}.getType();
+        BaseAPIGetRequest request = new BaseAPIGetRequest(url, CHECK_UPDATE_DATA_KEY, resultType, requestFinishListener);
+        request.get().setTag(API_TAG);
+        APIService.getInstance().queueJob(request.get());
     }
 
     @Override

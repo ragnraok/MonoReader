@@ -13,6 +13,7 @@ import cn.ragnarok.monoreader.api.base.BaseAPIGetRequest;
 import cn.ragnarok.monoreader.api.base.BaseAPIPostRequest;
 import cn.ragnarok.monoreader.api.base.BaseAPIService;
 import cn.ragnarok.monoreader.api.object.ArticleObject;
+import cn.ragnarok.monoreader.api.object.ChangeDateObject;
 import cn.ragnarok.monoreader.api.object.ListArticleObject;
 import cn.ragnarok.monoreader.api.util.Constant;
 
@@ -23,6 +24,7 @@ public class ArticleService extends BaseAPIService {
     public static final String API_TAG = "Article";
     public static final String ARTICLE_OBJECT_DATA_KEY = "article";
     public static final String ARTICLE_LIST_DATA_KEY = "articles";
+    public static final String UPDATE_CHECK_DATA_KEY = "change";
 
     public void loadArticle(int articleId, final APIRequestFinishListener<ArticleObject> requestFinishListener) {
         loaddArticleInternal(articleId, requestFinishListener, false);
@@ -64,6 +66,16 @@ public class ArticleService extends BaseAPIService {
 
         Type resultType = new TypeToken<Collection<ListArticleObject>>() {}.getType();
         BaseAPIGetRequest request = new BaseAPIGetRequest(url, ARTICLE_LIST_DATA_KEY, resultType, requestFinishListener);
+
+        request.get().setTag(API_TAG);
+        APIService.getInstance().queueJob(request.get());
+    }
+
+    public void favArticldListUpdateCheck(APIRequestFinishListener<ChangeDateObject> requestFinishListener) {
+        String url = APIService.getInstance().createURL(Constant.URL.FAV_ARTICLE_LIST_CHECK_UPDATE);
+
+        Type resultType = new TypeToken<ChangeDateObject>() {}.getType();
+        BaseAPIGetRequest request = new BaseAPIGetRequest(url, UPDATE_CHECK_DATA_KEY, resultType, requestFinishListener);
 
         request.get().setTag(API_TAG);
         APIService.getInstance().queueJob(request.get());
