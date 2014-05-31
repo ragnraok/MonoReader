@@ -9,6 +9,7 @@ import com.android.volley.toolbox.Volley;
 
 import cn.ragnarok.monoreader.api.service.APIService;
 import cn.ragnarok.monoreader.app.cache.BitmapDiskCache;
+import cn.ragnarok.monoreader.app.util.Utils;
 
 /**
  * Created by ragnarok on 14-5-25.
@@ -26,6 +27,9 @@ public class MonoApplication extends Application {
 
         BitmapDiskCache.init(this, MAX_CACHE_ITEM_NUM);
 
+        if (Utils.applicationContext == null) {
+            Utils.applicationContext = this;
+        }
     }
 
     @Override

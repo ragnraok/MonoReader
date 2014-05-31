@@ -37,6 +37,7 @@ import cn.ragnarok.monoreader.api.object.ListArticleObject;
 import cn.ragnarok.monoreader.api.service.ArticleService;
 import cn.ragnarok.monoreader.api.service.TimeLineService;
 import cn.ragnarok.monoreader.app.R;
+import cn.ragnarok.monoreader.app.base.MonoApplication;
 import cn.ragnarok.monoreader.app.cache.TimelineCache;
 import cn.ragnarok.monoreader.app.ui.activity.ArticleActivity;
 import cn.ragnarok.monoreader.app.ui.activity.MainActivity;
@@ -98,7 +99,16 @@ public class TimelineFragment extends Fragment {
         mIsLoadingMore = false;
         mIsInFavArticle = false;
 
+        mTimelineCache = TimelineCache.getInstance(Utils.applicationContext);
+        mTimelineCache.init();
+        initCachePage();
 
+    }
+
+    private void initCachePage() {
+        mMainTimeCacheLastPage = mTimelineCache.getMainTimelineCacheLastPage();
+        mFavTimelineCacheLastPage = mTimelineCache.getFavTimelineLastPage();
+        mFavArticleListCacheLastPage = mTimelineCache.getFavArticleListLastPage();
     }
 
     public void setIsFavTimeline(boolean isFav) {
@@ -520,11 +530,7 @@ public class TimelineFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         Log.d(TAG, "onAttach");
-        mTimelineCache = TimelineCache.getInstance(activity);
-        mMainTimeCacheLastPage = mTimelineCache.getMainTimelineCacheLastPage();
-        mFavTimelineCacheLastPage = mTimelineCache.getFavTimelineLastPage();
-        mFavArticleListCacheLastPage = mTimelineCache.getFavArticleListLastPage();
-        mTimelineCache.init();
+
 
     }
 

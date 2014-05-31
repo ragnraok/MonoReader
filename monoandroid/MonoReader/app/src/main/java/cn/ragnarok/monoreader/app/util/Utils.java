@@ -78,4 +78,7 @@ public class Utils {
             "-->\n" +
             "  </body>\n" +
             "</html>\n";
+
+
+    public static Context applicationContext;
 }

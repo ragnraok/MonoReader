@@ -203,6 +203,7 @@ public class TimelineCache {
         for (File f : mainTimelineCacheFile) {
             f.delete();
         }
+        mMainTimelinePage = 1;
     }
 
     public void clearFavTimelineCache() {
@@ -211,6 +212,7 @@ public class TimelineCache {
         for (File f : cacheFiles) {
             f.delete();
         }
+        mFavTimelinePage = 1;
     }
 
     public void clearFavArticleListCache() {
@@ -219,6 +221,7 @@ public class TimelineCache {
         for (File f : cacheFiles) {
             f.delete();
         }
+        mFavArticleListPage = 1;
     }
 
     public ArrayList<ListArticleObject> getMainTimeline() {
