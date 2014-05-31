@@ -1,31 +1,22 @@
 package cn.ragnarok.monoreader.app.cache;
 
 import android.content.Context;
-import android.util.Base64;
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import cn.ragnarok.monoreader.api.object.ListArticleObject;
 
@@ -42,10 +33,6 @@ public class TimelineCache {
     private File mMainTimelineCacheDir = null;
     private File mFavTimelineCacheDir = null;
     private File mFavArticleListCacheDir = null;
-
-//    private Map<Integer, ArrayList<ListArticleObject>> mMainTimelineMemCache;
-//    private Map<Integer, ArrayList<ListArticleObject>> mFavTimelineMemCache;
-//    private Map<Integer, ArrayList<ListArticleObject>> mFavArticleListMemCache;
 
     private ArrayList<ListArticleObject> mMainTimelineMemCache;
     private ArrayList<ListArticleObject> mFavTimelineMemCache;
@@ -146,9 +133,6 @@ public class TimelineCache {
 
     public void putMainTimelineCache(Collection<ListArticleObject> newData, int page) {
         synchronized (mMainTimelineMemCache) {
-//            ArrayList<ListArticleObject> data = new ArrayList<ListArticleObject>();
-//            data.addAll(newData);
-//            mMainTimelineMemCache.put(page, data);
             Log.d(TAG, "putMainTimelineCache, newData.size: " + newData.size() + ", page: " + page);
             mMainTimelineMemCache.addAll(newData);
             mMainTimelinePage = page;
@@ -157,9 +141,6 @@ public class TimelineCache {
 
     public void putFavTimelineCache(Collection<ListArticleObject> newData, int page) {
         synchronized (mFavTimelineMemCache) {
-//            ArrayList<ListArticleObject> data = new ArrayList<ListArticleObject>();
-//            data.addAll(newData);
-//            mFavTimelineMemCache.put(page, data);
             Log.d(TAG, "putFavTimelineCache, newData.size: " + newData.size() + ", page: " + page);
             mFavTimelineMemCache.addAll(newData);
             mFavTimelinePage = page;
@@ -168,9 +149,6 @@ public class TimelineCache {
 
     public void putFavArticleListCache(Collection<ListArticleObject> newData, int page) {
         synchronized (mFavArticleListMemCache) {
-//            ArrayList<ListArticleObject> data = new ArrayList<ListArticleObject>();
-//            data.addAll(newData);
-//            mFavArticleListMemCache.put(page, data);
             Log.d(TAG, "putFavArticleListCache, newData.size: " + newData.size() + ", page: " + page);
             mFavArticleListMemCache.addAll(newData);
             mFavArticleListPage = page;
