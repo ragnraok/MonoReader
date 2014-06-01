@@ -134,8 +134,8 @@ public class ArticleActivity extends Activity {
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
 //                    Log.d(TAG, "send immersive message");
-                    mWebViewClickHandler.removeMessages(CLICK_DELAY_MESSAGE);
-                    mWebViewClickHandler.sendEmptyMessageDelayed(CLICK_DELAY_MESSAGE, CLICK_TIMEOUT);
+//                    mWebViewClickHandler.removeMessages(CLICK_DELAY_MESSAGE);
+//                    mWebViewClickHandler.sendEmptyMessageDelayed(CLICK_DELAY_MESSAGE, CLICK_TIMEOUT);
                 }
 
                 return false;

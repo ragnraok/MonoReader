@@ -17,7 +17,7 @@ import cn.ragnarok.monoreader.app.util.Utils;
 public class MonoApplication extends Application {
 
     private static final String TAG = "Mono.MonoApplication";
-    private static final int MAX_CACHE_ITEM_NUM = 20;
+    private static final int MAX_CACHE_ITEM_NUM = 40;
 
     @Override
     public void onCreate() {

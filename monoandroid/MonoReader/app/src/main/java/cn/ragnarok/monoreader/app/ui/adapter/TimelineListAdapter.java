@@ -21,6 +21,7 @@ import com.android.volley.toolbox.ImageLoader;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import cn.ragnarok.monoreader.api.object.ListArticleObject;
@@ -282,6 +283,7 @@ public class TimelineListAdapter extends BaseAdapter {
             }
         };
         mImageLoader.get(url, imageListener);
+
     }
 
     private class ViewHolder {

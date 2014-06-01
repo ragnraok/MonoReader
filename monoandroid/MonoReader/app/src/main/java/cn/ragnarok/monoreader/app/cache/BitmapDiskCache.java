@@ -3,6 +3,8 @@ package cn.ragnarok.monoreader.app.cache;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.util.Log;
 import android.util.LruCache;
 
@@ -14,6 +16,7 @@ import java.lang.ref.SoftReference;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by ragnarok on 14-5-26.
@@ -22,14 +25,17 @@ public class BitmapDiskCache {
 
     public static final String TAG = "Mono.BitmapDiskCache";
     private static final int BUFFER_SIZE = 1024;
-    private static final int MAX_KEY_LENGTH = 64;
+    private static final int MAX_KEY_LENGTH = 128;
     private static final String CACHE_DIR = "MonoImageCache";
     private static int MAX_CACHE_SIZE = 20;
     private File mCacheDir;
-    private HashMap<String, String> mCacheMap; // key, file
+
+    private ConcurrentHashMap<String, String> mCacheMap; // key, file
     private LruCache<String, SoftReference<Bitmap>> mInMemoryCache; // url, bitmap, speed up
 
     private static BitmapDiskCache mInstance = null;
+    private HandlerThread mPutCacheThread = new HandlerThread("cache", Thread.MIN_PRIORITY);
+    private Handler mPutCacheHandler = null;
 
     public static BitmapDiskCache getInstance(Context context) {
         if (mInstance == null) {
@@ -49,7 +55,7 @@ public class BitmapDiskCache {
     private BitmapDiskCache(Context context) {
 
         mCacheDir = new File(context.getExternalFilesDir(CACHE_DIR).getPath());
-        mCacheMap = new HashMap<String, String>();
+        mCacheMap = new ConcurrentHashMap<String, String>();
 
         // put all exist cache
         File[] allCahce = mCacheDir.listFiles();
@@ -58,6 +64,9 @@ public class BitmapDiskCache {
         }
 
         mInMemoryCache = new LruCache<String, SoftReference<Bitmap>>(MAX_CACHE_SIZE);
+
+        mPutCacheThread.start();
+        mPutCacheHandler = new Handler(mPutCacheThread.getLooper());
 
     }
 
@@ -87,30 +96,43 @@ public class BitmapDiskCache {
         return key;
     }
 
-    public void put(String url, Bitmap bitmap) {
-        if (bitmap != null) {
-            String key = getKey(url);
+    public void put(final String url, final Bitmap bitmap) {
 
-            File newCache = new File(mCacheDir + File.separator + key);
-            FileOutputStream fos = null;
-            try {
-                newCache.createNewFile();
-                fos = new FileOutputStream(newCache);
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
-                fos.flush();
-                fos.close();
-                mCacheMap.put(key, newCache.getAbsolutePath());
-                Log.d(TAG, "put bitmap, url: " + url);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        final String key = getKey(url);
+
+        if (bitmap != null && !mCacheMap.containsKey(key)) {
+
+            mInMemoryCache.put(key, new SoftReference<Bitmap>(bitmap));
+
+            mPutCacheHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    File newCache = new File(mCacheDir + File.separator + key);
+                    FileOutputStream fos = null;
+                    try {
+                        newCache.createNewFile();
+                        fos = new FileOutputStream(newCache);
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                        fos.flush();
+                        fos.close();
+                        mCacheMap.put(key, newCache.getAbsolutePath());
+                        Log.d(TAG, "put bitmap, url: " + url);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+
         }
+
     }
 
     public Bitmap get(String url) {
         Bitmap bitmap = null;
-        if (mInMemoryCache.get(url) != null) {
-            SoftReference<Bitmap> softRefBitmap = mInMemoryCache.get(url);
+        String key = getKey(url);
+        if (mInMemoryCache.get(key) != null) {
+            SoftReference<Bitmap> softRefBitmap = mInMemoryCache.get(key);
             bitmap = softRefBitmap.get();
             if (bitmap != null) {
                 Log.d(TAG, "disk cache hit in memory, url=" + url);
@@ -118,13 +140,12 @@ public class BitmapDiskCache {
             }
         }
         if (bitmap == null) {
-            String key = getKey(url);
             if (mCacheMap.containsKey(key)) {
                 String path = mCacheMap.get(key);
                 bitmap = BitmapFactory.decodeFile(path);
                 if (bitmap != null) {
                     Log.d(TAG, "disk cache hit, url=" + url);
-                    mInMemoryCache.put(url, new SoftReference<Bitmap>(bitmap));
+                    mInMemoryCache.put(key, new SoftReference<Bitmap>(bitmap));
                     return bitmap;
                 }
             }
@@ -133,6 +154,8 @@ public class BitmapDiskCache {
         Log.d(TAG, "disk cache not hit, url = " + url);
         return null;
     }
+
+
 
     public boolean exist(String url) {
         return mCacheMap.containsKey(getKey(url));

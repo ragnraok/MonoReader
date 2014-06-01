@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -82,6 +84,9 @@ public class TimelineFragment extends Fragment {
     private boolean mIsNeedToFlushFavTimeline = false;
     private boolean mIsNeedToFlushFavArticleList = false;
 
+    private HandlerThread mFlushCacheThread = null;
+    private Handler mFlushCacheHandler = null;
+
     public static TimelineFragment newInstance(boolean isFavTimeline) {
         TimelineFragment fragment = new TimelineFragment();
         Bundle args = new Bundle();
@@ -101,6 +106,11 @@ public class TimelineFragment extends Fragment {
 
         mTimelineCache = TimelineCache.getInstance(Utils.applicationContext);
         mTimelineCache.init();
+
+        mFlushCacheThread = new HandlerThread("flushcache", Thread.MIN_PRIORITY);
+        mFlushCacheThread.start();
+        mFlushCacheHandler = new Handler(mFlushCacheThread.getLooper());
+
         initCachePage();
 
     }
@@ -114,6 +124,7 @@ public class TimelineFragment extends Fragment {
     public void setIsFavTimeline(boolean isFav) {
         if (isFav != mIsFavTimeline || mIsInFavArticle) {
             mIsFavTimeline = isFav;
+            mTimelineList.smoothScrollToPosition(0);
             resetTimeline();
         }
     }
@@ -143,9 +154,9 @@ public class TimelineFragment extends Fragment {
         mIsFavTimeline = false;
         mTimelineList.setVisibility(View.GONE);
         mLoadingProgress.setVisibility(View.VISIBLE);
+        mTimelineList.smoothScrollToPosition(0);
         mTimelineAdapter.clearData();
         mPullToRefreshLayout.setRefreshing(true);
-        mTimelineList.smoothScrollToPosition(0);
 //        mArticleService.loadFavArticleList(mPage, mRequestFinishListener);
         mArticleService.favArticldListUpdateCheck(mDataChangeReuqestFinishListener);
     }
@@ -373,8 +384,8 @@ public class TimelineFragment extends Fragment {
         alphaAnimation.setFillAfter(true);
         set.addAnimation(alphaAnimation);
 
-        LayoutAnimationController controller = new LayoutAnimationController(set, 0.5f);
-        mTimelineList.setLayoutAnimation(controller);
+//        LayoutAnimationController controller = new LayoutAnimationController(set, 0.5f);
+//        mTimelineList.setLayoutAnimation(controller);
 
         mTimelineList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -553,18 +564,24 @@ public class TimelineFragment extends Fragment {
         super.onDetach();
         Log.d(TAG, "onDetach");
         mTimelineService.cancelRequest();
-        if (mIsNeedToFlushMainTimeline) {
-            mTimelineCache.flushMainTimelineCacheToDisk();
-            mIsNeedToFlushMainTimeline = false;
-        }
-        if (mIsNeedToFlushFavTimeline) {
-            mTimelineCache.flushFavTimelineCacheToDisk();
-            mIsNeedToFlushFavTimeline = false;
-        }
-        if (mIsNeedToFlushFavArticleList) {
-            mTimelineCache.flushFavArticleListCacheToDisk();
-            mIsNeedToFlushFavArticleList = false;
-        }
+        mFlushCacheHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (mIsNeedToFlushMainTimeline) {
+                    mTimelineCache.flushMainTimelineCacheToDisk();
+                    mIsNeedToFlushMainTimeline = false;
+                }
+                if (mIsNeedToFlushFavTimeline) {
+                    mTimelineCache.flushFavTimelineCacheToDisk();
+                    mIsNeedToFlushFavTimeline = false;
+                }
+                if (mIsNeedToFlushFavArticleList) {
+                    mTimelineCache.flushFavArticleListCacheToDisk();
+                    mIsNeedToFlushFavArticleList = false;
+                }
+            }
+        });
+
     }
 
     @Override
