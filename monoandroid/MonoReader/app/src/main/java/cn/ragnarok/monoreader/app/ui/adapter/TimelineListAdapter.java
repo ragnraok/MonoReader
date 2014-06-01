@@ -250,39 +250,42 @@ public class TimelineListAdapter extends BaseAdapter {
             }
         }
 
-        ImageLoader.ImageListener imageListener = new ImageLoader.ImageListener() {
-            @Override
-            public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
+        if (!mIsFling) {
+            ImageLoader.ImageListener imageListener = new ImageLoader.ImageListener() {
+                @Override
+                public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
 
-                if (!mIsFling && imageContainer.getBitmap() != null) {
-                    if (imageView.getTag().toString().equals(imageContainer.getRequestUrl())) {
-                        Log.d(TAG, "set ImageView bitmap, url = " + imageView.getTag());
-                        Bitmap bitmap = imageContainer.getBitmap();
-                        imageView.setImageBitmap(bitmap);
+                    if (!mIsFling && imageContainer.getBitmap() != null) {
+                        if (imageView.getTag().toString().equals(imageContainer.getRequestUrl())) {
+                            Log.d(TAG, "set ImageView bitmap, url = " + imageView.getTag());
+                            Bitmap bitmap = imageContainer.getBitmap();
+                            imageView.setImageBitmap(bitmap);
 
-                        // put to disk cache
-                        if (!BitmapDiskCache.getInstance(mContext).exist(imageView.getTag().toString())) {
-                            BitmapDiskCache.getInstance(mContext).put(imageView.getTag().toString(), bitmap);
+                            // put to disk cache
+                            if (!BitmapDiskCache.getInstance(mContext).exist(imageView.getTag().toString())) {
+                                BitmapDiskCache.getInstance(mContext).put(imageView.getTag().toString(), bitmap);
+                            }
                         }
                     }
                 }
-            }
 
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                Log.d(TAG, "load Bitmap error, " + volleyError.toString() + ", url = " + imageView.getTag());
+                @Override
+                public void onErrorResponse(VolleyError volleyError) {
+                    Log.d(TAG, "load Bitmap error, " + volleyError.toString() + ", url = " + imageView.getTag());
 
-                if (!mIsFling) {
-                    boolean exist = BitmapDiskCache.getInstance(mContext).exist(imageView.getTag().toString());
-                    if (exist) {
-                        Bitmap bitmap = BitmapDiskCache.getInstance(mContext).get(imageView.getTag().toString());
-                        imageView.setImageBitmap(bitmap);
+                    if (!mIsFling) {
+                        boolean exist = BitmapDiskCache.getInstance(mContext).exist(imageView.getTag().toString());
+                        if (exist) {
+                            Bitmap bitmap = BitmapDiskCache.getInstance(mContext).get(imageView.getTag().toString());
+                            imageView.setImageBitmap(bitmap);
+                        }
                     }
-                }
 
-            }
-        };
-        mImageLoader.get(url, imageListener);
+                }
+            };
+            mImageLoader.get(url, imageListener);
+        }
+
 
     }
 
