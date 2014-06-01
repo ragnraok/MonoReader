@@ -63,10 +63,14 @@ class Site(db.Model, ModelMixin):
         articles_list = data_fetcher.fetch_articles()
         if articles_list is not None:
             for item in articles_list:
-                if not Article.query.is_exist_by_url(item['url']):
+                article = Article.query.get_by_url(item['url'])
+                if not article:
                     article = Article(title=item['title'], content=item['content'],
                             url=item['url'], updated=item['date'], site_id=self.id,
                             first_image_url=item['first_img_url'], site_title=self.title)
+                    article.save_without_commit()
+                else:
+                    article.site_id = self.id
                     article.save_without_commit()
 
     def delete_all_articles(self):
@@ -109,6 +113,8 @@ class ArticleQuery(MonoQuery):
         if self.with_entities(Article.url).filter_by(url=url).count() > 0:
             return True
         return False
+    def get_by_url(self, url):
+        return self.filter_by(url=url).first()
 
 class Article(db.Model, ModelMixin):
     __tablename__ = 'article'

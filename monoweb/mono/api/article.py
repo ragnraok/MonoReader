@@ -1,7 +1,7 @@
 from flask import current_app
 from sqlalchemy.sql.expression import desc
 
-from utils import SITE_NOT_EXIST, ARTICLE_NOT_EXIST, PAGE_SMALL_THAN_ONE
+from utils import SITE_NOT_EXIST, ARTICLE_NOT_EXIST, PAGE_SMALL_THAN_ONE, DATA_FORMAT_ERROR
 from objects import fill_article_object, fill_list_article_object, fill_change_date_object
 from mono.models import Site, Article
 from apibase import BaseAPIGETView, BaseAPIPOSTView, BaseArticleListView, BaseDataChangeCheckView
