@@ -379,7 +379,6 @@ public class TimelineFragment extends Fragment {
                 ListArticleObject article = (ListArticleObject) mTimelineAdapter.getItem(i);
                 Intent articleIntent = new Intent(getActivity(), ArticleActivity.class);
                 articleIntent.putExtra(ArticleActivity.ARTICLE_ID, article.articleId);
-                articleIntent.putExtra(ArticleActivity.IS_FROM_FAV_ARTICLE_LIST, mIsInFavArticle);
                 //startActivity(articleIntent);
                 startActivityForResult(articleIntent, ArticleActivity.FAV_SET);
             }
@@ -459,6 +458,7 @@ public class TimelineFragment extends Fragment {
     private void pullTimeline() {
         mPullToRefreshLayout.setRefreshing(true);
         if (!Utils.isNetworkConnected(getActivity())) {
+            mTimelineAdapter.clearData();
             Toast.makeText(getActivity(), R.string.connection_failed, Toast.LENGTH_SHORT).show();
             loadTimelineFramCache();
             mPullToRefreshLayout.setRefreshComplete();
@@ -512,7 +512,6 @@ public class TimelineFragment extends Fragment {
                 listener(new OnRefreshListener() {
             @Override
             public void onRefreshStarted(View view) {
-//                mPage = 1;
                 initPageFromCache();
                 mIsLastPage = false;
                 if (mIsInFavArticle) {
@@ -549,7 +548,6 @@ public class TimelineFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        //mTimelineCache.flushCacheToDisk();
     }
 
     @Override

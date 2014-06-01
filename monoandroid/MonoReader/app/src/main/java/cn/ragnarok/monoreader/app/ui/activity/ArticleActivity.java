@@ -30,13 +30,11 @@ public class ArticleActivity extends Activity {
 
     public static final String TAG ="Mono.ArticleActivity";
     public static final String ARTICLE_ID = "articleId";
-    public static final String IS_FROM_FAV_ARTICLE_LIST = "isFromArticleList";
     public static final String IS_FAV_ARTICLE = "isFavArticle";
 
     private ArticleObject mArticle;
     private int mArticleId;
     private boolean mIsFavArticle;
-    private boolean mIsFromFavArticleList;
     private ArticleService mArticleService;
     private ScrollableWebView mWebView;
     private View mMainLayout;
@@ -57,7 +55,6 @@ public class ArticleActivity extends Activity {
 
     private ArticleContentCache mArticleContentCache = null;
     private Handler mHandler = new Handler();
-    private Handler mUiHandler = new Handler(Looper.getMainLooper());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +73,6 @@ public class ArticleActivity extends Activity {
         mMainLayout = findViewById(R.id.article_layout);
 
         mArticleId = getIntent().getIntExtra(ARTICLE_ID, -1);
-        mIsFromFavArticleList = getIntent().getBooleanExtra(IS_FROM_FAV_ARTICLE_LIST, false);
 
         setProgressBarIndeterminate(true);
 
@@ -189,7 +185,7 @@ public class ArticleActivity extends Activity {
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        mArticleContentCache.putArticle(mArticle, mIsFromFavArticleList);
+                        mArticleContentCache.putArticle(mArticle);
                     }
                 });
 
@@ -208,7 +204,7 @@ public class ArticleActivity extends Activity {
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        mArticleContentCache.updateArticleFav(mArticleId, mIsFavArticle, mIsFromFavArticleList);
+                        mArticleContentCache.updateArticleFav(mArticleId, mIsFavArticle);
                     }
                 });
 
@@ -247,30 +243,20 @@ public class ArticleActivity extends Activity {
     private void loadArticleObject() {
         if (mArticleId != -1) {
             setProgressBarVisibility(true);
-            if (mIsFromFavArticleList) {
-                mArticle = mArticleContentCache.getArticle(mArticleId, mIsFromFavArticleList);
-                if (mArticle != null) {
-                    mIsFavArticle = mArticle.isFav;
-                    Log.d(TAG, "load article from cache, mIsFavArticle: " + mIsFavArticle);
-                    initFavMenuItem();
-                    loadArticleHtml();
-                } else {
-                    mArticleService.loadFavArticle(mArticleId, mLoadArticleListener);
-                }
+
+            mArticle = mArticleContentCache.getArticle(mArticleId);
+            if (mArticle != null) {
+                mIsFavArticle = mArticle.isFav;
+                Log.d(TAG, "load article from cache, mIsFavArticle: " + mIsFavArticle);
+
+                initFavMenuItem();
+                loadArticleHtml();
             } else {
-                mArticle = mArticleContentCache.getArticle(mArticleId, mIsFromFavArticleList);
-                if (mArticle != null) {
-                    mIsFavArticle = mArticle.isFav;
-                    Log.d(TAG, "load article from cache, mIsFavArticle: " + mIsFavArticle);
-
-                    initFavMenuItem();
-                    loadArticleHtml();
-                } else {
-                    mArticleService.loadArticle(mArticleId, mLoadArticleListener);
-                }
-
+                mArticleService.loadArticle(mArticleId, mLoadArticleListener);
             }
+
         }
+
     }
 
     private void loadArticleHtml() {

@@ -19,19 +19,18 @@ import cn.ragnarok.monoreader.api.object.ArticleObject;
  * Created by ragnarok on 14-5-30.
  */
 public class ArticleContentCache {
+    //TODO need to rewrite
     public static final String TAG = "Mono.ArticleContentCache";
 
-    public static final String NORMAL_ARTICLE_CACHE_DIR_NAME = "MonoNormalArticleCache";
-    public static final String FAV_ARTICLE_CACHE_DIR_NAME = "MonoFavArticleCache";
+    public static final String ARTICLE_CACHE_DIR_NAME = "MonoArticleCache";
 
-    private File mNormalArticleCacheDir = null;
-    private File mFavArticleCacheDir = null;
+    private File mArticleCacheDir = null;
 
     private static ArticleContentCache mCache = null;
 
     private ArticleContentCache(Context context) {
-        mNormalArticleCacheDir = new File(context.getExternalFilesDir(NORMAL_ARTICLE_CACHE_DIR_NAME).getPath());
-        mFavArticleCacheDir = new File(context.getExternalFilesDir(FAV_ARTICLE_CACHE_DIR_NAME).getPath());
+        mArticleCacheDir = new File(context.getExternalFilesDir(ARTICLE_CACHE_DIR_NAME).getPath());
+
     }
 
     public static ArticleContentCache getInstance(Context context) {
@@ -41,14 +40,10 @@ public class ArticleContentCache {
         return mCache;
     }
 
-    public void putArticle(ArticleObject article, boolean isInFavArticleList) {
+    public void putArticle(ArticleObject article) {
         String filename = String.valueOf(article.articleId);
-        File cacheFile = null;
-        if (isInFavArticleList) {
-            cacheFile = new File(mFavArticleCacheDir + File.separator + filename);
-        } else {
-            cacheFile = new File(mNormalArticleCacheDir + File.separator + filename);
-        }
+        File cacheFile = new File(mArticleCacheDir + File.separator + filename);
+
         FileWriter fileWriter = null;
         PrintWriter printWriter = null;
         try {
@@ -63,20 +58,16 @@ public class ArticleContentCache {
 
             fileWriter.close();
 
-            Log.d(TAG, "put articleId: " + article.articleId + ", isFav: " + article.isFav + ", isInFavArticleList: " + isInFavArticleList);
+            Log.d(TAG, "put articleId: " + article.articleId + ", isFav: " + article.isFav);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public ArticleObject getArticle(int articleId, boolean isInFavArticleList) {
-        File cacheFile = null;
-        Log.d(TAG, "getArticle, articleId: " + articleId + ", isInFavArticleList: " + isInFavArticleList);
-        if (isInFavArticleList) {
-            cacheFile = new File(mFavArticleCacheDir + File.separator + articleId);
-        } else {
-            cacheFile = new File(mNormalArticleCacheDir + File.separator + articleId);
-        }
+    public ArticleObject getArticle(int articleId) {
+        File cacheFile = new File(mArticleCacheDir + File.separator + articleId);;
+        Log.d(TAG, "getArticle, articleId: " + articleId);
+
         if (cacheFile.exists()) {
             try {
                 InputStreamReader isr = new InputStreamReader(new FileInputStream(cacheFile));
@@ -97,13 +88,9 @@ public class ArticleContentCache {
         return null;
     }
 
-    public void updateArticleFav(int articleId, boolean isFav, boolean isInFavArticleList) {
-        File cacheFile = null;
-        if (isInFavArticleList) {
-            cacheFile = new File(mFavArticleCacheDir + File.separator + articleId);
-        } else {
-            cacheFile = new File(mNormalArticleCacheDir + File.separator + articleId);
-        }
+    public void updateArticleFav(int articleId, boolean isFav) {
+        File cacheFile = new File(mArticleCacheDir + File.separator + articleId);
+
         if (cacheFile.exists()) {
             try {
                 InputStreamReader isr = new InputStreamReader(new FileInputStream(cacheFile));
@@ -115,13 +102,9 @@ public class ArticleContentCache {
 
                 article.isFav = isFav;
 
-                if (isInFavArticleList && !isFav) {
-                    cacheFile.delete();
-                }
+                putArticle(article);
 
-                putArticle(article, isInFavArticleList);
-
-                Log.d(TAG, "updateArticleFav, articleId: " + articleId + ", isFav: " + isFav + ", isInFavArticleList: " + isInFavArticleList);
+                Log.d(TAG, "updateArticleFav, articleId: " + articleId + ", isFav: " + isFav);
 
             } catch (IOException e) {
                 e.printStackTrace();

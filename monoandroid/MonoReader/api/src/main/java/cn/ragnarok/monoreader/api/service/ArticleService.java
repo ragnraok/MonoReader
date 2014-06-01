@@ -30,9 +30,9 @@ public class ArticleService extends BaseAPIService {
         loaddArticleInternal(articleId, requestFinishListener, false);
     }
 
-    public void loadFavArticle(int favArticleId, final APIRequestFinishListener<ArticleObject> requestFinishListener) {
-        loaddArticleInternal(favArticleId, requestFinishListener, true);
-    }
+//    public void loadFavArticle(int favArticleId, final APIRequestFinishListener<ArticleObject> requestFinishListener) {
+//        loaddArticleInternal(favArticleId, requestFinishListener, true);
+//    }
 
     private void loaddArticleInternal(int articleId, final APIRequestFinishListener<ArticleObject> requestFinishListener, boolean isLoadFav) {
         String url = null;
@@ -87,7 +87,6 @@ public class ArticleService extends BaseAPIService {
         JSONObject data = new JSONObject();
         try {
             data.put("article_id", articleId);
-            data.put("is_get_from_fav_article", true);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -103,8 +102,7 @@ public class ArticleService extends BaseAPIService {
 
         JSONObject data = new JSONObject();
         try {
-            data.put("fav_article_id", articleId);
-            data.put("is_get_from_article", true);
+            data.put("article_id", articleId);
         } catch (JSONException e) {
             e.printStackTrace();
         }
