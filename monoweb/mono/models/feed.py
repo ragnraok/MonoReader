@@ -29,6 +29,18 @@ class Site(db.Model, ModelMixin):
     def __repr__(self):
         return "<Site: updated at %s, url: %s>" % (self.updated.strftime("%Y-%m-%d"), self.url)
 
+    def fav(self):
+        self.is_daily_read_timeline = True
+        self.save()
+        now_timestamp = calendar.timegm(datetime.datetime.utcnow().utctimetuple())
+        cache[current_app.config['FAV_ARTICLE_LIST_UPDATE_CACHE_KEY']] = now_timestamp
+
+    def unfav(self):
+        self.is_daily_read_timeline = False
+        self.save()
+        now_timestamp = calendar.timegm(datetime.datetime.utcnow().utctimetuple())
+        cache[current_app.config['FAV_ARTICLE_LIST_UPDATE_CACHE_KEY']] = now_timestamp
+
     def update_site(self):
         data_fetcher = FeedDataFetcher(self.url, False)
         updated = data_fetcher.fetch_site_updated_time()

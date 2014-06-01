@@ -168,5 +168,9 @@ class FavSiteSetView(BaseAPIPOSTView):
         site = Site.query.get(site_id)
         if site is None:
             raise ValueError(SITE_NOT_EXIST)
-        site.is_read_daily = is_fav
-        site.save()
+        #site.is_read_daily = is_fav
+        #site.save()
+        if is_fav:
+            site.fav()
+        else:
+            site.unfav()
