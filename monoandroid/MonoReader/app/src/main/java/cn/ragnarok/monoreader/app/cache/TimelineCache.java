@@ -141,24 +141,42 @@ public class TimelineCache {
     public void putMainTimelineCache(Collection<ListArticleObject> newData, int page) {
         synchronized (mMainTimelineMemCache) {
             Log.d(TAG, "putMainTimelineCache, newData.size: " + newData.size() + ", page: " + page);
-            mMainTimelineMemCache.addAll(newData);
-            mMainTimelinePage = page;
+            if (page == 1) {
+                mMainTimelineMemCache.clear();
+            }
+            if (page >= mMainTimelinePage) {
+                mMainTimelineMemCache.addAll(newData);
+                mMainTimelinePage = page;
+            }
+
         }
     }
 
     public void putFavTimelineCache(Collection<ListArticleObject> newData, int page) {
         synchronized (mFavTimelineMemCache) {
             Log.d(TAG, "putFavTimelineCache, newData.size: " + newData.size() + ", page: " + page);
-            mFavTimelineMemCache.addAll(newData);
-            mFavTimelinePage = page;
+            if (page == 1) {
+                mFavTimelineMemCache.clear();
+            }
+            if (page >= mFavTimelinePage) {
+                mFavTimelineMemCache.addAll(newData);
+                mFavTimelinePage = page;
+            }
+
         }
     }
 
     public void putFavArticleListCache(Collection<ListArticleObject> newData, int page) {
         synchronized (mFavArticleListMemCache) {
             Log.d(TAG, "putFavArticleListCache, newData.size: " + newData.size() + ", page: " + page);
-            mFavArticleListMemCache.addAll(newData);
-            mFavArticleListPage = page;
+            if (page == 1) {
+                mFavArticleListMemCache.clear();
+            }
+            if (page >= mFavArticleListPage) {
+                mFavArticleListMemCache.addAll(newData);
+                mFavArticleListPage = page;
+            }
+
         }
     }
 

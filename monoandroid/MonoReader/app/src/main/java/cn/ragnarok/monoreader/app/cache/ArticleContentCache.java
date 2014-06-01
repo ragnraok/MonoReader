@@ -19,7 +19,6 @@ import cn.ragnarok.monoreader.api.object.ArticleObject;
  * Created by ragnarok on 14-5-30.
  */
 public class ArticleContentCache {
-    //TODO need to rewrite
     public static final String TAG = "Mono.ArticleContentCache";
 
     public static final String ARTICLE_CACHE_DIR_NAME = "MonoArticleCache";
