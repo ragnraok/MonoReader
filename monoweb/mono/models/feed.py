@@ -46,17 +46,22 @@ class Site(db.Model, ModelMixin):
         updated = data_fetcher.fetch_site_updated_time()
         is_new_article = False
         if updated > self.updated or self.articles.count() == 0:
-            #self.delete_all_articles()
-            if self.title is None:
-                self.title = data_fetcher.fetch_site_title()
-            self.__update_articles_from_fetcher(data_fetcher)
             if self.origin_url is None:
                 self.origin_url = self.url
                 self.url = data_fetcher.url
+                return
+            if self.title is None:
+                self.title = data_fetcher.fetch_site_title()
+            self.__update_articles_from_fetcher(data_fetcher)
             self.updated = updated
             is_new_article = True
 
         self.save()
+        if is_new_article:
+            now_timestamp = calendar.timegm(datetime.datetime.utcnow().utctimetuple())
+            cache[current_app.config['MAIN_TIMELINE_UPDATE_CACHE_KEY']] = now_timestamp
+            if self.is_read_daily:
+                cache[current_app.config['FAV_TIMELINE_UPDATE_CACHE_KEY']] = now_timestamp
         return is_new_article
 
     def __update_articles_from_fetcher(self, data_fetcher):

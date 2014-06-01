@@ -142,20 +142,21 @@ public class TimelineFragment extends Fragment {
 
     private void pullFavArticles() {
         initPageFromCache();
+        mTimelineAdapter.clearData();
+        mIsLastPage = false;
+        mIsLoadingMore = false;
+        mIsInFavArticle = true;
+        mIsFavTimeline = false;
         if (!Utils.isNetworkConnected(getActivity())) {
             Toast.makeText(getActivity(), R.string.connection_failed, Toast.LENGTH_SHORT).show();
             loadTimelineFramCache();
             mPullToRefreshLayout.setRefreshComplete();
             return;
         }
-        mIsLastPage = false;
-        mIsLoadingMore = false;
-        mIsInFavArticle = true;
-        mIsFavTimeline = false;
         mTimelineList.setVisibility(View.GONE);
         mLoadingProgress.setVisibility(View.VISIBLE);
         mTimelineList.smoothScrollToPosition(0);
-        mTimelineAdapter.clearData();
+
         mPullToRefreshLayout.setRefreshing(true);
 //        mArticleService.loadFavArticleList(mPage, mRequestFinishListener);
         mArticleService.favArticldListUpdateCheck(mDataChangeReuqestFinishListener);
