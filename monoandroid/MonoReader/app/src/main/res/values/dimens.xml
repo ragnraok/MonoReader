@@ -11,8 +11,8 @@
     <dimen name="center_progress_size">100dp</dimen>
     <dimen name="loading_more_progress_size">40dp</dimen>
     <dimen name="loading_more_layout_height">80dp</dimen>
-    <dimen name="drawer_width">250dp</dimen>
-    <dimen name="drawer_header_icon_size">40dp</dimen>
+    <dimen name="drawer_width">220dp</dimen>
+    <dimen name="drawer_header_icon_size">35dp</dimen>
     <dimen name="drawer_header_height">100dp</dimen>
     <dimen name="home_icon_right_padding">10dp</dimen>
 </resources>
