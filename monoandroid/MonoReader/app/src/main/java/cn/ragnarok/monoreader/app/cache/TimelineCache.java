@@ -81,12 +81,15 @@ public class TimelineCache {
     private void readLastUpdateFromCache() {
         String[] allCacheFileName = mMainTimelineCacheDir.list();
         long time = -1;
-        for (String t : allCacheFileName) {
-            long tt = Long.parseLong(t);
-            if (tt > time) {
-                time = tt;
+        if (allCacheFileName != null) {
+            for (String t : allCacheFileName) {
+                long tt = Long.parseLong(t);
+                if (tt > time) {
+                    time = tt;
+                }
             }
         }
+
         if (time != -1) {
             mMainTimelineLastUpdate = time;
         } else {
@@ -95,10 +98,12 @@ public class TimelineCache {
 
         allCacheFileName = mFavTimelineCacheDir.list();
         time = -1;
-        for (String t : allCacheFileName) {
-            long tt = Long.parseLong(t);
-            if (tt > time) {
-                time = tt;
+        if (allCacheFileName != null) {
+            for (String t : allCacheFileName) {
+                long tt = Long.parseLong(t);
+                if (tt > time) {
+                    time = tt;
+                }
             }
         }
         if (time != -1) {
@@ -109,10 +114,12 @@ public class TimelineCache {
 
         allCacheFileName = mFavArticleListCacheDir.list();
         time = -1;
-        for (String t : allCacheFileName) {
-            long tt = Long.parseLong(t);
-            if (tt > time) {
-                time = tt;
+        if (allCacheFileName != null) {
+            for (String t : allCacheFileName) {
+                long tt = Long.parseLong(t);
+                if (tt > time) {
+                    time = tt;
+                }
             }
         }
         if (time != -1) {
@@ -200,27 +207,36 @@ public class TimelineCache {
     public void clearMainTiemelineCache() {
         mMainTimelineMemCache.clear();
         File[] mainTimelineCacheFile = mMainTimelineCacheDir.listFiles();
-        for (File f : mainTimelineCacheFile) {
-            f.delete();
+        if (mainTimelineCacheFile != null) {
+            for (File f : mainTimelineCacheFile) {
+                f.delete();
+            }
         }
+
         mMainTimelinePage = 1;
     }
 
     public void clearFavTimelineCache() {
         mFavTimelineMemCache.clear();
         File[] cacheFiles = mFavTimelineCacheDir.listFiles();
-        for (File f : cacheFiles) {
-            f.delete();
+        if (cacheFiles != null) {
+            for (File f : cacheFiles) {
+                f.delete();
+            }
         }
+
         mFavTimelinePage = 1;
     }
 
     public void clearFavArticleListCache() {
         mFavArticleListMemCache.clear();
         File[] cacheFiles = mFavArticleListCacheDir.listFiles();
-        for (File f : cacheFiles) {
-            f.delete();
+        if (cacheFiles != null) {
+            for (File f : cacheFiles) {
+                f.delete();
+            }
         }
+
         mFavArticleListPage = 1;
     }
 

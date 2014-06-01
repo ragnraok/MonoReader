@@ -49,7 +49,7 @@ public class ArticleActivity extends Activity {
 
     private Handler mWebViewClickHandler = null;
     private static final int CLICK_DELAY_MESSAGE = 1;
-    private static final int CLICK_TIMEOUT = 300;
+    private static final int CLICK_TIMEOUT = 100;
 
     public static final int FAV_SET = 1;
 

@@ -195,17 +195,20 @@ public class TimelineFragment extends Fragment {
                 if (result.size() == 0) {
                     mIsLastPage = true;
                 }
-                mTimelineAdapter.appendData(result);
-                if (mIsInFavArticle) {
-                    mTimelineCache.putFavArticleListCache(result, mPage);
-                    mIsNeedToFlushFavArticleList = true;
-                } else if (mIsFavTimeline) {
-                    mTimelineCache.putFavTimelineCache(result, mPage);
-                    mIsNeedToFlushFavTimeline = true;
-                } else {
-                    mTimelineCache.putMainTimelineCache(result, mPage);
-                    mIsNeedToFlushMainTimeline = true;
+                if (!mIsLastPage) {
+                    mTimelineAdapter.appendData(result);
+                    if (mIsInFavArticle) {
+                        mTimelineCache.putFavArticleListCache(result, mPage);
+                        mIsNeedToFlushFavArticleList = true;
+                    } else if (mIsFavTimeline) {
+                        mTimelineCache.putFavTimelineCache(result, mPage);
+                        mIsNeedToFlushFavTimeline = true;
+                    } else {
+                        mTimelineCache.putMainTimelineCache(result, mPage);
+                        mIsNeedToFlushMainTimeline = true;
+                    }
                 }
+
 
                 mIsLoadingMore = false;
                 if (mTimelineList.getVisibility() == View.GONE) {
@@ -395,11 +398,6 @@ public class TimelineFragment extends Fragment {
             if (resultCode == Activity.RESULT_OK) {
                 boolean isFav = data.getBooleanExtra(ArticleActivity.IS_FAV_ARTICLE, false);
                 int articleId = data.getIntExtra(ArticleActivity.ARTICLE_ID, 0);
-//                if (mIsInFavArticle) {
-//                    pullFavArticles();
-//                } else {
-//
-//                }
                 mTimelineAdapter.updateArticleFav(articleId, isFav, mIsInFavArticle);
             }
         }
