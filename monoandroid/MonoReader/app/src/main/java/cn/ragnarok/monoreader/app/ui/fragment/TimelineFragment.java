@@ -77,9 +77,9 @@ public class TimelineFragment extends Fragment {
     private boolean mIsInFavArticle;
 
     private TimelineCache mTimelineCache;
-    private int mMainTimeCacheLastPage = 1;
-    private int mFavTimelineCacheLastPage = 1;
-    private int mFavArticleListCacheLastPage = 1;
+//    private int mMainTimeCacheLastPage = 1;
+//    private int mFavTimelineCacheLastPage = 1;
+//    private int mFavArticleListCacheLastPage = 1;
     private boolean mIsNeedToFlushMainTimeline = false;
     private boolean mIsNeedToFlushFavTimeline = false;
     private boolean mIsNeedToFlushFavArticleList = false;
@@ -111,15 +111,15 @@ public class TimelineFragment extends Fragment {
         mFlushCacheThread.start();
         mFlushCacheHandler = new Handler(mFlushCacheThread.getLooper());
 
-        initCachePage();
+//        initCachePage();
 
     }
 
-    private void initCachePage() {
-        mMainTimeCacheLastPage = mTimelineCache.getMainTimelineCacheLastPage();
-        mFavTimelineCacheLastPage = mTimelineCache.getFavTimelineLastPage();
-        mFavArticleListCacheLastPage = mTimelineCache.getFavArticleListLastPage();
-    }
+//    private void initCachePage() {
+//        mMainTimeCacheLastPage = mTimelineCache.getMainTimelineLastPage();
+//        mFavTimelineCacheLastPage = mTimelineCache.getFavTimelineLastPage();
+//        mFavArticleListCacheLastPage = mTimelineCache.getFavArticleListLastPage();
+//    }
 
     public void setIsFavTimeline(boolean isFav) {
         if (isFav != mIsFavTimeline || mIsInFavArticle) {
@@ -420,14 +420,14 @@ public class TimelineFragment extends Fragment {
         ArrayList<ListArticleObject> articles;
         if (mIsInFavArticle) {
             articles = mTimelineCache.getFavArticleList();
-            mPage = mFavArticleListCacheLastPage;
+            mPage = mTimelineCache.getFavArticleListLastPage();
         }
         else if (mIsFavTimeline) {
             articles = mTimelineCache.getFavTimeline();
-            mPage = mFavTimelineCacheLastPage;
+            mPage = mTimelineCache.getFavTimelineLastPage();
         } else {
             articles = mTimelineCache.getMainTimeline();
-            mPage = mMainTimeCacheLastPage;
+            mPage = mTimelineCache.getMainTimelineLastPage();
         }
         boolean result = false;
         if (articles.size() > 0) {
@@ -456,12 +456,12 @@ public class TimelineFragment extends Fragment {
 
     private void initPageFromCache() {
         if (mIsInFavArticle) {
-            mPage = mFavArticleListCacheLastPage;
+            mPage = mTimelineCache.getFavArticleListLastPage();
         }
         else if (mIsFavTimeline) {
-            mPage = mFavTimelineCacheLastPage;
+            mPage = mTimelineCache.getFavTimelineLastPage();
         } else {
-            mPage = mMainTimeCacheLastPage;
+            mPage = mTimelineCache.getMainTimelineLastPage();
         }
     }
 
