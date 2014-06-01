@@ -2,6 +2,7 @@ from apibase import BaseAPIPOSTView
 from utils import DATA_FORMAT_ERROR, SITE_NOT_EXIST
 from mono.models import Site, Category
 from mono.task.worker import add_update_task
+from mono.feed import get_feed_url
 
 class SiteSubscribeView(BaseAPIPOSTView):
     def __init__(self, is_subscribe=True, **kwargs):
@@ -9,6 +10,7 @@ class SiteSubscribeView(BaseAPIPOSTView):
         self.is_subscribe = is_subscribe
 
     def proc_data(self, data, **kwargs):
+        # TODO: need to add subscribe response
         """
         post data format:
             1. subscribe:

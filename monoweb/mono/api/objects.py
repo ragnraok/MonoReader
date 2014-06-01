@@ -35,7 +35,7 @@ def fill_article_object(article_id, title, site, updated, content, url, cover_ur
         }
     """
     return dict(article_id=article_id, title=title, site=site,
-            updated=updated.strftime("%Y-%M-%d"), content=content, url=url,
+            updated=updated.strftime("%Y-%m-%d"), content=content, url=url,
             cover_url=cover_url, is_fav=is_fav)
 
 def fill_site_object(site_id, title, updated, url, category, is_read_daily, article_count):
