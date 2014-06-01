@@ -42,6 +42,8 @@ class SiteSubscribeView(BaseAPIPOSTView):
 
             #new_site.update_site()
             add_update_task(new_site)
+            now_timestamp = calendar.timegm(datetime.datetime.utcnow().utctimetuple())
+            cache[current_app.config['MAIN_TIMELINE_UPDATE_CACHE_KEY']] = now_timestamp
         else:
             site_id = data.get('site_id', None)
             if site_id is None:
@@ -51,3 +53,5 @@ class SiteSubscribeView(BaseAPIPOSTView):
                 raise ValueError(SITE_NOT_EXIST)
             site.is_subscribe = False
             site.save()
+            now_timestamp = calendar.timegm(datetime.datetime.utcnow().utctimetuple())
+            cache[current_app.config['MAIN_TIMELINE_UPDATE_CACHE_KEY']] = now_timestamp

@@ -141,9 +141,9 @@ class Article(db.Model, ModelMixin):
             #fav_article.save()
             now_timestamp = calendar.timegm(datetime.datetime.utcnow().utctimetuple())
             cache[current_app.config['FAV_ARTICLE_LIST_UPDATE_CACHE_KEY']] = now_timestamp
-            cache[current_app.config['MAIN_TIMELINE_UPDATE_CACHE_KEY']] = now_timestamp
-            if self.site is not None and self.site.is_read_daily:
-                cache[current_app.config['FAV_TIMELINE_UPDATE_CACHE_KEY']] = now_timestamp
+            #cache[current_app.config['MAIN_TIMELINE_UPDATE_CACHE_KEY']] = now_timestamp
+            #if self.site is not None and self.site.is_read_daily:
+            #    cache[current_app.config['FAV_TIMELINE_UPDATE_CACHE_KEY']] = now_timestamp
             self.is_fav = True
             self.save()
 
@@ -151,9 +151,9 @@ class Article(db.Model, ModelMixin):
         if self.is_fav:
             now_timestamp = calendar.timegm(datetime.datetime.utcnow().utctimetuple())
             cache[current_app.config['FAV_ARTICLE_LIST_UPDATE_CACHE_KEY']] = now_timestamp
-            cache[current_app.config['MAIN_TIMELINE_UPDATE_CACHE_KEY']] = now_timestamp
-            if self.site is not None and self.site.is_read_daily:
-                cache[current_app.config['FAV_TIMELINE_UPDATE_CACHE_KEY']] = now_timestamp
+            #cache[current_app.config['MAIN_TIMELINE_UPDATE_CACHE_KEY']] = now_timestamp
+            #if self.site is not None and self.site.is_read_daily:
+            #    cache[current_app.config['FAV_TIMELINE_UPDATE_CACHE_KEY']] = now_timestamp
             self.is_fav = False
             self.save()
 

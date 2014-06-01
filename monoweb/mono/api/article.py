@@ -112,9 +112,7 @@ class FavArticleListCheckView(BaseDataChangeCheckView):
         key = current_app.config['FAV_ARTICLE_LIST_UPDATE_CACHE_KEY']
         update = cache[key]
         if update:
-            print "check fav article list, update is not null"
             return fill_change_date_object(update)
         else:
-            print "check fav article list, update is null"
             now_timestamp = calendar.timegm(datetime.datetime.utcnow().utctimetuple())
             return fill_change_date_object(now_timestamp)
