@@ -28,7 +28,10 @@ class SiteSubscribeView(BaseAPIPOSTView):
             title = data.get('title', None)
             if site_url is None:
                 raise ValueError(DATA_FORMAT_ERROR)
-            if Site.query.is_exist_by_url(site_url):
+            site = Site.query.get_by_url(site_url)
+            if site is not None:
+                site.is_subscribe = True
+                site.save()
                 return
             new_site = Site(url=site_url, title=title)
             new_site.save()
@@ -46,4 +49,5 @@ class SiteSubscribeView(BaseAPIPOSTView):
             site = Site.query.get(site_id)
             if site is None:
                 raise ValueError(SITE_NOT_EXIST)
-            site.delete()
+            site.is_subscribe = False
+            site.save()

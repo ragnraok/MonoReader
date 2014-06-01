@@ -1,4 +1,4 @@
-from feed import Site, Article, Category, FavArticle, TestModel
+from feed import Site, Article, Category
 
 def init_db(app):
     unclassified_name = app.config.get('UNCLASSIFIED', "not classified")

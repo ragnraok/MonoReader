@@ -13,7 +13,7 @@ manager = Manager(mono_app)
 
 @manager.shell
 def shell():
-    from mono.models import Site, Article, Category, FavArticle, TestModel
+    from mono.models import Site, Article, Category
     return dict(
             app=mono_app,
             db=db,
@@ -21,14 +21,12 @@ def shell():
             Site=Site,
             Article=Article,
             Category=Category,
-            FavArticle=FavArticle,
-            TestModel=TestModel,
             update_all_site=update_all_site
             )
 
 @manager.command
 def syncdb():
-    from mono.models import Site, Article, Category, FavArticle
+    from mono.models import Site, Article, Category
     db.create_all()
     init_db(mono_app)
 

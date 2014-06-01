@@ -1,5 +1,6 @@
 from flask.ext.sqlalchemy import BaseQuery
 from mono.database import db
+from mono.feed import get_feed_url
 
 class ModelMixin(object):
     def save(self):
@@ -35,10 +36,17 @@ class SiteQuery(MonoQuery):
     def daily_read_sites(self):
         sites = self.filter_by(is_read_daily=True).all()
         return sites
+
     def is_exist_by_url(self, url):
         if self.filter_by(url=url).count() > 0:
             return True
         return False
+
+    def get_by_url(self, url):
+        s = self.filter_by(url=url).first()
+        if not s:
+            s = self.filter_by(origin_url=url).first()
+        return s
 
 class CategorQuery(MonoQuery):
     def is_exist_by_name(self, name):
