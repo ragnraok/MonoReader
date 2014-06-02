@@ -104,6 +104,33 @@ public class BitmapDiskCache {
 
             mInMemoryCache.put(key, new SoftReference<Bitmap>(bitmap));
 
+            putToDisk(url, bitmap);
+//            mPutCacheHandler.post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    File newCache = new File(mCacheDir + File.separator + key);
+//                    FileOutputStream fos = null;
+//                    try {
+//                        newCache.createNewFile();
+//                        fos = new FileOutputStream(newCache);
+//                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+//                        fos.flush();
+//                        fos.close();
+//                        mCacheMap.put(key, newCache.getAbsolutePath());
+//                        Log.d(TAG, "put bitmap, url: " + url);
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            });
+
+
+        }
+    }
+
+    public void putToDisk(final String url, final Bitmap bitmap) {
+        final String key = getKey(url);
+        if (bitmap != null && !mCacheMap.containsKey(key)) {
             mPutCacheHandler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -122,10 +149,7 @@ public class BitmapDiskCache {
                     }
                 }
             });
-
-
         }
-
     }
 
     public Bitmap get(String url) {
