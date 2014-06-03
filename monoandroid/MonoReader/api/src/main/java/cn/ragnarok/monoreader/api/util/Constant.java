@@ -29,6 +29,7 @@ public class Constant {
 
         public static final String SUBSCRIBE = API_PREFIX + "subscribe/";
         public static final String UNSUBSCRIBE = API_PREFIX + "unsubscribe/";
+        public static final String BUNDLE_UNSUBSCRIBE = API_PREFIX + "bundle_unsubscribe/";
 
         public static final String GET_ALL_CATEGORY = API_PREFIX + "category/get_all/";
         public static final String SET_CATEGORY = API_PREFIX + "category/set/";

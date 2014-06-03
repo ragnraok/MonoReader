@@ -5,21 +5,26 @@ package cn.ragnarok.monoreader.app.ui.fragment;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.app.ProgressDialog;
 import android.os.Build;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import cn.ragnarok.monoreader.api.base.APIRequestFinishListener;
@@ -52,6 +57,9 @@ public class SiteListFragment extends Fragment {
     private SiteListAdapter mSiteListAdapter = null;
 
     private SubscribeFragment mSubscribeFragment;
+    private AbsListView.MultiChoiceModeListener mUnsubscribeMode;
+    private ArrayList<Integer> mSelectSite = new ArrayList<Integer>();
+    private ProgressDialog mProgressDialog;
 
     public static SiteListFragment newInstance() {
         SiteListFragment fragment = new SiteListFragment();
@@ -62,6 +70,7 @@ public class SiteListFragment extends Fragment {
         mSubscribeService = new SubscribeService();
         mSiteService = new SiteService();
         mSubscribeFragment = new SubscribeFragment();
+
     }
 
     @Override
@@ -71,6 +80,7 @@ public class SiteListFragment extends Fragment {
         getActivity().getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         initGetSiteRequestListener();
         setHasOptionsMenu(true);
+
 
 
     }
@@ -83,6 +93,47 @@ public class SiteListFragment extends Fragment {
         mSiteList = (StickyListHeadersListView) view.findViewById(R.id.site_list);
         mProgressBar = (ProgressBar) view.findViewById(R.id.loading_progress);
         mPtrLayout = (PullToRefreshLayout) view.findViewById(R.id.ptr_layout);
+
+        mUnsubscribeMode = new AbsListView.MultiChoiceModeListener() {
+            @Override
+            public void onItemCheckedStateChanged(ActionMode actionMode, int position, long id, boolean checked) {
+                Log.d(TAG, "check: " + checked + ", positioin: " + position);
+                int siteId = ((SiteObject)mSiteListAdapter.getItem(position)).siteId;
+                if (checked) {
+                    mSelectSite.add(siteId);
+                } else {
+                    mSelectSite.remove(new Integer(siteId));
+                }
+            }
+
+            @Override
+            public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+                actionMode.getMenuInflater().inflate(R.menu.site_actionmode, menu);
+                mSelectSite.clear();
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+                int itemId = menuItem.getItemId();
+                if (itemId == R.id.action_unsubsribe) {
+                    actionMode.finish();
+                    mProgressDialog = ProgressDialog.show(getActivity(), "Please waiting", "");
+                    unSubscribeSelectSite();
+                }
+                return false;
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode actionMode) {
+
+            }
+        };
 
         initSiteList();
         initPtrLayout();
@@ -128,6 +179,8 @@ public class SiteListFragment extends Fragment {
                 }
             }
         });
+        mSiteList.getWrappedList().setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
+        mSiteList.getWrappedList().setMultiChoiceModeListener(mUnsubscribeMode);
 
 
     }
@@ -181,10 +234,48 @@ public class SiteListFragment extends Fragment {
         //}
     }
 
+    private void unSubscribeSelectSite() {
+        Log.d(TAG, "unsubscribe select site, size: " + mSelectSite.size());
+        if (mSelectSite.size() > 0 && mSiteListAdapter != null) {
+            mSubscribeService.bundleUnSubscribe(mSelectSite, new APIRequestFinishListener() {
+                @Override
+                public void onRequestSuccess() {
+
+                    if (mProgressDialog != null) {
+                        mProgressDialog.dismiss();
+                    }
+                    loadSiteList();
+                }
+
+                @Override
+                public void onRequestFail(VolleyError error) {
+                    Log.d(TAG, "bundle unsubscribe failed, error: " + error.toString());
+                    if (mProgressDialog != null) {
+                        mProgressDialog.dismiss();
+                    }
+                    loadSiteList();
+                }
+
+                @Override
+                public void onGetResult(Object result) {
+
+                }
+            });
+        }
+
+    }
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mSubscribeService.cancelRequest();
+        mSiteService.cancelRequest();
     }
 
     private void subscribe() {

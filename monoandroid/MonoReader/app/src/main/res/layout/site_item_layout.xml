@@ -8,15 +8,41 @@
     android:paddingLeft="20dp"
     android:paddingRight="20dp"
     android:background="@drawable/timeline_item_without_cover_bg">
-    <ImageView
-        android:id="@+id/fav_set"
-        android:layout_width="@dimen/fav_size_icon_size"
-        android:layout_height="@dimen/fav_size_icon_size"
-        android:src="@drawable/ic_rating_not_important"
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:scaleType="fitXY"
-        android:clickable="true"/>
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/fav_set"
+            android:layout_width="@dimen/fav_size_icon_size"
+            android:layout_height="@dimen/fav_size_icon_size"
+            android:clickable="true"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_rating_not_important" />
+
+        <!--<ImageView-->
+            <!--android:id="@+id/fav_set2"-->
+            <!--android:layout_width="@dimen/fav_size_icon_size"-->
+            <!--android:layout_height="@dimen/fav_size_icon_size"-->
+            <!--android:clickable="true"-->
+            <!--android:scaleType="fitXY"-->
+            <!--android:layout_marginTop="5dp"-->
+            <!--android:src="@drawable/ic_rating_not_important" />-->
+
+        <ImageView
+            android:id="@+id/category_set"
+            android:layout_width="@dimen/fav_size_icon_size"
+            android:layout_height="@dimen/fav_size_icon_size"
+            android:clickable="true"
+            android:scaleType="fitXY"
+            android:layout_marginTop="5dp"
+            android:src="@drawable/ic_collections_collection" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/base_info"

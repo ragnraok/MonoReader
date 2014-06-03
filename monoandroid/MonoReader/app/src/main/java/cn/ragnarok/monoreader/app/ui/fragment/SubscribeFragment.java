@@ -74,7 +74,8 @@ public class SubscribeFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
-        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+//        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        dialog.setTitle("Subscribe");
         return dialog;
     }
 

@@ -23,10 +23,17 @@ import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
  */
 public class SiteListAdapter extends BaseAdapter implements StickyListHeadersAdapter {
 
+    public interface OnCategorySetFinishListener {
+        public void onCategorySetFinish(SiteObject newSetSite);
+    }
+
+    private OnCategorySetFinishListener mOnCategorySetFinishListener;
+
     private Context mContext;
     private SiteObject[] mSiteList;
 
     private View.OnClickListener mFavClickListener;
+    private View.OnClickListener mCategeoryClickListener;
     private SiteService mSiteService;
 
     public SiteListAdapter(Context context, SiteObject[] siteList) {
@@ -37,7 +44,11 @@ public class SiteListAdapter extends BaseAdapter implements StickyListHeadersAda
         initClickListener();
     }
 
-    public void initClickListener() {
+    public void setOnCategorySetFinishListener(OnCategorySetFinishListener listener) {
+        mOnCategorySetFinishListener = listener;
+    }
+
+    private void initClickListener() {
         mFavClickListener = new View.OnClickListener() {
 
             @Override
@@ -88,6 +99,15 @@ public class SiteListAdapter extends BaseAdapter implements StickyListHeadersAda
                         }
                     });
                 }
+            }
+        };
+
+        mCategeoryClickListener = new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                final SiteObject site = (SiteObject) view.getTag();
+
             }
         };
     }
@@ -142,12 +162,15 @@ public class SiteListAdapter extends BaseAdapter implements StickyListHeadersAda
             view = LayoutInflater.from(mContext).inflate(R.layout.site_item_layout, viewGroup, false);
             SiteItemViewHolder holder = new SiteItemViewHolder();
             holder.favSetView = (ImageView) view.findViewById(R.id.fav_set);
+            holder.catgorySetView = (ImageView) view.findViewById(R.id.category_set);
             holder.siteTitle = (TextView) view.findViewById(R.id.site_title);
             holder.siteUrl = (TextView) view.findViewById(R.id.site_url);
             holder.siteLastUpdated = (TextView) view.findViewById(R.id.site_last_updated);
             holder.siteArticleNum = (TextView) view.findViewById(R.id.site_articles_num);
             holder.favSetView.setTag(mSiteList[i]);
+            holder.catgorySetView.setTag(mSiteList[i]);
             holder.favSetView.setOnClickListener(mFavClickListener);
+            holder.catgorySetView.setOnClickListener(mCategeoryClickListener);
             view.setTag(holder);
         }
         SiteItemViewHolder holder = (SiteItemViewHolder) view.getTag();
@@ -170,6 +193,7 @@ public class SiteListAdapter extends BaseAdapter implements StickyListHeadersAda
 
     class SiteItemViewHolder {
         ImageView favSetView;
+        ImageView catgorySetView;
         TextView siteTitle;
         TextView siteUrl;
         TextView siteLastUpdated;

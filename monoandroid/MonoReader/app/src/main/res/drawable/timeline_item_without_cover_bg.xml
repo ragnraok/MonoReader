@@ -3,6 +3,8 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_selected="true" android:drawable="@color/timeline_item_without_cover_select_bg"/>
     <item android:state_pressed="true" android:drawable="@color/timeline_item_without_cover_select_bg"/>
+    <item android:state_active="true" android:drawable="@color/timeline_item_without_cover_select_bg" />
+    <item android:state_activated="true" android:drawable="@color/timeline_item_without_cover_select_bg"/>
     <item android:drawable="@color/white"/>
 
 </selector>

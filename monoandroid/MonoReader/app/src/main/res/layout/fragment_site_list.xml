@@ -18,7 +18,8 @@
         android:scrollbars="none"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
-        android:overScrollMode="never"/>
+        android:overScrollMode="never"
+        android:animateLayoutChanges="true"/>
 
     <RelativeLayout
         android:layout_width="match_parent"

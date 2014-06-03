@@ -43,15 +43,23 @@ class SiteArticleListView(BaseArticleListView):
 class SiteList(object):
 
     def __get_site_object_list(self, site_list):
+        unclassified_name = current_app.config.get('UNCLASSIFIED', "not classified")
         result = []
         for site in site_list:
+            #is_un_classified = site.category is not None \
+            #    and site.category.name == unclassified_name or True
+            if site.category is not None:
+                is_un_classified = site.category.name == unclassified_name
+            else:
+                is_un_classified = True
             result.append(fill_site_object(site_id=site.id, title=site.title, updated=site.updated,
                 category=site.category, is_read_daily=site.is_read_daily,
-                article_count=site.articles.count(), url=site.url))
+                article_count=site.articles.count(), url=site.url,
+                is_un_classified=is_un_classified))
         return result
 
     def get_all_sites(self):
-        site_list = Site.query.all()
+        site_list = Site.query.filter_by(is_subscribe=True)
         return self.__get_site_object_list(site_list)
 
     def get_sites_by_cateogry(self, category):

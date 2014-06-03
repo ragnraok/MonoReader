@@ -97,6 +97,7 @@ public class MainActivity extends Activity {
                 originTitle = getTitle().toString();
                 getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
                 setTitle(R.string.app_name);
+                mIsChangeFragment = false;
             }
 
             @Override
