@@ -2,6 +2,7 @@ package cn.ragnarok.monoreader.app.ui.fragment;
 
 
 
+import android.app.DialogFragment;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -14,7 +15,7 @@ import cn.ragnarok.monoreader.app.R;
  * A simple {@link Fragment} subclass.
  *
  */
-public class CategorySetFragment extends Fragment {
+public class CategorySetFragment extends DialogFragment {
 
 
     public CategorySetFragment() {

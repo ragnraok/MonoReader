@@ -182,6 +182,20 @@ public class SiteListFragment extends Fragment {
         mSiteList.getWrappedList().setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
         mSiteList.getWrappedList().setMultiChoiceModeListener(mUnsubscribeMode);
 
+        mSiteList.setOnHeaderClickListener(new StickyListHeadersListView.OnHeaderClickListener() {
+            @Override
+            public void onHeaderClick(StickyListHeadersListView stickyListHeadersListView, View view, int i, long l, boolean b) {
+
+            }
+        });
+
+        mSiteList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+            }
+        });
+
 
     }
 

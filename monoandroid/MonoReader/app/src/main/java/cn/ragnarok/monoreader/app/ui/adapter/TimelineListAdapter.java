@@ -71,7 +71,7 @@ public class TimelineListAdapter extends BaseAdapter {
         mImageMemoryCache = new BitmapMemeoryCache(mContext, 1024 * 1024 * maxSize);
         mImageLoader = new ImageLoader(APIService.getInstance().getQueue(), mImageMemoryCache);
 
-        initShowAnimation();
+//        initShowAnimation();
 
     }
 

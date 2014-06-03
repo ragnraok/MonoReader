@@ -107,9 +107,13 @@ public class SiteListAdapter extends BaseAdapter implements StickyListHeadersAda
             @Override
             public void onClick(View view) {
                 final SiteObject site = (SiteObject) view.getTag();
-
+                setSiteCategory(site);
             }
         };
+    }
+
+    private void setSiteCategory(SiteObject site) {
+
     }
 
     public void setData(SiteObject[] siteList) {
