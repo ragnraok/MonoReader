@@ -59,8 +59,8 @@ def pretreate_html(html):
     return result
 
 def is_feed_url(url):
-    if 'feed' in url or 'rss' in url or 'atom' in url:
-        return True
+    #if 'feed' in url or 'rss' in url or 'atom' in url:
+    #    return True
     headers = {'User-Agent': 'Mozilla/5.0 (X11; U; Linux i686)' +
                         'Gecko/20071127 Firefox/2.0.0.11'}
     response = requests.get(url, headers=headers)
@@ -70,10 +70,13 @@ def is_feed_url(url):
     return False
 
 def get_feed_url(url):
-    if not url.startswith("http://") or not url.startswith("https://"):
+    if not url.startswith("http://") and not url.startswith("https://"):
         return None
-    if is_feed_url(url):
-        return url
+    try:
+        if is_feed_url(url):
+            return url
+    except:
+        return None
 
     headers = {'User-Agent': 'Mozilla/5.0 (X11; U; Linux i686)' +
                         'Gecko/20071127 Firefox/2.0.0.11'}
