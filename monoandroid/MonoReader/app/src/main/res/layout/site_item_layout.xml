@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/site_list_item_height"
+    android:paddingTop="5dp"
+    android:paddingBottom="5dp"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
+    android:background="@drawable/timeline_item_without_cover_bg">
+    <ImageView
+        android:id="@+id/fav_set"
+        android:layout_width="@dimen/fav_size_icon_size"
+        android:layout_height="@dimen/fav_size_icon_size"
+        android:src="@drawable/ic_rating_not_important"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:scaleType="fitXY"
+        android:clickable="true"/>
+
+    <LinearLayout
+        android:id="@+id/base_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/site_title"
+            style="@style/site_list_item_text_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="阮一峰的网络日志"
+            android:textSize="25dp" />
+
+        <TextView
+            android:id="@+id/site_url"
+            style="@style/site_list_item_text_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="http://www.ruanyifeng.com/blog/atom.xml"
+            android:textSize="20dp" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/base_info"
+        android:layout_marginTop="10dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:layout_alignParentBottom="true">
+        <TextView
+            android:id="@+id/site_last_updated"
+            android:textSize="12dp"
+            android:textColor="#424242"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="last updated: 2014-06-01"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"/>
+        <TextView
+            android:id="@+id/site_articles_num"
+            android:textSize="12dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#424242"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:text="34 articles"
+            android:layout_marginRight="10dp"/>
+    </RelativeLayout>
+</RelativeLayout>

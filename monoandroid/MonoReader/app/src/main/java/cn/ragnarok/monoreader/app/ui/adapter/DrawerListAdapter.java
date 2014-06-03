@@ -17,7 +17,7 @@ public class DrawerListAdapter extends BaseAdapter {
 
     private Context mContext;
     private String[] mDrawerMenuItems;
-    private int[] mIcons = new int[] {R.drawable.home_icon, R.drawable.sites_icon, R.drawable.categories_icon, R.drawable.setting_icon};
+    private int[] mIcons = new int[] {R.drawable.home_icon, R.drawable.sites_icon, /* R.drawable.categories_icon,*/ R.drawable.setting_icon};
 
     public DrawerListAdapter(Context context) {
         mContext = context;

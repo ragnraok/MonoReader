@@ -112,4 +112,14 @@
         <item name="android:textSize">10dp</item>
     </style>
 
+    <style name="site_list_item_text_style">
+        <item name="android:textColor">#424242</item>
+        <item name="android:shadowColor">#B7B7B7</item>
+        <item name="android:shadowDx">1.5</item>
+        <item name="android:shadowDy">1.5</item>
+        <item name="android:shadowRadius">1.2</item>
+        <item name="android:maxLength">30</item>
+        <item name="android:ellipsize">marquee</item>
+    </style>
+
 </resources>

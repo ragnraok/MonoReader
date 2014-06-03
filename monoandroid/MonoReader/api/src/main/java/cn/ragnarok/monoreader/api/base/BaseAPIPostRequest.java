@@ -6,6 +6,8 @@ import com.android.volley.VolleyError;
 
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
+
 /**
  * Created by ragnarok on 14-5-23.
  */

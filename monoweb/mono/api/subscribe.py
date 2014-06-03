@@ -1,3 +1,5 @@
+from flask import current_app
+
 from apibase import BaseAPIPOSTView
 from utils import DATA_FORMAT_ERROR, SITE_NOT_EXIST
 from mono.models import Site, Category
@@ -35,13 +37,18 @@ class SiteSubscribeView(BaseAPIPOSTView):
                 site.is_subscribe = True
                 site.save()
                 return
-            new_site = Site(url=site_url, title=title)
+            feed_url = get_feed_url(site_url)
+            if feed_url is None:
+                current_app.logger.error("subscribe error, cannot get feed url for site %s" % site_url)
+                raise ValueError(SITE_NOT_EXIST)
+            new_site = Site(url=feed_url, title=title, origin_url=site_url)
             new_site.save()
             if category is not None:
                 new_site.set_category_by_name(category_name)
             else:
                 new_site.unset_category()
 
+            current_app.logger.info("subscribe site: %s" % new_site.url)
             #new_site.update_site()
             add_update_task(new_site)
             now_timestamp = calendar.timegm(datetime.datetime.utcnow().utctimetuple())

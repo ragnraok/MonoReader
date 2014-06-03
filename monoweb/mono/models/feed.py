@@ -42,7 +42,10 @@ class Site(db.Model, ModelMixin):
         self.save()
 
     def update_site(self):
-        data_fetcher = FeedDataFetcher(self.url, False)
+        if self.origin_url is None:
+            data_fetcher = FeedDataFetcher(self.url, False)
+        else:
+            data_fetcher = FeedDataFetcher(self.url, True)
         updated = data_fetcher.fetch_site_updated_time()
         is_new_article = False
         if updated > self.updated or self.articles.count() == 0:
@@ -106,7 +109,7 @@ class Site(db.Model, ModelMixin):
             self.save()
 
     def set_category_by_name(self, category_name):
-        category = Category.query.filter_by(name=category_name)
+        category = Category.query.filter_by(name=category_name).first()
         if category is None:
             category = Category(name=category_name)
             category.save()

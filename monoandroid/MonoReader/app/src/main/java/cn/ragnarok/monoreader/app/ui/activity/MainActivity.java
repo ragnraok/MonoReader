@@ -13,6 +13,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
@@ -24,6 +25,7 @@ import cn.ragnarok.monoreader.api.service.APIService;
 import cn.ragnarok.monoreader.app.R;
 import cn.ragnarok.monoreader.app.test.api.TestUtil;
 import cn.ragnarok.monoreader.app.ui.adapter.DrawerListAdapter;
+import cn.ragnarok.monoreader.app.ui.fragment.SiteListFragment;
 import cn.ragnarok.monoreader.app.ui.fragment.TimelineFragment;
 import cn.ragnarok.monoreader.app.util.Utils;
 
@@ -31,9 +33,14 @@ public class MainActivity extends Activity {
 
     public static final String TAG = "Mono.MainActivity";
 
-    private TimelineFragment mTimelineFragment;
+    private static final int FRAGMENT_NUM = 3;
 
-    private Fragment[] mFragmentList = new Fragment[4];
+    private TimelineFragment mTimelineFragment;
+    private SiteListFragment mSiteListFragment;
+
+    private Fragment[] mFragmentList = new Fragment[FRAGMENT_NUM];
+    private int mCurrentSelectFragmentId = 0;
+    private boolean mIsChangeFragment = false;
 
     private ListView mLeftDrawer;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -42,14 +49,11 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
         // TEST ONLY CODE
         APIService.getInstance().setHost(TestUtil.HOST);
         // END TEST ONLY CODE
 
 //        requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
-
 
         setContentView(R.layout.activity_main);
 
@@ -62,6 +66,9 @@ public class MainActivity extends Activity {
 
         mTimelineFragment = TimelineFragment.newInstance(false);
         mFragmentList[0] = mTimelineFragment;
+
+        mSiteListFragment = SiteListFragment.newInstance();
+        mFragmentList[1] = mSiteListFragment;
 
         initDrawer();
 
@@ -95,8 +102,12 @@ public class MainActivity extends Activity {
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-                getActionBar().setNavigationMode(tempNagiviationMode);
-                setTitle(originTitle);
+                if (!mIsChangeFragment) {
+                    getActionBar().setNavigationMode(tempNagiviationMode);
+                    setTitle(originTitle);
+                }
+
+
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
@@ -110,8 +121,16 @@ public class MainActivity extends Activity {
         mLeftDrawer.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                if (position < 1 && position > 0) {
-                    getFragmentManager().beginTransaction().replace(R.id.container, mFragmentList[position - 1]).commit();
+                if (position < 3 && position > 0) {
+                    int selectFragmentId = position - 1;
+                    Fragment selectFragment = mFragmentList[selectFragmentId];
+                    if (selectFragmentId != mCurrentSelectFragmentId) {
+                        mIsChangeFragment = true;
+                    } else {
+                        mIsChangeFragment = false;
+                    }
+                    mCurrentSelectFragmentId = selectFragmentId;
+                    getFragmentManager().beginTransaction().replace(R.id.container, selectFragment).commit();
                 }
                 mDrawerLayout.closeDrawer(mLeftDrawer);
             }

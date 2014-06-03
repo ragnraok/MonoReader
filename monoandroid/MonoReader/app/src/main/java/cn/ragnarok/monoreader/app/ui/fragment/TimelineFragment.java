@@ -77,9 +77,6 @@ public class TimelineFragment extends Fragment {
     private boolean mIsInFavArticle;
 
     private TimelineCache mTimelineCache;
-//    private int mMainTimeCacheLastPage = 1;
-//    private int mFavTimelineCacheLastPage = 1;
-//    private int mFavArticleListCacheLastPage = 1;
     private boolean mIsNeedToFlushMainTimeline = false;
     private boolean mIsNeedToFlushFavTimeline = false;
     private boolean mIsNeedToFlushFavArticleList = false;
@@ -344,6 +341,7 @@ public class TimelineFragment extends Fragment {
     }
 
     private void initTimelineList() {
+//        mTimelineList.setFastScrollEnabled(true);
         mTimelineList.setVisibility(View.GONE);
         mLoadingProgress.setVisibility(View.VISIBLE);
 
@@ -564,6 +562,7 @@ public class TimelineFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         Log.d(TAG, "onDetach");
+        getActivity().getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         mTimelineService.cancelRequest();
         mFlushCacheHandler.post(new Runnable() {
             @Override
