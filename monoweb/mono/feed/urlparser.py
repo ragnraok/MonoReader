@@ -70,6 +70,8 @@ def is_feed_url(url):
     return False
 
 def get_feed_url(url):
+    if not url.startswith("http://") or not url.startswith("https://"):
+        return None
     if is_feed_url(url):
         return url
 
