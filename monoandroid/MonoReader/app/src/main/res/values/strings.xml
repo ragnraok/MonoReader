@@ -35,4 +35,8 @@
     <string name="site_last_update_format">Last Updated: %s</string>
     <string name="site_articles_num_format">%d articles</string>
     <string name="un_classified_name">Not Classified</string>
+    <string name="subscribe">Subscribe</string>
+    <string name="subscribe_hint">Please input a url</string>
+    <string name="subscribe_success">Subscribe Success</string>
+    <string name="subscribe_fail">Subscribe Failed</string>
 </resources>

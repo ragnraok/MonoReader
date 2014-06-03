@@ -4,25 +4,25 @@ package cn.ragnarok.monoreader.app.ui.fragment;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.DialogFragment;
 import android.os.Build;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 import cn.ragnarok.monoreader.api.base.APIRequestFinishListener;
-import cn.ragnarok.monoreader.api.object.CategorySiteObject;
 import cn.ragnarok.monoreader.api.object.SiteObject;
 import cn.ragnarok.monoreader.api.service.SiteService;
 import cn.ragnarok.monoreader.api.service.SubscribeService;
@@ -51,6 +51,8 @@ public class SiteListFragment extends Fragment {
     private APIRequestFinishListener<Collection<SiteObject>> mGetSiteListRequestListener;
     private SiteListAdapter mSiteListAdapter = null;
 
+    private SubscribeFragment mSubscribeFragment;
+
     public static SiteListFragment newInstance() {
         SiteListFragment fragment = new SiteListFragment();
         return fragment;
@@ -59,6 +61,7 @@ public class SiteListFragment extends Fragment {
         // Required empty public constructor
         mSubscribeService = new SubscribeService();
         mSiteService = new SiteService();
+        mSubscribeFragment = new SubscribeFragment();
     }
 
     @Override
@@ -67,6 +70,9 @@ public class SiteListFragment extends Fragment {
         getActivity().setTitle("Sites");
         getActivity().getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         initGetSiteRequestListener();
+        setHasOptionsMenu(true);
+
+
     }
 
     @Override
@@ -80,6 +86,13 @@ public class SiteListFragment extends Fragment {
 
         initSiteList();
         initPtrLayout();
+
+        mSubscribeFragment.setOnSubscribeSuccessListener(new SubscribeFragment.OnSubscribeSuccessListener() {
+            @Override
+            public void onSubscribeSuccess() {
+                loadSiteList();
+            }
+        });
 
         return view;
     }
@@ -171,5 +184,25 @@ public class SiteListFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
+    }
+
+    private void subscribe() {
+        mSubscribeFragment.show(getFragmentManager(), "Subscribe");
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_subscribe) {
+            subscribe();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.site_list, menu);
     }
 }
