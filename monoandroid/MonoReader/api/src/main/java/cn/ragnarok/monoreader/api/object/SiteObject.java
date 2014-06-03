@@ -18,6 +18,8 @@ public class SiteObject {
     @SerializedName("article_count")
     public int articleCount;
     public String url;
+    @SerializedName("is_un_classified")
+    public boolean isUnClassified;
 
     @Override
     public String toString() {

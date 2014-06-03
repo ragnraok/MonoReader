@@ -151,6 +151,7 @@ public class SiteListFragment extends Fragment {
                 Log.d(TAG, "get site list error: " + error.toString());
                 Toast.makeText(getActivity(), R.string.connection_failed, Toast.LENGTH_SHORT).show();
                 setLoadFinishViewVisibility();
+                mPtrLayout.setRefreshComplete();
             }
 
             @Override

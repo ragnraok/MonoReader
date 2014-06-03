@@ -107,11 +107,11 @@ public class SiteListAdapter extends BaseAdapter implements StickyListHeadersAda
             view.setTag(holder);
         }
         HeaderViewHolder holder = (HeaderViewHolder) view.getTag();
-//        if (!mSiteList[i].isUnClassified) {
+        if (!mSiteList[i].isUnClassified) {
             holder.category.setText(mSiteList[i].category);
-//        } else {
-//            holder.category.setText(R.string.un_classified_name);
-//        }
+        } else {
+            holder.category.setText(R.string.un_classified_name);
+        }
         return view;
 
     }

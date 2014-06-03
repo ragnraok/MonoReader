@@ -44,7 +44,7 @@ class SiteQuery(MonoQuery):
 
     def get_by_url(self, url):
         s = self.filter_by(url=url).first()
-        if not s:
+        if s is None:
             s = self.filter_by(origin_url=url).first()
         return s
 

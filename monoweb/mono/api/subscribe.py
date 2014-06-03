@@ -5,6 +5,10 @@ from utils import DATA_FORMAT_ERROR, SITE_NOT_EXIST
 from mono.models import Site, Category
 from mono.task.worker import add_update_task
 from mono.feed import get_feed_url
+from mono import cache
+
+import datetime
+import calendar
 
 class SiteSubscribeView(BaseAPIPOSTView):
     def __init__(self, is_subscribe=True, **kwargs):
@@ -12,7 +16,6 @@ class SiteSubscribeView(BaseAPIPOSTView):
         self.is_subscribe = is_subscribe
 
     def proc_data(self, data, **kwargs):
-        # TODO: need to add subscribe response
         """
         post data format:
             1. subscribe:
@@ -32,15 +35,15 @@ class SiteSubscribeView(BaseAPIPOSTView):
             title = data.get('title', None)
             if site_url is None:
                 raise ValueError(DATA_FORMAT_ERROR)
-            site = Site.query.get_by_url(site_url)
-            if site is not None:
-                site.is_subscribe = True
-                site.save()
-                return
             feed_url = get_feed_url(site_url)
             if feed_url is None:
                 current_app.logger.error("subscribe error, cannot get feed url for site %s" % site_url)
                 raise ValueError(SITE_NOT_EXIST)
+            site = Site.query.get_by_url(feed_url)
+            if site is not None:
+                site.is_subscribe = True
+                site.save()
+                return
             new_site = Site(url=feed_url, title=title, origin_url=site_url)
             new_site.save()
             if category is not None:
