@@ -30,6 +30,8 @@
     <string name="refresh">Refresh</string>
     <string name="fav_fail">Favorite Failed</string>
     <string name="unfav_fail">UnFavorite Failed</string>
+    <string name="fav_success">Favorite Success</string>
+    <string name="unfav_success">UnFavorite Success</string>
     <string name="site_last_update_format">Last Updated: %s</string>
     <string name="site_articles_num_format">%d articles</string>
     <string name="un_classified_name">Not Classified</string>

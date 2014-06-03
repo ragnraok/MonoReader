@@ -9,8 +9,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.VolleyError;
+
+import cn.ragnarok.monoreader.api.base.APIRequestFinishListener;
 import cn.ragnarok.monoreader.api.object.CategorySiteObject;
 import cn.ragnarok.monoreader.api.object.SiteObject;
+import cn.ragnarok.monoreader.api.service.SiteService;
 import cn.ragnarok.monoreader.app.R;
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 
@@ -23,10 +27,12 @@ public class SiteListAdapter extends BaseAdapter implements StickyListHeadersAda
     private SiteObject[] mSiteList;
 
     private View.OnClickListener mFavClickListener;
+    private SiteService mSiteService;
 
     public SiteListAdapter(Context context, SiteObject[] siteList) {
         this.mContext = context;
         this.mSiteList = siteList;
+        mSiteService = new SiteService();
 
         initClickListener();
     }
@@ -35,9 +41,47 @@ public class SiteListAdapter extends BaseAdapter implements StickyListHeadersAda
         mFavClickListener = new View.OnClickListener() {
 
             @Override
-            public void onClick(View view) {
+            public void onClick(final View view) {
                 SiteObject site = (SiteObject) view.getTag();
-                Toast.makeText(mContext, site.title, Toast.LENGTH_SHORT).show();
+                if (site.isFav) {
+                    ((ImageView)view).setImageResource(R.drawable.ic_rating_not_important);
+                    mSiteService.unfavSite(site.siteId, new APIRequestFinishListener() {
+                        @Override
+                        public void onRequestSuccess() {
+                            Toast.makeText(mContext, R.string.unfav_success, Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onRequestFail(VolleyError error) {
+                            ((ImageView)view).setImageResource(R.drawable.ic_rating_important);
+                            Toast.makeText(mContext, R.string.unfav_fail, Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onGetResult(Object result) {
+
+                        }
+                    });
+                } else {
+                    ((ImageView)view).setImageResource(R.drawable.ic_rating_important);
+                    mSiteService.favSite(site.siteId, new APIRequestFinishListener() {
+                        @Override
+                        public void onRequestSuccess() {
+                            Toast.makeText(mContext, R.string.fav_success, Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onRequestFail(VolleyError error) {
+                            ((ImageView)view).setImageResource(R.drawable.ic_rating_not_important);
+                            Toast.makeText(mContext, R.string.fav_fail, Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onGetResult(Object result) {
+
+                        }
+                    });
+                }
             }
         };
     }
@@ -105,6 +149,11 @@ public class SiteListAdapter extends BaseAdapter implements StickyListHeadersAda
         holder.siteUrl.setText(mSiteList[i].url);
         holder.siteLastUpdated.setText(mContext.getString(R.string.site_last_update_format, mSiteList[i].updated));
         holder.siteArticleNum.setText(mContext.getString(R.string.site_articles_num_format, mSiteList[i].articleCount));
+        if (mSiteList[i].isFav) {
+            holder.favSetView.setImageResource(R.drawable.ic_rating_important);
+        } else {
+            holder.favSetView.setImageResource(R.drawable.ic_rating_not_important);
+        }
         return view;
     }
 
