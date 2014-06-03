@@ -7,6 +7,7 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,9 +23,12 @@ import com.android.volley.VolleyError;
 import cn.ragnarok.monoreader.api.base.APIRequestFinishListener;
 import cn.ragnarok.monoreader.api.service.SubscribeService;
 import cn.ragnarok.monoreader.app.R;
+import cn.ragnarok.monoreader.app.util.Utils;
 
 
 public class SubscribeFragment extends DialogFragment {
+
+    public static final String TAG = "Mono.SubscribeFragment";
 
     public interface OnSubscribeSuccessListener {
         public void onSubscribeSuccess();
@@ -100,6 +104,7 @@ public class SubscribeFragment extends DialogFragment {
                 String url = mSubscribeUrl.getText().toString();
                 if (url != null && url.trim().length() != 0) {
                     setSubscribeVisibility();
+                    Utils.hideKeyboard(getActivity(), mSubscribeUrl);
                     mSubscribeService.subscribe(null, url, null, mSubscribeListener);
                 } else {
                     Toast.makeText(getActivity(), R.string.subscribe_hint, Toast.LENGTH_SHORT).show();
@@ -132,4 +137,13 @@ public class SubscribeFragment extends DialogFragment {
         super.onAttach(activity);
         initSubscribeListener();
     }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mSubscribeService.cancelRequest();
+//        Log.d(TAG, "onDetach");
+    }
+
+
 }
