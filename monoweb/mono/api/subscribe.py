@@ -43,6 +43,8 @@ class SiteSubscribeView(BaseAPIPOSTView):
             if site is not None:
                 site.is_subscribe = True
                 site.save()
+                now_timestamp = calendar.timegm(datetime.datetime.utcnow().utctimetuple())
+                cache[current_app.config['MAIN_TIMELINE_UPDATE_CACHE_KEY']] = now_timestamp
                 return
             new_site = Site(url=feed_url, title=title, origin_url=site_url)
             new_site.save()
@@ -64,6 +66,31 @@ class SiteSubscribeView(BaseAPIPOSTView):
             if site is None:
                 raise ValueError(SITE_NOT_EXIST)
             site.is_subscribe = False
+            site.is_read_daily = False
             site.save()
             now_timestamp = calendar.timegm(datetime.datetime.utcnow().utctimetuple())
             cache[current_app.config['MAIN_TIMELINE_UPDATE_CACHE_KEY']] = now_timestamp
+            if site.is_read_daily:
+                cache[current_app.config['FAV_TIMELINE_UPDATE_CACHE_KEY']] = now_timestamp
+
+class BundleUnsubscribe(BaseAPIPOSTView):
+    def proc_data(self, data, **kwargs):
+        """
+        post data format:
+            {
+                site_ids: [id1, id2, id3]
+            }
+        """
+        site_ids = data.get('site_ids', None)
+        if site_ids is None:
+            raise ValueError(DATA_FORMAT_ERROR)
+        for site_id in site_ids:
+            site = Site.query.get(site_id)
+            if site is not None:
+                site.is_subscribe = False
+                site.is_read_daily = False
+                site.unset_category()
+                site.save()
+        now_timestamp = calendar.timegm(datetime.datetime.utcnow().utctimetuple())
+        cache[current_app.config['MAIN_TIMELINE_UPDATE_CACHE_KEY']] = now_timestamp
+        cache[current_app.config['FAV_TIMELINE_UPDATE_CACHE_KEY']] = now_timestamp

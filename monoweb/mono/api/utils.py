@@ -20,13 +20,15 @@ def make_api_response(error_code, data=None):
 
 def get_post_data():
     result = request.get_json(force=True, silent=True)
-    if result is None:
-        result = request.data
+    if result is not None:
+        return result
+    result = request.data
     try:
         """
         all post data must be in json format
         """
-        result = dict(result)
+        result = json.loads(result)
         return result
-    except:
+    except e:
+        print e
         raise ValueError(DATA_FORMAT_ERROR)

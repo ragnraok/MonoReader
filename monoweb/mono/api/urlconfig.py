@@ -30,11 +30,13 @@ def config_api_url():
     api_app.add_url_rule("/category/set/", view_func=category_setview)
     api_app.add_url_rule("/category/unset/", view_func=category_unsetview)
 
-    from subscribe import SiteSubscribeView
+    from subscribe import SiteSubscribeView, BundleUnsubscribe
     subscribe_view = SiteSubscribeView.as_view('subscribe_view', is_subscribe=True)
     unsubscribe_view = SiteSubscribeView.as_view('unsubscribe_view', is_subscribe=False)
+    bundle_unsubscribe_view = BundleUnsubscribe.as_view('bundle_unsubscribe_view')
     api_app.add_url_rule("/subscribe/", view_func=subscribe_view)
     api_app.add_url_rule("/unsubscribe/", view_func=unsubscribe_view)
+    api_app.add_url_rule("/bundle_unsubscribe/", view_func=bundle_unsubscribe_view)
 
     from article import ArticleLoadView, ArticleFavSetView, FavArticleListView, FavArticleListCheckView
     load_article_view = ArticleLoadView.as_view('load_article_view')

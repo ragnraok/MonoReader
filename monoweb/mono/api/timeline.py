@@ -28,9 +28,13 @@ class MainTimelineView(BaseArticleListView):
         per_page_num = current_app.config.get('ARTICLE_NUM_PER_PAGE', 10)
         page = kwargs.get('page', 1)
         if page >= 1:
-            article_list = Article.query.filter(Article.site_id!=None).order_by(
-                    desc(Article.updated)).paginate(page=page,
-                            per_page=per_page_num, error_out=False).items
+            #article_list = Article.query.filter(Article.site_id!=None).order_by(
+            #        desc(Article.updated)).paginate(page=page,
+            #                per_page=per_page_num, error_out=False).items
+            article_list = Article.query.filter(Article.site_id.in_(
+                Site.query.with_entities(Site.id).filter(Site.is_subscribe==True))).filter(
+                        Article.id!=None).order_by(desc(Article.updated)).paginate(
+                                page=page, per_page=per_page_num, error_out=False).items
         else:
             raise ValueError(PAGE_SMALL_THAN_ONE)
         result = []
