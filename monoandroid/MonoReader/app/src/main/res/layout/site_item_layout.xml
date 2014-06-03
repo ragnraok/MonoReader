@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text="http://www.ruanyifeng.com/blog/atom.xml"
-            android:textSize="20dp" />
+            android:textSize="17dp" />
     </LinearLayout>
 
     <RelativeLayout

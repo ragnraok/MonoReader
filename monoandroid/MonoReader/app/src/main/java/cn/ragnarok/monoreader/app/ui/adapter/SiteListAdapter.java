@@ -42,13 +42,16 @@ public class SiteListAdapter extends BaseAdapter implements StickyListHeadersAda
 
             @Override
             public void onClick(final View view) {
-                SiteObject site = (SiteObject) view.getTag();
+                final SiteObject site = (SiteObject) view.getTag();
                 if (site.isFav) {
                     ((ImageView)view).setImageResource(R.drawable.ic_rating_not_important);
                     mSiteService.unfavSite(site.siteId, new APIRequestFinishListener() {
                         @Override
                         public void onRequestSuccess() {
                             Toast.makeText(mContext, R.string.unfav_success, Toast.LENGTH_SHORT).show();
+                            site.isFav = false;
+                            view.setTag(site);
+                            notifyDataSetChanged();
                         }
 
                         @Override
@@ -68,6 +71,9 @@ public class SiteListAdapter extends BaseAdapter implements StickyListHeadersAda
                         @Override
                         public void onRequestSuccess() {
                             Toast.makeText(mContext, R.string.fav_success, Toast.LENGTH_SHORT).show();
+                            site.isFav = true;
+                            view.setTag(site);
+                            notifyDataSetChanged();
                         }
 
                         @Override
@@ -149,7 +155,8 @@ public class SiteListAdapter extends BaseAdapter implements StickyListHeadersAda
         holder.siteUrl.setText(mSiteList[i].url);
         holder.siteLastUpdated.setText(mContext.getString(R.string.site_last_update_format, mSiteList[i].updated));
         holder.siteArticleNum.setText(mContext.getString(R.string.site_articles_num_format, mSiteList[i].articleCount));
-        if (mSiteList[i].isFav) {
+        SiteObject site = (SiteObject) holder.favSetView.getTag();
+        if (site.isFav) {
             holder.favSetView.setImageResource(R.drawable.ic_rating_important);
         } else {
             holder.favSetView.setImageResource(R.drawable.ic_rating_not_important);
