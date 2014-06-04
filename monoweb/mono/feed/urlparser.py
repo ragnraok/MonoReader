@@ -93,6 +93,8 @@ def get_feed_url(url):
             return feed_url
         elif feed_url.startswith('/'):
             p = urlparse.urlparse(feed_url)
+            if p is None or p.hostname is None:
+                return None
             url = 'http://' + p.hostname
             feed_url = os.path.join(url, feed_url[1:])
         return feed_url
