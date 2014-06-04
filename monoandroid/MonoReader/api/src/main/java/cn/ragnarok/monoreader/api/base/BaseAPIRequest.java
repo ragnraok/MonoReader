@@ -2,6 +2,7 @@ package cn.ragnarok.monoreader.api.base;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Cache;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Response;
@@ -23,16 +24,19 @@ import cn.ragnarok.monoreader.api.util.ErrorHelper;
 public class BaseAPIRequest extends StringRequest {
 
     protected String mPostData = null;
+    protected static final int TIMEOUT = 1000 * 60;
 
     public BaseAPIRequest(int method, String url, Response.Listener<String> listener, Response.ErrorListener errorListener) {
         super(method, url, listener, errorListener);
         this.setShouldCache(true);
+        setRetryPolicy(new DefaultRetryPolicy(TIMEOUT, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
     }
 
     public BaseAPIRequest(int method, String url, Response.Listener<String> listener, Response.ErrorListener errorListener, String postData) {
         super(method, url, listener, errorListener);
         this.mPostData = postData;
         this.setShouldCache(true);
+        setRetryPolicy(new DefaultRetryPolicy(TIMEOUT, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
     }
 
     @Override
