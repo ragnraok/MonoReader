@@ -64,6 +64,7 @@ public class SubscribeFragment extends DialogFragment {
 
             @Override
             public void onRequestFail(VolleyError error) {
+                Log.d(TAG, "subscribe failed, error:" + error.toString());
                 Toast.makeText(getActivity(), R.string.subscribe_fail, Toast.LENGTH_SHORT).show();
                 dismiss();
             }
@@ -79,7 +80,7 @@ public class SubscribeFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
 //        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        dialog.setTitle("Subscribe");
+        dialog.setTitle(R.string.subscribe);
         return dialog;
     }
 
