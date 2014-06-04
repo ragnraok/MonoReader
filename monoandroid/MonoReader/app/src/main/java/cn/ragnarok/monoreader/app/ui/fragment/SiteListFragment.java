@@ -60,6 +60,7 @@ public class SiteListFragment extends Fragment {
     private AbsListView.MultiChoiceModeListener mUnsubscribeMode;
     private ArrayList<Integer> mSelectSite = new ArrayList<Integer>();
     private ProgressDialog mProgressDialog;
+    private SiteListAdapter.OnCategorySetFinishListener mCategorySetListener;
 
     public static SiteListFragment newInstance() {
         SiteListFragment fragment = new SiteListFragment();
@@ -70,7 +71,12 @@ public class SiteListFragment extends Fragment {
         mSubscribeService = new SubscribeService();
         mSiteService = new SiteService();
         mSubscribeFragment = new SubscribeFragment();
-
+        mCategorySetListener = new SiteListAdapter.OnCategorySetFinishListener() {
+            @Override
+            public void onCategorySetFinish() {
+                loadSiteList();
+            }
+        };
     }
 
     @Override
@@ -201,7 +207,7 @@ public class SiteListFragment extends Fragment {
 
     private void loadSiteList() {
         mPtrLayout.setRefreshing(true);
-        mSiteList.setVisibility(View.INVISIBLE);
+        mSiteList.setVisibility(View.GONE);
         mProgressBar.setVisibility(View.VISIBLE);
         mSiteService.loadAllSite(mGetSiteListRequestListener);
     }
@@ -231,6 +237,7 @@ public class SiteListFragment extends Fragment {
                 mSiteCollection.toArray(data);
 //                if (mSiteListAdapter == null) {
                     mSiteListAdapter = new SiteListAdapter(getActivity(), data);
+                    mSiteListAdapter.setOnCategorySetFinishListener(mCategorySetListener);
                     mSiteList.setAdapter(mSiteListAdapter);
 //                } else {
 //                    mSiteListAdapter.setData(data);

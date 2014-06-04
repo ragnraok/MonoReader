@@ -40,4 +40,7 @@
     <string name="subscribe_hint">Please input a url</string>
     <string name="subscribe_success">Subscribe Success</string>
     <string name="subscribe_fail">Subscribe Failed</string>
+    <string name="set_category">Set Category</string>
+    <string name="ok">OK</string>
+    <string name="category_set_hint">Please input a category name</string>
 </resources>

@@ -1,5 +1,6 @@
 package cn.ragnarok.monoreader.app.ui.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,8 @@ import cn.ragnarok.monoreader.api.object.CategorySiteObject;
 import cn.ragnarok.monoreader.api.object.SiteObject;
 import cn.ragnarok.monoreader.api.service.SiteService;
 import cn.ragnarok.monoreader.app.R;
+import cn.ragnarok.monoreader.app.ui.fragment.CategorySetFragment;
+import cn.ragnarok.monoreader.app.ui.fragment.SiteListFragment;
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 
 /**
@@ -24,7 +27,7 @@ import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 public class SiteListAdapter extends BaseAdapter implements StickyListHeadersAdapter {
 
     public interface OnCategorySetFinishListener {
-        public void onCategorySetFinish(SiteObject newSetSite);
+        public void onCategorySetFinish();
     }
 
     private OnCategorySetFinishListener mOnCategorySetFinishListener;
@@ -35,11 +38,20 @@ public class SiteListAdapter extends BaseAdapter implements StickyListHeadersAda
     private View.OnClickListener mFavClickListener;
     private View.OnClickListener mCategeoryClickListener;
     private SiteService mSiteService;
+    CategorySetFragment mCategorySetFragment = new CategorySetFragment();
 
     public SiteListAdapter(Context context, SiteObject[] siteList) {
         this.mContext = context;
         this.mSiteList = siteList;
         mSiteService = new SiteService();
+        mCategorySetFragment.setCategorySetFinishListener(new CategorySetFragment.CategorySetFinishListener() {
+            @Override
+            public void onSetCategoryFinish() {
+                if (mOnCategorySetFinishListener != null) {
+                    mOnCategorySetFinishListener.onCategorySetFinish();
+                }
+            }
+        });
 
         initClickListener();
     }
@@ -113,7 +125,8 @@ public class SiteListAdapter extends BaseAdapter implements StickyListHeadersAda
     }
 
     private void setSiteCategory(SiteObject site) {
-
+        mCategorySetFragment.setSiteId(site.siteId);
+        mCategorySetFragment.show(((Activity)mContext).getFragmentManager(), "Category");
     }
 
     public void setData(SiteObject[] siteList) {
