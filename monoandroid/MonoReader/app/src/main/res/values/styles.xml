@@ -45,6 +45,7 @@
         <item name="android:layout_alignParentBottom">true</item>
         <item name="android:layout_marginBottom">5dp</item>
         <item name="android:ellipsize">marquee</item>
+        <item name="android:marqueeRepeatLimit">marquee_forever</item>
     </style>
 
     <style name="timeline_item_text_without_cover" parent="timeline_item_text">
@@ -52,14 +53,17 @@
     </style>
 
     <style name="timeline_item_title_without_cover" parent="timeline_item_text_without_cover">
-        <item name="android:textSize">27dp</item>
+        <item name="android:textSize">25dp</item>
         <item name="android:textColor">#424242</item>
+        <item name="android:maxLength">40</item>
         <item name="android:ellipsize">marquee</item>
+        <item name="android:marqueeRepeatLimit">marquee_forever</item>
     </style>
 
     <style name="timeline_item_site" parent="timeline_item_text">
-        <item name="android:maxLength">20</item>
+        <item name="android:maxLength">30</item>
         <item name="android:ellipsize">marquee</item>
+        <item name="android:marqueeRepeatLimit">marquee_forever</item>
         <item name="android:textColor">#F0F8FF</item>
         <item name="android:textSize">15dp</item>
     </style>
@@ -120,6 +124,7 @@
         <item name="android:shadowRadius">1.2</item>
         <item name="android:maxLength">30</item>
         <item name="android:ellipsize">marquee</item>
+        <item name="android:marqueeRepeatLimit">marquee_forever</item>
     </style>
 
 </resources>

@@ -40,7 +40,7 @@ public class TimelineListAdapter extends BaseAdapter {
 
     private static final int RATE = 8;
 
-    private static final int MAX_TITLE_LENGTH = 40;
+    private static final int MAX_TITLE_LENGTH = 25;
 
     private static final int ITEM_ARTICLE = 1;
     private static final int ITEM_LOADING_PROGRESS = 2;
