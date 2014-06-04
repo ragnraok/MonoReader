@@ -2,6 +2,7 @@ package cn.ragnarok.monoreader.app.ui.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
+
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 
 import cn.ragnarok.monoreader.api.base.APIRequestFinishListener;
 import cn.ragnarok.monoreader.api.object.CategorySiteObject;
@@ -26,6 +34,8 @@ import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
  */
 public class SiteListAdapter extends BaseAdapter implements StickyListHeadersAdapter {
 
+    public static final String TAG = "Mono.SiteListAdapter";
+
     public interface OnCategorySetFinishListener {
         public void onCategorySetFinish();
     }
@@ -34,6 +44,7 @@ public class SiteListAdapter extends BaseAdapter implements StickyListHeadersAda
 
     private Context mContext;
     private SiteObject[] mSiteList;
+    private long[] mHeaderId;
 
     private View.OnClickListener mFavClickListener;
     private View.OnClickListener mCategeoryClickListener;
@@ -43,6 +54,13 @@ public class SiteListAdapter extends BaseAdapter implements StickyListHeadersAda
     public SiteListAdapter(Context context, SiteObject[] siteList) {
         this.mContext = context;
         this.mSiteList = siteList;
+        rearragneSiteList();
+
+        mHeaderId = new long[siteList.length];
+        for (int i = 0; i < mHeaderId.length; i++) {
+            mHeaderId[i] = siteList[i].category.hashCode();
+        }
+
         mSiteService = new SiteService();
         mCategorySetFragment.setCategorySetFinishListener(new CategorySetFragment.CategorySetFinishListener() {
             @Override
@@ -54,6 +72,22 @@ public class SiteListAdapter extends BaseAdapter implements StickyListHeadersAda
         });
 
         initClickListener();
+    }
+
+    private void rearragneSiteList() {
+        Arrays.sort(mSiteList, new Comparator<SiteObject>() {
+            @Override
+            public int compare(SiteObject siteObject, SiteObject siteObject2) {
+                return siteObject.category.compareTo(siteObject2.category);
+//                if (siteObject.category.hashCode() > siteObject2.category.hashCode()) {
+//                    return 1;
+//                } else if (siteObject.category.hashCode() < siteObject2.category.hashCode()) {
+//                    return -1;
+//                } else {
+//                    return 0;
+//                }
+            }
+        });
     }
 
     public void setOnCategorySetFinishListener(OnCategorySetFinishListener listener) {
@@ -155,7 +189,9 @@ public class SiteListAdapter extends BaseAdapter implements StickyListHeadersAda
 
     @Override
     public long getHeaderId(int i) {
-        return mSiteList[i].category.hashCode();
+        long id =  mHeaderId[i];
+//        Log.d(TAG, "headerId: " + id);
+        return id;
     }
 
     @Override
@@ -184,8 +220,6 @@ public class SiteListAdapter extends BaseAdapter implements StickyListHeadersAda
             holder.siteUrl = (TextView) view.findViewById(R.id.site_url);
             holder.siteLastUpdated = (TextView) view.findViewById(R.id.site_last_updated);
             holder.siteArticleNum = (TextView) view.findViewById(R.id.site_articles_num);
-            holder.favSetView.setTag(mSiteList[i]);
-            holder.catgorySetView.setTag(mSiteList[i]);
             holder.favSetView.setOnClickListener(mFavClickListener);
             holder.catgorySetView.setOnClickListener(mCategeoryClickListener);
             view.setTag(holder);
@@ -195,6 +229,8 @@ public class SiteListAdapter extends BaseAdapter implements StickyListHeadersAda
         holder.siteUrl.setText(mSiteList[i].url);
         holder.siteLastUpdated.setText(mContext.getString(R.string.site_last_update_format, mSiteList[i].updated));
         holder.siteArticleNum.setText(mContext.getString(R.string.site_articles_num_format, mSiteList[i].articleCount));
+        holder.favSetView.setTag(mSiteList[i]);
+        holder.catgorySetView.setTag(mSiteList[i]);
         SiteObject site = (SiteObject) holder.favSetView.getTag();
         if (site.isFav) {
             holder.favSetView.setImageResource(R.drawable.ic_rating_important);
