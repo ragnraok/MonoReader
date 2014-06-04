@@ -16,6 +16,10 @@
         android:layout_height="wrap_content"
         android:textSize="20dp"
         android:textColor="#5E5E5E"
+        android:shadowDx="1.5"
+        android:shadowDy="1.5"
+        android:shadowRadius="2"
+        android:shadowColor="#F5F5F5"
         android:text="Test"/>
 
 </LinearLayout>
