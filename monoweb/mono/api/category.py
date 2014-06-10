@@ -57,7 +57,6 @@ class CategorySetView(BaseAPIPOSTView):
         site = Site.query.get(site_id)
         if site is None:
             raise ValueError(SITE_NOT_EXIST)
-        print site.title
         if self.is_set:
             category = Category.query.filter_by(name=category_name).first()
             if category is None:

@@ -100,6 +100,8 @@ public class SiteListFragment extends Fragment {
         mProgressBar = (ProgressBar) view.findViewById(R.id.loading_progress);
         mPtrLayout = (PullToRefreshLayout) view.findViewById(R.id.ptr_layout);
 
+
+
         mUnsubscribeMode = new AbsListView.MultiChoiceModeListener() {
             @Override
             public void onItemCheckedStateChanged(ActionMode actionMode, int position, long id, boolean checked) {
