@@ -23,12 +23,14 @@ def config_api_url():
     api_app.add_url_rule("/site/get_by_category_id/<int:category_id>/", view_func=site_listview_by_category)
     api_app.add_url_rule("/site/fav_set/", view_func=FavSiteSetView.as_view("fav_site_setview"))
 
-    from category import CategoryListView, CategorySetView
+    from category import CategoryListView, CategorySetView, CategoryTimeline
     category_setview = CategorySetView.as_view('category_setview', is_set=True)
     category_unsetview = CategorySetView.as_view('category_unsetview', is_set=False)
+    category_timeline = CategoryTimeline.as_view('category_timeline_view')
     api_app.add_url_rule("/category/get_all/", view_func=CategoryListView.as_view('category_listview'))
     api_app.add_url_rule("/category/set/", view_func=category_setview)
     api_app.add_url_rule("/category/unset/", view_func=category_unsetview)
+    api_app.add_url_rule("/category/<category>/timeline/<int:page>/", view_func=category_timeline)
 
     from subscribe import SiteSubscribeView, BundleUnsubscribe
     subscribe_view = SiteSubscribeView.as_view('subscribe_view', is_subscribe=True)

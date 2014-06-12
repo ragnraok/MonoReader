@@ -1,9 +1,10 @@
 from flask import current_app
+from sqlalchemy.sql.expression import desc, select
 
-from apibase import BaseAPIGETView, BaseAPIPOSTView
-from objects import fill_category_object
-from utils import SITE_NOT_EXIST, DATA_FORMAT_ERROR
-from mono.models import Site, Category
+from apibase import BaseAPIGETView, BaseAPIPOSTView, BaseArticleListView
+from objects import fill_category_object, fill_list_article_object
+from utils import SITE_NOT_EXIST, DATA_FORMAT_ERROR, PAGE_SMALL_THAN_ONE
+from mono.models import Site, Category, Article
 
 class CategoryListView(BaseAPIGETView):
     """
@@ -65,3 +66,38 @@ class CategorySetView(BaseAPIPOSTView):
             site.set_category(category)
         else:
             site.unset_category()
+
+class CategoryTimeline(BaseArticleListView):
+    """
+    response format:
+    {
+        error_code: error_code,
+        data: {
+            articles: [
+                list article object
+                ...
+            ]
+        }
+    }
+    """
+    def get_article_list(self, **kwargs):
+        category_name = kwargs.get('category', None)
+        page = kwargs.get('page', 1)
+        if page < 1:
+            raise ValueError(PAGE_SMALL_THAN_ONE)
+        if category_name is None:
+            raise ValueError(DATA_FORMAT_ERROR)
+        per_page_num = current_app.config.get('ARTICLE_NUM_PER_PAGE', 10)
+        category = Category.query.filter_by(name=category_name).first()
+        if category is not None:
+            ids = [item.id for item in category.sites]
+            article_list = Article.query.filter(Article.site_id.in_(ids)).order_by(
+                    desc(Article.updated)).paginate(page=page, per_page=per_page_num, error_out=False).items
+        else:
+            article_list = []
+        result = []
+        for article in article_list:
+            result.append(fill_list_article_object(article.id, article.title,
+                article.site.title, article.updated, article.first_image_url,
+                article.is_fav))
+        return result
