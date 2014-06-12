@@ -3,6 +3,8 @@ package cn.ragnarok.monoreader.app.ui.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -54,6 +56,10 @@ public class SiteArticleListActivity extends Activity {
     private boolean mIsLoadingMore;
     private boolean mIsLastPage;
 
+    private Handler mHandler = new Handler(Looper.getMainLooper());
+
+//    private boolean mIsPull = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,7 +80,9 @@ public class SiteArticleListActivity extends Activity {
 
         initView();
         initRequestListener();
+
         resetArticleList();
+
 
     }
 
@@ -171,13 +179,14 @@ public class SiteArticleListActivity extends Activity {
         if (!Utils.isNetworkConnected(this)) {
             Toast.makeText(SiteArticleListActivity.this, R.string.connection_failed, Toast.LENGTH_SHORT).show();
         }
+        mPtrLayout.setRefreshing(true);
         mProgressBar.setVisibility(View.VISIBLE);
         mArticleListView.setVisibility(View.GONE);
         mArticleListAdapter.clearData();
         mPage = 1;
         mIsLastPage = false;
         mIsLoadingMore = false;
-        mPtrLayout.setRefreshing(true);
+
         mSiteService.loadSiteArticleList(mSiteId, mPage, mArticleListRequestListener);
     }
 
@@ -191,17 +200,17 @@ public class SiteArticleListActivity extends Activity {
         mSiteService.loadSiteArticleList(mSiteId, mPage, mArticleListRequestListener);
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-    }
+//    @Override
+//    protected void onPostCreate(Bundle savedInstanceState) {
+//        super.onPostCreate(savedInstanceState);
+//        mHandler.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                resetArticleList();
+//            }
+//        }, 500);
+//
+//    }
 
     @Override
     protected void onDestroy() {
