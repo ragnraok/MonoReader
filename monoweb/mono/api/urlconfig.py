@@ -27,10 +27,13 @@ def config_api_url():
     category_setview = CategorySetView.as_view('category_setview', is_set=True)
     category_unsetview = CategorySetView.as_view('category_unsetview', is_set=False)
     category_timeline = CategoryTimeline.as_view('category_timeline_view')
+    unclassified_category_timeline = CategoryTimeline.as_view('unclassified_category_timeline_view',
+            is_un_classified=True)
     api_app.add_url_rule("/category/get_all/", view_func=CategoryListView.as_view('category_listview'))
     api_app.add_url_rule("/category/set/", view_func=category_setview)
     api_app.add_url_rule("/category/unset/", view_func=category_unsetview)
     api_app.add_url_rule("/category/<category>/timeline/<int:page>/", view_func=category_timeline)
+    api_app.add_url_rule("/category/unclassified_timeline/<int:page>/", view_func=unclassified_category_timeline)
 
     from subscribe import SiteSubscribeView, BundleUnsubscribe
     subscribe_view = SiteSubscribeView.as_view('subscribe_view', is_subscribe=True)

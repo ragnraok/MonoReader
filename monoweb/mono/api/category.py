@@ -68,6 +68,10 @@ class CategorySetView(BaseAPIPOSTView):
             site.unset_category()
 
 class CategoryTimeline(BaseArticleListView):
+    def __init__(self, is_un_classified=False, **kwargs):
+        super(CategoryTimeline, self).__init__(**kwargs)
+        self.is_un_classified = is_un_classified
+
     """
     response format:
     {
@@ -81,14 +85,18 @@ class CategoryTimeline(BaseArticleListView):
     }
     """
     def get_article_list(self, **kwargs):
-        category_name = kwargs.get('category', None)
+        if self.is_un_classified:
+            unclassified_name = current_app.config.get('UNCLASSIFIED', "not classified")
+            category = Category.query.filter_by(name=unclassified_name).first()
+        else:
+            category_name = kwargs.get('category', None)
+            if category_name is None:
+                raise ValueError(DATA_FORMAT_ERROR)
+            category = Category.query.filter_by(name=category_name).first()
         page = kwargs.get('page', 1)
         if page < 1:
             raise ValueError(PAGE_SMALL_THAN_ONE)
-        if category_name is None:
-            raise ValueError(DATA_FORMAT_ERROR)
         per_page_num = current_app.config.get('ARTICLE_NUM_PER_PAGE', 10)
-        category = Category.query.filter_by(name=category_name).first()
         if category is not None:
             ids = [item.id for item in category.sites]
             article_list = Article.query.filter(Article.site_id.in_(ids)).order_by(
