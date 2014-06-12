@@ -516,7 +516,7 @@ public class TimelineFragment extends Fragment {
         ptrOptions.refreshOnUp(true);
         ptrOptions.scrollDistance(0.4f);
 
-        ActionBarPullToRefresh.from(getActivity()).allChildrenArePullable().options(ptrOptions.build()).
+        ActionBarPullToRefresh.from(getActivity()).theseChildrenArePullable(R.id.timeline_list, R.id.loading_layout).options(ptrOptions.build()).
                 listener(new OnRefreshListener() {
             @Override
             public void onRefreshStarted(View view) {

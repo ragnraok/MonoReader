@@ -6,7 +6,7 @@
     tools:context="cn.ragnarok.monoreader.app.ui.fragment.TimelineFragment">
 
     <ListView
-        android:id="@+id/timeline_list"
+        android:id="@+id/article_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:divider="@drawable/list_divider"

@@ -46,7 +46,7 @@ public class TimelineListAdapter extends BaseAdapter {
     private static final int ITEM_LOADING_PROGRESS = 2;
 
     private Context mContext;
-    private boolean mIsFavTimeline;
+//    private boolean mIsFavTimeline;
 
     private int mLastShowPosition;
     private AnimationSet mItemShowAnimation;
@@ -61,7 +61,7 @@ public class TimelineListAdapter extends BaseAdapter {
 
     public TimelineListAdapter(Context context, boolean isFavTimeline) {
         this.mContext = context;
-        this.mIsFavTimeline = isFavTimeline;
+//        this.mIsFavTimeline = isFavTimeline;
         mLastShowPosition = -1;
 
         mData = new ArrayList<ListArticleObject>();

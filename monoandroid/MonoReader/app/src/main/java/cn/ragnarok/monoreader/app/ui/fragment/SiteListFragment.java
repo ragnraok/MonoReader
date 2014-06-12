@@ -6,6 +6,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -32,6 +33,7 @@ import cn.ragnarok.monoreader.api.object.SiteObject;
 import cn.ragnarok.monoreader.api.service.SiteService;
 import cn.ragnarok.monoreader.api.service.SubscribeService;
 import cn.ragnarok.monoreader.app.R;
+import cn.ragnarok.monoreader.app.ui.activity.SiteArticleListActivity;
 import cn.ragnarok.monoreader.app.ui.adapter.SiteListAdapter;
 import cn.ragnarok.monoreader.app.util.Utils;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
@@ -99,8 +101,6 @@ public class SiteListFragment extends Fragment {
         mSiteList = (StickyListHeadersListView) view.findViewById(R.id.site_list);
         mProgressBar = (ProgressBar) view.findViewById(R.id.loading_progress);
         mPtrLayout = (PullToRefreshLayout) view.findViewById(R.id.ptr_layout);
-
-
 
         mUnsubscribeMode = new AbsListView.MultiChoiceModeListener() {
             @Override
@@ -200,6 +200,13 @@ public class SiteListFragment extends Fragment {
         mSiteList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(getActivity(), SiteArticleListActivity.class);
+                if (mSiteListAdapter != null) {
+                    SiteObject site = ((SiteObject)mSiteListAdapter.getItem(i));
+                    intent.putExtra(SiteArticleListActivity.SITE_ID, site.siteId);
+                    intent.putExtra(SiteArticleListActivity.SITE_TITLE, site.title);
+                }
+                startActivity(intent);
 
             }
         });

@@ -43,4 +43,6 @@
     <string name="set_category">Set Category</string>
     <string name="ok">OK</string>
     <string name="category_set_hint">Please input a category name</string>
+    <string name="title_activity_site_article_list">SiteArticleListActivity</string>
+
 </resources>
