@@ -23,6 +23,7 @@ import cn.ragnarok.monoreader.api.service.SiteService;
 import cn.ragnarok.monoreader.app.R;
 import cn.ragnarok.monoreader.app.ui.adapter.TimelineListAdapter;
 import cn.ragnarok.monoreader.app.ui.fragment.TimelineFragment;
+import cn.ragnarok.monoreader.app.util.Utils;
 import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
 import uk.co.senab.actionbarpulltorefresh.library.Options;
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
@@ -73,28 +74,27 @@ public class SiteArticleListActivity extends Activity {
 
         initView();
         initRequestListener();
-        resetArticleList();
 
-        resetArticleList();
     }
 
     private void initRequestListener() {
         mArticleListRequestListener = new APIRequestFinishListener<Collection<ListArticleObject>>() {
             @Override
             public void onRequestSuccess() {
-
+                mPtrLayout.setRefreshComplete();
             }
 
             @Override
             public void onRequestFail(VolleyError error) {
                 Toast.makeText(SiteArticleListActivity.this, R.string.connection_failed, Toast.LENGTH_SHORT).show();
                 Log.d(TAG, "get article list faied: " + error.toString() + ", page: " + mPage);
+                mPtrLayout.setRefreshComplete();
                 mArticleListAdapter.setLoadingMore(false);
             }
 
             @Override
             public void onGetResult(Collection<ListArticleObject> result) {
-                mPtrLayout.setRefreshComplete();
+
                 mArticleListAdapter.appendData(result);
                 mProgressBar.setVisibility(View.GONE);
                 mArticleListView.setVisibility(View.VISIBLE);
@@ -103,6 +103,7 @@ public class SiteArticleListActivity extends Activity {
                 }
                 mIsLoadingMore = false;
                 mArticleListAdapter.setLoadingMore(false);
+
                 Log.d(TAG, "successfully get article list, result.size: " + result.size() + ", page: " + mPage);
             }
         };
@@ -142,8 +143,8 @@ public class SiteArticleListActivity extends Activity {
                 ListArticleObject article = (ListArticleObject) mArticleListAdapter.getItem(i);
                 Intent articleIntent = new Intent(SiteArticleListActivity.this, ArticleActivity.class);
                 articleIntent.putExtra(ArticleActivity.ARTICLE_ID, article.articleId);
-                //startActivity(articleIntent);
-                startActivityForResult(articleIntent, ArticleActivity.FAV_SET);
+                startActivity(articleIntent);
+
             }
         });
 
@@ -166,6 +167,9 @@ public class SiteArticleListActivity extends Activity {
 
 
     private void resetArticleList() {
+        if (!Utils.isNetworkConnected(this)) {
+            Toast.makeText(SiteArticleListActivity.this, R.string.connection_failed, Toast.LENGTH_SHORT).show();
+        }
         mProgressBar.setVisibility(View.VISIBLE);
         mArticleListView.setVisibility(View.GONE);
         mArticleListAdapter.clearData();
@@ -177,6 +181,9 @@ public class SiteArticleListActivity extends Activity {
     }
 
     private void loadMoreArticleList() {
+        if (!Utils.isNetworkConnected(this)) {
+            Toast.makeText(SiteArticleListActivity.this, R.string.connection_failed, Toast.LENGTH_SHORT).show();
+        }
         mIsLoadingMore = true;
         mPage++;
         mArticleListAdapter.setLoadingMore(true);
@@ -186,25 +193,26 @@ public class SiteArticleListActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        resetArticleList();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.site_article_list, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
-            super.onBackPressed();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        // Inflate the menu; this adds items to the action bar if it is present.
+//        getMenuInflater().inflate(R.menu.site_article_list, menu);
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        // Handle action bar item clicks here. The action bar will
+//        // automatically handle clicks on the Home/Up button, so long
+//        // as you specify a parent activity in AndroidManifest.xml.
+//        int id = item.getItemId();
+//        if (id == android.R.id.home) {
+//            super.onBackPressed();
+//            return true;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 }
