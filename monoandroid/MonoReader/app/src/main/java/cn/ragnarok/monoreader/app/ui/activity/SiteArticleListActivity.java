@@ -74,6 +74,7 @@ public class SiteArticleListActivity extends Activity {
 
         initView();
         initRequestListener();
+        resetArticleList();
 
     }
 
@@ -191,9 +192,15 @@ public class SiteArticleListActivity extends Activity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
-        resetArticleList();
+
     }
 
 //    @Override
