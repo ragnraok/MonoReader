@@ -3,21 +3,20 @@
     android:id="@+id/ptr_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.activity.SiteArticleListActivity">
+    tools:context=".ui.activity.CategoryTimelineActivity">
 
     <ListView
-        android:id="@+id/article_list"
+        android:id="@+id/timeline_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:divider="@drawable/list_divider"
-        android:dividerHeight="@dimen/list_divider_height"
         android:animateLayoutChanges="false"
-        />
+        android:divider="@drawable/list_divider"
+        android:dividerHeight="@dimen/list_divider_height" />
 
     <RelativeLayout
+        android:id="@+id/loading_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/loading_layout">
+        android:layout_height="match_parent">
 
         <ProgressBar
             android:id="@+id/loading_progress"
@@ -28,3 +27,4 @@
     </RelativeLayout>
 
 </uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout>
+

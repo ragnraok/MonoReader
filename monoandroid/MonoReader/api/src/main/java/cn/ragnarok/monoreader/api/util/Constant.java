@@ -34,8 +34,8 @@ public class Constant {
         public static final String GET_ALL_CATEGORY = API_PREFIX + "category/get_all/";
         public static final String SET_CATEGORY = API_PREFIX + "category/set/";
         public static final String UNSET_CATEGORY = API_PREFIX + "category/unset/";
-        public static final String CATEGORY_TIMELINE = API_PREFIX + "/category/%s/timeline/%d/";
-        public static final String UNCLASSIFIED_CATEGORY_TIMELINE  = API_PREFIX + "/category/unclassified_timeline/%d/";
+        public static final String CATEGORY_TIMELINE = API_PREFIX + "category/%s/timeline/%d/";
+        public static final String UNCLASSIFIED_CATEGORY_TIMELINE  = API_PREFIX + "category/unclassified_timeline/%d/";
 
         public static final String LOAD_SITE_ALL_ARTICLE = API_PREFIX + "site/%d/articles/";
         public static final String LOAD_SITE_ARTICLE = API_PREFIX + "site/%d/articles/%d/";

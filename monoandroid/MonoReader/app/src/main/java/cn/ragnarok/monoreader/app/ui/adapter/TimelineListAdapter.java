@@ -185,6 +185,7 @@ public class TimelineListAdapter extends BaseAdapter {
     public View getView(int i, View view, ViewGroup viewGroup) {
         if (mIsShowLoadingProgress && i == getCount() - 1) {
             View result = LayoutInflater.from(mContext).inflate(R.layout.loading_more_layout, viewGroup, false);
+            result.setClickable(false);
             return result;
         }
         ListArticleObject article = mData.get(i);

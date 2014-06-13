@@ -41,6 +41,10 @@
             android:name=".ui.activity.SiteArticleListActivity"
             android:label="@string/title_activity_site_article_list" >
         </activity>
+        <activity
+            android:name=".ui.activity.CategoryTimelineActivity"
+            android:label="@string/title_activity_category_timeline" >
+        </activity>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />

@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.android.volley.VolleyError;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 import cn.ragnarok.monoreader.api.base.APIRequestFinishListener;
@@ -33,6 +34,7 @@ import cn.ragnarok.monoreader.api.object.SiteObject;
 import cn.ragnarok.monoreader.api.service.SiteService;
 import cn.ragnarok.monoreader.api.service.SubscribeService;
 import cn.ragnarok.monoreader.app.R;
+import cn.ragnarok.monoreader.app.ui.activity.CategoryTimelineActivity;
 import cn.ragnarok.monoreader.app.ui.activity.SiteArticleListActivity;
 import cn.ragnarok.monoreader.app.ui.adapter.SiteListAdapter;
 import cn.ragnarok.monoreader.app.util.Utils;
@@ -192,7 +194,18 @@ public class SiteListFragment extends Fragment {
 
         mSiteList.setOnHeaderClickListener(new StickyListHeadersListView.OnHeaderClickListener() {
             @Override
-            public void onHeaderClick(StickyListHeadersListView stickyListHeadersListView, View view, int i, long l, boolean b) {
+            public void onHeaderClick(StickyListHeadersListView l, View header, int itemPosition, long headerId, boolean currentlySticky) {
+                SiteObject site = (SiteObject) mSiteListAdapter.getItem(itemPosition);
+                if (site != null) {
+                    String category = site.category;
+                    String[] categorySet = mSiteListAdapter.getCategorySet();
+                    Log.d(TAG, "start category timelnie, category: " + category + ", categorySet: " + Arrays.toString(categorySet));
+                    Intent intent = new Intent(getActivity(), CategoryTimelineActivity.class);
+                    intent.putExtra(CategoryTimelineActivity.CATEGORY, category);
+                    intent.putExtra(CategoryTimelineActivity.CATEGORY_SET, categorySet);
+
+                    startActivity(intent);
+                }
 
             }
         });
