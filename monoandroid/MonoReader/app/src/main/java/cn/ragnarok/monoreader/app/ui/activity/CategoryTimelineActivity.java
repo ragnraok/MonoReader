@@ -231,6 +231,11 @@ public class CategoryTimelineActivity extends Activity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mCategoryService.cancelCategoryTimelineRequest();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

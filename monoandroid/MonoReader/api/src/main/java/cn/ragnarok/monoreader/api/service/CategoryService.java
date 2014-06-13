@@ -27,6 +27,7 @@ public class CategoryService extends BaseAPIService {
     public static final String API_TAG = "category";
     public static final String DATA_KEY = "category";
     public static final String CATEGORY_TIMELINE_DATA_KEY = "articles";
+    public static final String CATEGORY_TIMELINE_TAG = "categoryTimeline";
 
 
     public void loadAllCategoryList(final APIRequestFinishListener<Collection<CategoryObject>> requestFinishListener) {
@@ -88,7 +89,7 @@ public class CategoryService extends BaseAPIService {
 
         Type resultType = new TypeToken<Collection<ListArticleObject>>(){}.getType();
         BaseAPIGetRequest request = new BaseAPIGetRequest(url, CATEGORY_TIMELINE_DATA_KEY, resultType, requestFinishListener);
-        request.get().setTag(API_TAG);
+        request.get().setTag(CATEGORY_TIMELINE_TAG);
 
         APIService.getInstance().queueJob(request.get());
     }
@@ -96,5 +97,9 @@ public class CategoryService extends BaseAPIService {
     @Override
     public void cancelRequest() {
         APIService.getInstance().getQueue().cancelAll(API_TAG);
+    }
+
+    public void cancelCategoryTimelineRequest() {
+        APIService.getInstance().getQueue().cancelAll(CATEGORY_TIMELINE_TAG);
     }
 }
