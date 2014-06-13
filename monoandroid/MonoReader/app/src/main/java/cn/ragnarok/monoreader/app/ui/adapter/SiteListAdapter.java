@@ -94,7 +94,11 @@ public class SiteListAdapter extends BaseAdapter implements StickyListHeadersAda
 
         mCategorySet = new HashSet<String>();
         for (SiteObject site : mSiteList) {
-            mCategorySet.add(site.category);
+            if (!site.isUnClassified) {
+                mCategorySet.add(site.category);
+            } else {
+                mCategorySet.add(mContext.getString(R.string.un_classified_name));
+            }
         }
 
     }
