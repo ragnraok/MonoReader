@@ -90,7 +90,7 @@ public class CategoryTimelineActivity extends Activity {
 
         initRequestListener();
         initView();
-        resetTimeline();
+//        resetTimeline();
     }
 
     private int getCurrentCategoryPos() {
@@ -193,17 +193,22 @@ public class CategoryTimelineActivity extends Activity {
     }
 
     private void resetTimeline() {
+        Log.d(TAG, "reset timeline");
         if (!Utils.isNetworkConnected(this)) {
             Toast.makeText(this, R.string.connection_failed, Toast.LENGTH_SHORT).show();
             return;
         }
+//        mTimelineList.setSelection(0);
+//        mTimelineList.setScrollY(0);
+        mTimelineList.smoothScrollToPosition(0);
         mIsLastPage = false;
         mIsLoadingMore = false;
         mPage = 1;
         mTimelineList.setVisibility(View.GONE);
         mProgressBar.setVisibility(View.VISIBLE);
-        mPtrLayout.setRefreshing(true);
         mTimelineAdapter.clearData();
+        mPtrLayout.setRefreshing(true);
+
         if (mCurrentCategory.equals(getString(R.string.un_classified_name))) {
             mCategoryService.unclassifiedCategoryTimeline(mPage, mTimelineRequestListener);
         } else {
@@ -214,6 +219,7 @@ public class CategoryTimelineActivity extends Activity {
     private void loadMoreTimeline() {
         if (!Utils.isNetworkConnected(this)) {
             Toast.makeText(this, R.string.connection_failed, Toast.LENGTH_SHORT).show();
+            mTimelineAdapter.setLoadingMore(false);
             return;
         }
         mIsLoadingMore = true;
