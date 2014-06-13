@@ -98,7 +98,11 @@ class CategoryTimeline(BaseArticleListView):
             raise ValueError(PAGE_SMALL_THAN_ONE)
         per_page_num = current_app.config.get('ARTICLE_NUM_PER_PAGE', 10)
         if category is not None:
+            ss = Site.query.filter_by(is_subscribe=True).all()
+            ssids = [item.id for item in ss]
             ids = [item.id for item in category.sites]
+            ids = set(ssids).intersection(set(ids))
+            ids = list(ids)
             article_list = Article.query.filter(Article.site_id.in_(ids)).order_by(
                     desc(Article.updated)).paginate(page=page, per_page=per_page_num, error_out=False).items
         else:

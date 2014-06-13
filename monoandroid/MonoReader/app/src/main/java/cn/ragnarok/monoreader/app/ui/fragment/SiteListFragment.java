@@ -198,6 +198,9 @@ public class SiteListFragment extends Fragment {
                 SiteObject site = (SiteObject) mSiteListAdapter.getItem(itemPosition);
                 if (site != null) {
                     String category = site.category;
+                    if (site.isUnClassified) {
+                        category = getString(R.string.un_classified_name);
+                    }
                     String[] categorySet = mSiteListAdapter.getCategorySet();
                     Log.d(TAG, "start category timelnie, category: " + category + ", categorySet: " + Arrays.toString(categorySet));
                     Intent intent = new Intent(getActivity(), CategoryTimelineActivity.class);
