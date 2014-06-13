@@ -19,6 +19,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
 
 import cn.ragnarok.monoreader.api.base.APIRequestFinishListener;
 import cn.ragnarok.monoreader.api.object.CategorySiteObject;
@@ -45,6 +47,7 @@ public class SiteListAdapter extends BaseAdapter implements StickyListHeadersAda
     private Context mContext;
     private SiteObject[] mSiteList;
     private long[] mHeaderId;
+    private Set<String> mCategorySet;
 
     private View.OnClickListener mFavClickListener;
     private View.OnClickListener mCategeoryClickListener;
@@ -88,6 +91,18 @@ public class SiteListAdapter extends BaseAdapter implements StickyListHeadersAda
 //                }
             }
         });
+
+        mCategorySet = new HashSet<String>();
+        for (SiteObject site : mSiteList) {
+            mCategorySet.add(site.category);
+        }
+
+    }
+
+    public String[] getCategorySet() {
+        String[] result = new String[mCategorySet.size()];
+        mCategorySet.toArray(result);
+        return result;
     }
 
     public void setOnCategorySetFinishListener(OnCategorySetFinishListener listener) {
