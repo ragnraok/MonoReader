@@ -39,11 +39,13 @@
         </activity>
         <activity
             android:name=".ui.activity.SiteArticleListActivity"
-            android:label="@string/title_activity_site_article_list" >
+            android:label="@string/title_activity_site_article_list"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".ui.activity.CategoryTimelineActivity"
-            android:label="@string/title_activity_category_timeline" >
+            android:label="@string/title_activity_category_timeline"
+            android:screenOrientation="portrait">
         </activity>
     </application>
 
