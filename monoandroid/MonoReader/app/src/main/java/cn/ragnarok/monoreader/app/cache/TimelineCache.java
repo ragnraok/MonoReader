@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.HashMap;
 
 import cn.ragnarok.monoreader.api.object.ListArticleObject;
+import cn.ragnarok.monoreader.app.util.Utils;
 
 /**
  * Created by ragnarok on 14-5-30.
@@ -27,9 +28,9 @@ import cn.ragnarok.monoreader.api.object.ListArticleObject;
 public class TimelineCache {
     public static final String TAG = "Mono.TimelineDiskCache";
 
-    public static final String MAIN_TIMELINE_CACHE_DIR_NAME = "MainTimelineCache";
-    public static final String FAV_TIMELINE_CACHE_DIR_NAME = "FavTimelineCache";
-    public static final String FAV_ARTICLE_LIST_CACHE_DIR_NAME = "FavArticleListCache";
+    public static final String MAIN_TIMELINE_CACHE_DIR_NAME = Utils.MAIN_TIMELINE_CACHE_DIR_NAME;
+    public static final String FAV_TIMELINE_CACHE_DIR_NAME = Utils.FAV_TIMELINE_CACHE_DIR_NAME;
+    public static final String FAV_ARTICLE_LIST_CACHE_DIR_NAME = Utils.FAV_ARTICLE_LIST_CACHE_DIR_NAME;
 
     private File mMainTimelineCacheDir = null;
     private File mFavTimelineCacheDir = null;

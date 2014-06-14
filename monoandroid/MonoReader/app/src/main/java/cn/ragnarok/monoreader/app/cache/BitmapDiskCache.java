@@ -18,6 +18,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
+import cn.ragnarok.monoreader.app.util.Utils;
+
 /**
  * Created by ragnarok on 14-5-26.
  */
@@ -26,7 +28,7 @@ public class BitmapDiskCache {
     public static final String TAG = "Mono.BitmapDiskCache";
     private static final int BUFFER_SIZE = 1024;
     private static final int MAX_KEY_LENGTH = 128;
-    private static final String CACHE_DIR = "MonoImageCache";
+    private static final String CACHE_DIR = Utils.MONO_IMG_CACHE_DIR;
     private static int MAX_CACHE_SIZE = 20;
     private File mCacheDir;
 

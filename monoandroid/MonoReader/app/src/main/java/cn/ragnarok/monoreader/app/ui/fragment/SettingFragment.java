@@ -59,6 +59,7 @@ public class SettingFragment extends PreferenceFragment {
                 return true;
             }
         });
+
     }
 
     private void onUpdateHost(String newValue) {

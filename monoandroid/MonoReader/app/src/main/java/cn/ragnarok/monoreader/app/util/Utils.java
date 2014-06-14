@@ -8,6 +8,8 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import java.io.File;
+
 import cn.ragnarok.monoreader.app.R;
 
 /**
@@ -93,4 +95,30 @@ public class Utils {
 
     public static final String HOST = "host";
     public static final String HOST_PREFIX = "http://";
+    public static final String MONO_IMG_CACHE_DIR = "MonoImageCache";
+    public static final String MAIN_TIMELINE_CACHE_DIR_NAME = "MainTimelineCache";
+    public static final String FAV_TIMELINE_CACHE_DIR_NAME = "FavTimelineCache";
+    public static final String FAV_ARTICLE_LIST_CACHE_DIR_NAME = "FavArticleListCache";
+
+    public static void clearDiskCache(Context context) {
+        File monoImgCache = new File(context.getExternalFilesDir(MONO_IMG_CACHE_DIR).getPath());
+        if (monoImgCache.exists()) {
+            monoImgCache.delete();
+        }
+
+        File mainTimelineCache = new File(context.getExternalFilesDir(MAIN_TIMELINE_CACHE_DIR_NAME).getPath());
+        if (mainTimelineCache.exists()) {
+            mainTimelineCache.delete();
+        }
+
+        File favTimelineCache = new File(context.getExternalFilesDir(FAV_TIMELINE_CACHE_DIR_NAME).getPath());
+        if (favTimelineCache.exists()) {
+            favTimelineCache.delete();
+        }
+
+        File favArticleListCache = new File(context.getExternalFilesDir(FAV_ARTICLE_LIST_CACHE_DIR_NAME).getPath());
+        if (favArticleListCache.exists()) {
+            favArticleListCache.delete();
+        }
+    }
 }
