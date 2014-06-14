@@ -122,8 +122,6 @@ public class SettingFragment extends PreferenceFragment {
             return;
         }
 
-//        String oldHost = Uri.parse(mOriginHost).getHost();
-//        String newHost = Uri.parse(newValue).getHost();
         if (!mOriginHost.equals(newValue)) {
             SharedPreferences hostPref = getActivity().getPreferences(Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = hostPref.edit();
