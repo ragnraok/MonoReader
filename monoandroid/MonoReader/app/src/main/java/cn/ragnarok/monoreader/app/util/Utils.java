@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import cn.ragnarok.monoreader.app.R;
 
@@ -103,22 +105,46 @@ public class Utils {
     public static void clearDiskCache(Context context) {
         File monoImgCache = new File(context.getExternalFilesDir(MONO_IMG_CACHE_DIR).getPath());
         if (monoImgCache.exists()) {
-            monoImgCache.delete();
+            deleteFolder(monoImgCache);
         }
 
         File mainTimelineCache = new File(context.getExternalFilesDir(MAIN_TIMELINE_CACHE_DIR_NAME).getPath());
         if (mainTimelineCache.exists()) {
-            mainTimelineCache.delete();
+            deleteFolder(mainTimelineCache);
         }
 
         File favTimelineCache = new File(context.getExternalFilesDir(FAV_TIMELINE_CACHE_DIR_NAME).getPath());
         if (favTimelineCache.exists()) {
-            favTimelineCache.delete();
+            deleteFolder(favTimelineCache);
         }
 
         File favArticleListCache = new File(context.getExternalFilesDir(FAV_ARTICLE_LIST_CACHE_DIR_NAME).getPath());
         if (favArticleListCache.exists()) {
-            favArticleListCache.delete();
+            deleteFolder(favArticleListCache);
         }
+    }
+
+    public static void deleteFolder(File folder) {
+        File[] files = folder.listFiles();
+        if(files!=null) { //some JVMs return null for empty dirs
+            for(File f: files) {
+                if(f.isDirectory()) {
+                    deleteFolder(f);
+                } else {
+                    f.delete();
+                }
+            }
+        }
+        folder.delete();
+    }
+
+    public static boolean checkIsURL(String url) {
+        try {
+            URL _url = new URL(url);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 }

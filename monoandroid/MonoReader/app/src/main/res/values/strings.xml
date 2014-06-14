@@ -51,5 +51,6 @@
     <string name="host_setting">Host</string>
     <string name="host_setting_title">Please enter host address</string>
     <string name="host_prefix">http://</string>
+    <string name="invalid_host_hint">Please enter a valid url</string>
     <!--<string name="host_addressing"></string>-->
 </resources>

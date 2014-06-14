@@ -238,6 +238,7 @@ public class TimelineFragment extends Fragment {
             @Override
             public void onRequestFail(VolleyError error) {
                 Log.d(TAG, "dataChangeRequest fail, erro: " + error.toString());
+                Toast.makeText(getActivity(), R.string.connection_failed, Toast.LENGTH_SHORT).show();
                 boolean isSuccess = loadTimelineFramCache();
                 if (!isSuccess) {
                     mPage = 1;

@@ -2,21 +2,29 @@ package cn.ragnarok.monoreader.app.ui.activity;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
+import android.text.InputType;
 import android.text.Layout;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -51,9 +59,9 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // TEST ONLY CODE
-        APIService.getInstance().setHost(TestUtil.HOST);
-        // END TEST ONLY CODE
+//        // TEST ONLY CODE
+//        APIService.getInstance().setHost(TestUtil.HOST);
+//        // END TEST ONLY CODE
 
 //        requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
 
@@ -77,10 +85,49 @@ public class MainActivity extends Activity {
 
         initDrawer();
 
-        if (savedInstanceState == null) {
+        String host = getPreferences(Context.MODE_PRIVATE).getString(Utils.HOST, null);
+        Log.d(TAG, "start main activity, host: " + host);
+        if (host != null && host.length() != 0) {
+            APIService.getInstance().setHost(host);
             getFragmentManager().beginTransaction().add(R.id.container, mTimelineFragment).commit();
             getFragmentManager().beginTransaction().replace(R.id.container, mTimelineFragment).commit();
+        } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            View view = LayoutInflater.from(this).inflate(R.layout.enter_host_layout, null);
+            final EditText input = (EditText) view.findViewById(R.id.host);
+            builder.setView(view);
+            builder.setTitle(R.string.host_setting_title);
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    String url = input.getText().toString();
+                    if (!url.endsWith("/")) {
+                        url = url + "/";
+                    }
+                    if (Utils.checkIsURL(url)) {
+                        SharedPreferences pref = getPreferences(Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = pref.edit();
+                        editor.putString(Utils.HOST, url);
+                        editor.commit();
+                        APIService.getInstance().setHost(url);
+                        getFragmentManager().beginTransaction().add(R.id.container, mTimelineFragment).commit();
+                        getFragmentManager().beginTransaction().replace(R.id.container, mTimelineFragment).commit();
+                    }
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            builder.show();
         }
+
+        //if (savedInstanceState == null) {
+
+        //}
     }
 
     private void initDrawer() {
