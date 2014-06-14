@@ -94,6 +94,15 @@ public class SubscribeFragment extends DialogFragment {
         mSubscribeButton = (Button) view.findViewById(R.id.subscribe_ok);
         mButtonBarLayout = (LinearLayout) view.findViewById(R.id.button_bar);
         mProgress = (ProgressBar) view.findViewById(R.id.progress);
+
+        mSubscribeUrl.requestFocus();
+        mSubscribeUrl.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Utils.showKeyboard(getActivity(), mSubscribeUrl);
+            }
+        }, 50);
+
         initSubscribe();
         return view;
     }

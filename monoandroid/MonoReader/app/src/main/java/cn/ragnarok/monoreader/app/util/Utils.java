@@ -96,6 +96,12 @@ public class Utils {
 
     }
 
+    public static void showKeyboard(Context context, View view) {
+        InputMethodManager imm = (InputMethodManager)context.getSystemService(
+                Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(view, 0);
+    }
+
     public static final String HOST = "host";
     public static final String HOST_PREFIX = "http://";
     public static final String CACHE_SIZE = "cache_size";
