@@ -53,4 +53,8 @@
     <string name="host_prefix">http://</string>
     <string name="invalid_host_hint">Please enter a valid url</string>
     <!--<string name="host_addressing"></string>-->
+    <string name="cache_size">Cache Size</string>
+    <string name="clear_cache">Clear Cache</string>
+    <string name="cache_size_format">%d KB</string>
+    <string name="clear_cache_success">Successfully clear cache</string>
 </resources>

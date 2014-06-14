@@ -98,10 +98,13 @@ public class Utils {
 
     public static final String HOST = "host";
     public static final String HOST_PREFIX = "http://";
+    public static final String CACHE_SIZE = "cache_size";
+    public static final String CLEAR_CACHE = "clear_cache";
     public static final String MONO_IMG_CACHE_DIR = "MonoImageCache";
     public static final String MAIN_TIMELINE_CACHE_DIR_NAME = "MainTimelineCache";
     public static final String FAV_TIMELINE_CACHE_DIR_NAME = "FavTimelineCache";
     public static final String FAV_ARTICLE_LIST_CACHE_DIR_NAME = "FavArticleListCache";
+    public static final String ARTICLE_CACHE_DIR_NAME = "MonoArticleCache";
 
     public static void clearDiskCache(Context context) {
         File monoImgCache = new File(context.getExternalFilesDir(MONO_IMG_CACHE_DIR).getPath());
@@ -123,12 +126,48 @@ public class Utils {
         if (favArticleListCache.exists()) {
             deleteFolder(favArticleListCache);
         }
+
+        File articleContentCache = new File(context.getExternalFilesDir(ARTICLE_CACHE_DIR_NAME).getPath());
+        if (articleContentCache.exists()) {
+            deleteFolder(articleContentCache);
+        }
+
         TimelineCache.getInstance(context).clearMemCache();
+    }
+
+    public static long getDiskCacheSizeInKB(Context context) {
+        long size = 0;
+        File monoImgCache = new File(context.getExternalFilesDir(MONO_IMG_CACHE_DIR).getPath());
+        if (monoImgCache.exists()) {
+            size += getFolderSize(monoImgCache);
+        }
+
+        File mainTimelineCache = new File(context.getExternalFilesDir(MAIN_TIMELINE_CACHE_DIR_NAME).getPath());
+        if (mainTimelineCache.exists()) {
+            size += getFolderSize(mainTimelineCache);
+        }
+
+        File favTimelineCache = new File(context.getExternalFilesDir(FAV_TIMELINE_CACHE_DIR_NAME).getPath());
+        if (favTimelineCache.exists()) {
+            size += getFolderSize(favTimelineCache);
+        }
+
+        File favArticleListCache = new File(context.getExternalFilesDir(FAV_ARTICLE_LIST_CACHE_DIR_NAME).getPath());
+        if (favArticleListCache.exists()) {
+            size += getFolderSize(favArticleListCache);
+        }
+
+        File articleContentCache = new File(context.getExternalFilesDir(ARTICLE_CACHE_DIR_NAME).getPath());
+        if (articleContentCache.exists()) {
+            size += getFolderSize(articleContentCache);
+        }
+
+        return size / 1024;
     }
 
     public static void deleteFolder(File folder) {
         File[] files = folder.listFiles();
-        if(files!=null) { //some JVMs return null for empty dirs
+        if(files != null) { //some JVMs return null for empty dirs
             for(File f: files) {
                 if(f.isDirectory()) {
                     deleteFolder(f);
@@ -138,6 +177,20 @@ public class Utils {
             }
         }
         folder.delete();
+    }
+
+    public static long getFolderSize(File file) {
+        long size = 0;
+        File[] fileList = file.listFiles();
+        if (fileList != null) {
+            for (int i = 0; i < fileList.length; i++) {
+                if (fileList[i].isDirectory()) {
+                    size = size + getFolderSize(fileList[i]);
+                }
+                size += fileList[i].length();
+            }
+        }
+        return size;
     }
 
     public static boolean checkIsURL(String url) {

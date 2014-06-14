@@ -14,6 +14,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 
 import cn.ragnarok.monoreader.api.object.ArticleObject;
+import cn.ragnarok.monoreader.app.util.Utils;
 
 /**
  * Created by ragnarok on 14-5-30.
@@ -21,7 +22,7 @@ import cn.ragnarok.monoreader.api.object.ArticleObject;
 public class ArticleContentCache {
     public static final String TAG = "Mono.ArticleContentCache";
 
-    public static final String ARTICLE_CACHE_DIR_NAME = "MonoArticleCache";
+    public static final String ARTICLE_CACHE_DIR_NAME = Utils.ARTICLE_CACHE_DIR_NAME;
 
     private File mArticleCacheDir = null;
 

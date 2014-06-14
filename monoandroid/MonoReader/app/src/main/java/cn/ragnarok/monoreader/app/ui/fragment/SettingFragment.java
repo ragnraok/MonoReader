@@ -2,11 +2,15 @@ package cn.ragnarok.monoreader.app.ui.fragment;
 
 
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Looper;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
@@ -35,8 +39,13 @@ public class SettingFragment extends PreferenceFragment {
     public static final String TAG = "Mono.SettingFragment";
 
     private EditTextPreference mHostPreference;
+    private Preference mCacheSizePref;
+    private Preference mClearCachPref;
     String mOriginHost;
 
+    Handler mHandler;
+    HandlerThread mHandlerThread;
+    Handler mUiHandler;
 
     public static SettingFragment newInstance() {
         SettingFragment fragment = new SettingFragment();
@@ -53,6 +62,13 @@ public class SettingFragment extends PreferenceFragment {
         addPreferencesFromResource(R.xml.settings);
         getActivity().setTitle(R.string.setting);
 
+        mHandlerThread = new HandlerThread("SettingThread");
+        mHandlerThread.start();
+
+        mHandler = new Handler(mHandlerThread.getLooper());
+        mUiHandler = new Handler(Looper.getMainLooper());
+
+
         initPref();
     }
 
@@ -67,6 +83,31 @@ public class SettingFragment extends PreferenceFragment {
 
                 onUpdateHost(newValue.toString());
                 return true;
+            }
+        });
+
+        mCacheSizePref = findPreference(Utils.CACHE_SIZE);
+        mClearCachPref = findPreference(Utils.CLEAR_CACHE);
+
+        mCacheSizePref.setSummary(getString(R.string.cache_size_format, Utils.getDiskCacheSizeInKB(getActivity())));
+        mClearCachPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Utils.clearDiskCache(getActivity());
+                        mUiHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getActivity(), R.string.clear_cache_success, Toast.LENGTH_SHORT).show();
+                                mCacheSizePref.setSummary(getString(R.string.cache_size_format, Utils.getDiskCacheSizeInKB(getActivity())));
+                            }
+                        });
+                    }
+                });
+
+                return false;
             }
         });
 
@@ -95,6 +136,11 @@ public class SettingFragment extends PreferenceFragment {
     }
 
 
-
-
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        if (mHandlerThread != null) {
+            mHandlerThread.quit();
+        }
+    }
 }
