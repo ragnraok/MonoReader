@@ -25,6 +25,7 @@ import cn.ragnarok.monoreader.api.service.APIService;
 import cn.ragnarok.monoreader.app.R;
 import cn.ragnarok.monoreader.app.test.api.TestUtil;
 import cn.ragnarok.monoreader.app.ui.adapter.DrawerListAdapter;
+import cn.ragnarok.monoreader.app.ui.fragment.SettingFragment;
 import cn.ragnarok.monoreader.app.ui.fragment.SiteListFragment;
 import cn.ragnarok.monoreader.app.ui.fragment.TimelineFragment;
 import cn.ragnarok.monoreader.app.util.Utils;
@@ -37,6 +38,7 @@ public class MainActivity extends Activity {
 
     private TimelineFragment mTimelineFragment;
     private SiteListFragment mSiteListFragment;
+    private SettingFragment mSettingFragment;
 
     private Fragment[] mFragmentList = new Fragment[FRAGMENT_NUM];
     private int mCurrentSelectFragmentId = 0;
@@ -69,6 +71,9 @@ public class MainActivity extends Activity {
 
         mSiteListFragment = SiteListFragment.newInstance();
         mFragmentList[1] = mSiteListFragment;
+
+        mSettingFragment = SettingFragment.newInstance();
+        mFragmentList[2] = mSettingFragment;
 
         initDrawer();
 
@@ -122,7 +127,7 @@ public class MainActivity extends Activity {
         mLeftDrawer.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                if (position < 3 && position > 0) {
+                if (position > 0) {
                     int selectFragmentId = position - 1;
                     Fragment selectFragment = mFragmentList[selectFragmentId];
                     if (selectFragmentId != mCurrentSelectFragmentId) {

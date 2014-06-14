@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="@string/basic_setting">
+        <EditTextPreference
+            android:key="host"
+            android:title="@string/host_setting"
+            android:text="@string/host_prefix"
+            />
+    </PreferenceCategory>
+
+</PreferenceScreen>

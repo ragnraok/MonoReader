@@ -90,4 +90,7 @@ public class Utils {
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
 
     }
+
+    public static final String HOST = "host";
+    public static final String HOST_PREFIX = "http://";
 }
