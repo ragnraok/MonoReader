@@ -370,4 +370,10 @@ public class TimelineCache {
         mFavTimelineCacheDir.delete();
         mMainTimelineCacheDir.delete();
     }
+
+    public void clearMemCache() {
+        mMainTimelineMemCache.clear();
+        mFavTimelineMemCache.clear();
+        mFavArticleListMemCache.clear();
+    }
 }

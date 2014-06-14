@@ -182,6 +182,9 @@ public class BitmapDiskCache {
     }
 
 
+//    public void clearMemCache() {
+//
+//    }
 
     public boolean exist(String url) {
         return mCacheMap.containsKey(getKey(url));

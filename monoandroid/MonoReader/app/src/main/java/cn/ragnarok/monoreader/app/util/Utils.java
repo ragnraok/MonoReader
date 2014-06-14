@@ -13,6 +13,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import cn.ragnarok.monoreader.app.R;
+import cn.ragnarok.monoreader.app.cache.TimelineCache;
 
 /**
  * Created by ragnarok on 14-5-26.
@@ -122,6 +123,7 @@ public class Utils {
         if (favArticleListCache.exists()) {
             deleteFolder(favArticleListCache);
         }
+        TimelineCache.getInstance(context).clearMemCache();
     }
 
     public static void deleteFolder(File folder) {

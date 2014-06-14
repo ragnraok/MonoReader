@@ -310,6 +310,7 @@ public class TimelineFragment extends Fragment {
         actionBar.setListNavigationCallbacks(adapter, new ActionBar.OnNavigationListener() {
             @Override
             public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+                mTimelineAdapter.setLoadingMore(false);
                 if (itemPosition == 0) {
                     mArticleService.cancelRequest();
                     setIsFavTimeline(false);
