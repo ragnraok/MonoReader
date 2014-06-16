@@ -45,13 +45,13 @@ public class APIService {
      * @param context
      * @param requestQueue
      */
-    public static void init(Context context, RequestQueue requestQueue, RequestQueue imageLoadRequestQueue) {
+    public static void init(Context context, RequestQueue requestQueue) {
         if (service == null) {
             service = new APIService();
         }
         service.mContext = context;
         service.mRequestQueue = requestQueue;
-        service.mImageLoadRequestQueue = imageLoadRequestQueue;
+//        service.mImageLoadRequestQueue = imageLoadRequestQueue;
         service.mIsInit = true;
     }
 
@@ -77,9 +77,9 @@ public class APIService {
         return mRequestQueue;
     }
 
-    public RequestQueue getImageLoadQueue() {
-        return mImageLoadRequestQueue;
-    }
+//    public RequestQueue getImageLoadQueue() {
+//        return mImageLoadRequestQueue;
+//    }
 
     public void cancelAllRequest() {
         for (String tag : serviceTagList) {

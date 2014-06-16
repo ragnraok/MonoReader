@@ -23,7 +23,7 @@ public class MonoApplication extends Application {
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "onCreate Application");
-        APIService.init(this, Volley.newRequestQueue(this), Volley.newRequestQueue(this));
+        APIService.init(this, Volley.newRequestQueue(this));
 
         BitmapDiskCache.init(this, MAX_CACHE_ITEM_NUM);
 
