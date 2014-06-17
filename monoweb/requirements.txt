@@ -16,6 +16,7 @@ requests
 
 # deployment
 gunicorn
+fabric
 
 
 # task

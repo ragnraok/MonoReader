@@ -18,8 +18,8 @@ SQLALCHEMY_ECHO = False
 REDIS_URL = "redis://localhost:6379"
 
 # logging
-LOG_FILE = "monoreader.log"
-TASK_LOG_FILE = "monoreader_task.log"
+LOG_FILE = "log/mono/monoreader.log"
+TASK_LOG_FILE = "log/task/monoreader_task.log"
 
 # cache
 MAIN_TIMELINE_UPDATE_CACHE_KEY = "timeline_update"
