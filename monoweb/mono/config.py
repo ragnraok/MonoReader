@@ -21,6 +21,8 @@ REDIS_URL = "redis://localhost:6379"
 LOG_FILE = "log/mono/monoreader.log"
 TASK_LOG_FILE = "log/task/monoreader_task.log"
 
+LOG_DIRS = ["log/mono", "log/task", "log/redis"]
+
 # cache
 MAIN_TIMELINE_UPDATE_CACHE_KEY = "timeline_update"
 FAV_TIMELINE_UPDATE_CACHE_KEY = "fav_timeline_udpate"

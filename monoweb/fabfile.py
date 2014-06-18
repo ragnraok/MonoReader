@@ -1,4 +1,5 @@
 from deploy_config import *
+from mono.config import LOG_DIRS
 from supervisor_template import SUPERVISOR_TEMPLATE
 
 from fabric.api import *
@@ -29,6 +30,7 @@ def install_requirements():
         run("make -j4")
         run("make install")
     run("rm -r redis-2.8.9.tar.gz redis-2.8.9")
+    # install supervisor
     # install pip requirements
     run("pip install -r requirements.txt")
 
@@ -49,6 +51,16 @@ def config_nginx():
 def deploy():
     # enter virtualenv
     with cd(os.path.join("$HOME", WEB_PROJECT_DIR)):
-        run("virtualenv venv")
+        # create log dir
+        for _dir in LOG_DIRS:
+            run("mkdir %s" % _dir)
+        # enter virtualenv
         run("source venv/bin/activate")
-        run("python manager.py gunicorn")
+        # start server
+        run("supervisord -c %s" % SUPERVISOR_FILENAME)
+        run("supervisorctl reread")
+        run("supervisorctl update")
+        run("supervisorctl start mono")
+        run("supervisorctl start redis")
+        run("supervisorctl start worker")
+        run("supervisorctl start clock")
