@@ -3,8 +3,10 @@ package cn.ragnarok.monoreader.app.ui.fragment;
 
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.util.Log;
@@ -35,9 +37,7 @@ public class SubscribeFragment extends DialogFragment {
     }
 
     private EditText mSubscribeUrl;
-    private Button mSubscribeButton;
     private ProgressBar mProgress;
-    private LinearLayout mButtonBarLayout;
 
     private SubscribeService mSubscribeService;
     private APIRequestFinishListener mSubscribeListener;
@@ -78,22 +78,56 @@ public class SubscribeFragment extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        Dialog dialog = super.onCreateDialog(savedInstanceState);
-//        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        dialog.setTitle(R.string.subscribe);
-        return dialog;
-    }
+//        Dialog dialog = super.onCreateDialog(savedInstanceState);
+////        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+//        dialog.setTitle(R.string.subscribe);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(R.string.subscribe);
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+//                String url = mSubscribeUrl.getText().toString();
+//                if (url != null && url.trim().length() != 0) {
+//                    setSubscribeVisibility();
+//                    Utils.hideKeyboard(getActivity(), mSubscribeUrl);
+//                    mSubscribeService.subscribe(null, url, null, mSubscribeListener);
+//                } else {
+//                    Toast.makeText(getActivity(), R.string.subscribe_hint, Toast.LENGTH_SHORT).show();
+//                }
+            }
+        });
 
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_subscribe, container, false);
+        View view = getActivity().getLayoutInflater().inflate(R.layout.fragment_subscribe, null, false);
         mSubscribeUrl = (EditText) view.findViewById(R.id.subscribe_url);
-        mSubscribeButton = (Button) view.findViewById(R.id.subscribe_ok);
-        mButtonBarLayout = (LinearLayout) view.findViewById(R.id.button_bar);
         mProgress = (ProgressBar) view.findViewById(R.id.progress);
+
+
+
+        builder.setView(view);
+
+        final AlertDialog dialog =  builder.create();
+
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                Button b = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                b.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View view) {
+                        String url = mSubscribeUrl.getText().toString();
+                        if (url != null && url.trim().length() != 0) {
+                            setSubscribeVisibility();
+                            Utils.hideKeyboard(getActivity(), mSubscribeUrl);
+                            mSubscribeService.subscribe(null, url, null, mSubscribeListener);
+                        } else {
+                            Toast.makeText(getActivity(), R.string.subscribe_hint, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        });
 
         mSubscribeUrl.requestFocus();
         mSubscribeUrl.postDelayed(new Runnable() {
@@ -103,24 +137,7 @@ public class SubscribeFragment extends DialogFragment {
             }
         }, 50);
 
-        initSubscribe();
-        return view;
-    }
-
-    private void initSubscribe() {
-        mSubscribeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String url = mSubscribeUrl.getText().toString();
-                if (url != null && url.trim().length() != 0) {
-                    setSubscribeVisibility();
-                    Utils.hideKeyboard(getActivity(), mSubscribeUrl);
-                    mSubscribeService.subscribe(null, url, null, mSubscribeListener);
-                } else {
-                    Toast.makeText(getActivity(), R.string.subscribe_hint, Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+        return dialog;
     }
 
     public void setOnSubscribeSuccessListener(OnSubscribeSuccessListener listener) {
@@ -128,14 +145,12 @@ public class SubscribeFragment extends DialogFragment {
     }
 
     private void setSubscribeVisibility() {
-        mButtonBarLayout.setVisibility(View.GONE);
         mSubscribeUrl.setVisibility(View.GONE);
 
         mProgress.setVisibility(View.VISIBLE);
     }
 
     private void setSubscribeFinishVisibility() {
-        mButtonBarLayout.setVisibility(View.VISIBLE);
         mSubscribeUrl.setVisibility(View.VISIBLE);
 
         mProgress.setVisibility(View.GONE);

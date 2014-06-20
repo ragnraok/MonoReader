@@ -21,15 +21,15 @@
         android:id="@+id/category_name"
         android:hint="@string/category_set_hint"/>
 
-    <Button
-        android:id="@+id/set_category_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/ok"
-        android:layout_below="@id/category_name"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"/>
+    <!--<Button-->
+        <!--android:id="@+id/set_category_button"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="@string/ok"-->
+        <!--android:layout_below="@id/category_name"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_marginTop="10dp"-->
+        <!--android:layout_marginBottom="10dp"/>-->
 
 
 </RelativeLayout>

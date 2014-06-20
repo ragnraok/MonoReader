@@ -2,8 +2,11 @@ package cn.ragnarok.monoreader.app.ui.fragment;
 
 
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.util.Log;
@@ -25,6 +28,7 @@ import cn.ragnarok.monoreader.api.base.APIRequestFinishListener;
 import cn.ragnarok.monoreader.api.object.CategoryObject;
 import cn.ragnarok.monoreader.api.service.CategoryService;
 import cn.ragnarok.monoreader.app.R;
+import cn.ragnarok.monoreader.app.util.Utils;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -46,7 +50,6 @@ public class CategorySetFragment extends DialogFragment {
 
     private AutoCompleteTextView mCategoryView;
     private ProgressBar mProgressBar;
-    private Button mOKButton;
     private ArrayAdapter<String> adapter;
 
     private int mSiteId = -1;
@@ -64,24 +67,48 @@ public class CategorySetFragment extends DialogFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_category_set, container, false);
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+//        Dialog dialog = super.onCreateDialog(savedInstanceState);
+//        dialog.setTitle(R.string.set_category);
+//        return dialog;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(R.string.set_category);
+        View view = getActivity().getLayoutInflater().inflate(R.layout.fragment_category_set, null, false);
         mCategoryView = (AutoCompleteTextView) view.findViewById(R.id.category_name);
         mProgressBar = (ProgressBar) view.findViewById(R.id.progress);
-        mOKButton = (Button) view.findViewById(R.id.set_category_button);
 
-        mOKButton.setOnClickListener(new View.OnClickListener() {
+        builder.setView(view);
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                setCategory();
+            public void onClick(DialogInterface dialogInterface, int i) {
+            }
+        });
+
+
+
+
+        final AlertDialog dialog = builder.create();
+
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                Button b = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                b.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View view) {
+                        setCategory();
+                    }
+                });
             }
         });
 
         loadAllCategory();
 
-        return view;
+
+
+        return dialog;
     }
 
     private void initRequestListener() {
@@ -119,6 +146,7 @@ public class CategorySetFragment extends DialogFragment {
             @Override
             public void onRequestSuccess() {
 //                setRequestFinishVis();
+                Log.d(TAG, "set category success");
                 if (mCategorySetFinishListener != null) {
                     mCategorySetFinishListener.onSetCategoryFinish();
                 }
@@ -143,13 +171,19 @@ public class CategorySetFragment extends DialogFragment {
     private void setRequestFinishVis() {
         mProgressBar.setVisibility(View.GONE);
         mCategoryView.setVisibility(View.VISIBLE);
-        mOKButton.setVisibility(View.VISIBLE);
+
+        mCategoryView.requestFocus();
+        mCategoryView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Utils.showKeyboard(getActivity(), mCategoryView);
+            }
+        }, 50);
     }
 
     private void setRequestStartVis() {
         mProgressBar.setVisibility(View.VISIBLE);
         mCategoryView.setVisibility(View.GONE);
-        mOKButton.setVisibility(View.GONE);
     }
 
     private void loadAllCategory() {
@@ -165,20 +199,22 @@ public class CategorySetFragment extends DialogFragment {
         }
         if (mSiteId != -1) {
             setRequestStartVis();
+            Log.d(TAG, "set category, siteId: " + mSiteId + ", category: " + category + ", mSetCategoryRequestListener==NULL:" + (mSetCategoryRequestListener == null));
             mCategoryService.setSiteCategory(mSiteId, category, mSetCategoryRequestListener);
         }
     }
 
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        Dialog dialog = super.onCreateDialog(savedInstanceState);
-        dialog.setTitle(R.string.set_category);
-        return dialog;
-    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
         initRequestListener();
     }
 

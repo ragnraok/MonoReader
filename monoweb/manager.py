@@ -38,7 +38,7 @@ def dropdb():
 
 @manager.command
 def runserver():
-    mono_app.run(host="0.0.0.0", port=5000)
+    mono_app.run(host="0.0.0.0", port=6000)
 
 @manager.command
 def worker():
