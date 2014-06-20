@@ -1,17 +1,19 @@
 from deploy_config import *
-from mono.config import LOG_DIRS
 from supervisor_template import SUPERVISOR_TEMPLATE
 
 from fabric.api import *
 
 import os
 
+env.user = HOST_UESRNAME
+env.password = HOST_PASSWORD
 env.hosts = HOST
 
 src_dir = "MonoReader"
 
 def create_supervisord_file():
-    supervisord_config = SUPERVISOR_TEMPLATE.format(HOST_UESRNAME)
+    supervisord_config = SUPERVISOR_TEMPLATE.format(username=HOST_UESRNAME, gunicorn_host=GUNICORN_HOST,
+            gunicorn_port=GUNICORN_PORT)
     supervisord_file = open(SUPERVISOR_FILENAME, "w")
     supervisord_file.write(supervisord_config)
     supervisord_file.close()

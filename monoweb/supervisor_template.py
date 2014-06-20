@@ -23,8 +23,8 @@ supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
 serverurl=unix:///tmp/supervisor.sock           ; use a unix:// URL  for a unix socket
 
 [program:mono]
-user={0}
-command=python manager.py gunicorn
+user={username}
+command=python manager.py gunicorn --host {gunicorn_host} --port {gunicorn_port}
 autostart=false
 autorestart=true
 directory=.
@@ -32,7 +32,7 @@ stderr_logfile=log/mono/mono_stderr.log
 stdout_logfile=log/mono/mono_stdout.log
 
 [program:worker]
-user={0}
+user={username}
 command=python manager.py worker
 autostart=false
 autorestart=true
@@ -41,7 +41,7 @@ stderr_logfile=log/task/worker_stderr.log
 stdout_logfile=log/task/worker_stdout.log
 
 [program:clock]
-user={0}
+user={username}
 command=python manager.py clock
 autostart=false
 autorestart=true
@@ -50,7 +50,7 @@ stderr_logfile=log/task/clock_stderr.log
 stdout_logfile=log/task/clock_stdout.log
 
 [program:redis]
-user={0}
+user={username}
 command=redis-server
 autostart=false
 autorestart=true
