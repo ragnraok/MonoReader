@@ -40,15 +40,15 @@ def install_requirements():
     run("tar -xvzf pip-1.5.6.tar.gz")
     with cd("pip-1.5.6"):
         sudo("python setup.py install")
-    run("rm -rf pip-1.5.6")
+    run("rm -rf pip-1.5.6 pip-1.5.6.tar.gz")
     # install supervisor
     run("curl -OL https://pypi.python.org/packages/source/s/supervisor/supervisor-3.0.tar.gz")
     run("tar -xvzf supervisor-3.0.tar.gz")
     with cd("supervisor-3.0"):
         sudo("python setup.py install")
-    run("rm -rf supervisor-3.0")
+    run("rm -rf supervisor-3.0 supervisor-3.0.tar.gz")
     # install pip requirements
-    run("pip install -r requirements.txt")
+    sudo("pip install -r requirements.txt")
 
 def prepare():
     with cd("$HOME"):
@@ -88,3 +88,22 @@ def deploy():
         run("supervisorctl start redis")
         run("supervisorctl start worker")
         run("supervisorctl start clock")
+
+def stop():
+    with cd(os.path.join("$HOME", WEB_PROJECT_DIR)):
+        # enter virtualenv
+        run("source venv/bin/activate")
+
+        run("supervisorctl stop mono")
+        run("supervisorctl stop redis")
+        run("supervisorctl stop worker")
+        run("supervisorctl stop clock")
+
+def status():
+    with cd(os.path.join("$HOME", WEB_PROJECT_DIR)):
+        # enter virtualenv
+        run("source venv/bin/activate")
+
+        run("supervisorctl status mono")
+        run("supervisorctl status worker")
+        run("supervisorctl status clock")
