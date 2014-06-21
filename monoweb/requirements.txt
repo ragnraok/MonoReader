@@ -17,6 +17,7 @@ requests
 # deployment
 gunicorn
 fabric
+supervisor
 
 
 # task

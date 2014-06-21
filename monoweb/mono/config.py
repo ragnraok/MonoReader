@@ -18,10 +18,15 @@ SQLALCHEMY_ECHO = False
 REDIS_URL = "redis://localhost:6379"
 
 # logging
-LOG_FILE = "log/mono/monoreader.log"
-TASK_LOG_FILE = "log/task/monoreader_task.log"
+ROOT_LOG_DIR = "log"
+MONO_LOG_DIR = os.path.join(ROOT_LOG_DIR, "mono")
+TASK_LOG_DIR = os.path.join(ROOT_LOG_DIR, "task")
+REDIS_LOG_DIR = os.path.join(ROOT_LOG_DIR, "redis")
+SUPERVISOR_LOG_DIR = os.path.join(ROOT_LOG_DIR, "supervisord")
+LOG_FILE = os.path.join(MONO_LOG_DIR, "monoreader.log") #"log/mono/monoreader.log"
+TASK_LOG_FILE = os.path.join(TASK_LOG_DIR, "monoreader_task.log") #"log/task/monoreader_task.log"
 
-LOG_DIRS = ["log/mono", "log/task", "log/redis"]
+LOG_DIRS = [ROOT_LOG_DIR, MONO_LOG_DIR, TASK_LOG_DIR, REDIS_LOG_DIR, SUPERVISOR_LOG_DIR]
 
 # cache
 MAIN_TIMELINE_UPDATE_CACHE_KEY = "timeline_update"

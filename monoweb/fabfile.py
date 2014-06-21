@@ -11,6 +11,9 @@ env.hosts = HOST
 
 src_dir = "MonoReader"
 
+def sys_info():
+    run("uname -a")
+
 def create_supervisord_file():
     supervisord_config = SUPERVISOR_TEMPLATE.format(username=HOST_UESRNAME, gunicorn_host=GUNICORN_HOST,
             gunicorn_port=GUNICORN_PORT)
@@ -32,20 +35,37 @@ def install_requirements():
         run("make -j4")
         run("make install")
     run("rm -r redis-2.8.9.tar.gz redis-2.8.9")
+    # install pip
+    run("curl -OL https://pypi.python.org/packages/source/p/pip/pip-1.5.6.tar.gz")
+    run("tar -xvzf pip-1.5.6.tar.gz")
+    with cd("pip-1.5.6"):
+        sudo("python setup.py install")
+    run("rm -rf pip-1.5.6")
     # install supervisor
+    run("curl -OL https://pypi.python.org/packages/source/s/supervisor/supervisor-3.0.tar.gz")
+    run("tar -xvzf supervisor-3.0.tar.gz")
+    with cd("supervisor-3.0"):
+        sudo("python setup.py install")
+    run("rm -rf supervisor-3.0")
     # install pip requirements
     run("pip install -r requirements.txt")
 
 def prepare():
     with cd("$HOME"):
-        get_code()
-        with cd(WEB_PROJECT_DIR):
-            # make virtualenv
-            pull()
-            run("virtualenv venv")
-            run("source venv/bin/activate")
-            install_requirements()
-            create_supervisord_file()
+        with settings(warn_only=True):
+            if run("test -d %s" % PROJECT_DIR).failed:
+                get_code()
+                with cd(WEB_PROJECT_DIR):
+                    # make virtualenv
+                    pull()
+                    run("virtualenv venv")
+                    run("source venv/bin/activate")
+                    install_requirements()
+                    create_supervisord_file()
+                    return
+            else:
+                with cd(PROJECT_DIR):
+                    pull()
 
 def config_nginx():
     pass
@@ -54,8 +74,10 @@ def deploy():
     # enter virtualenv
     with cd(os.path.join("$HOME", WEB_PROJECT_DIR)):
         # create log dir
-        for _dir in LOG_DIRS:
-            run("mkdir %s" % _dir)
+        with settings(warn_only=True):
+            for _dir in LOG_DIRS:
+                if run("test -d %s" % _dir).failed:
+                    run("mkdir %s" % _dir)
         # enter virtualenv
         run("source venv/bin/activate")
         # start server
