@@ -20,6 +20,8 @@ def create_supervisord_file():
     supervisord_file = open(SUPERVISOR_FILENAME, "w")
     supervisord_file.write(supervisord_config)
     supervisord_file.close()
+    supervisord_file = open(SUPERVISOR_FILENAME)
+    put(supervisord_file, SUPERVISOR_FILENAME, use_sudo=True)
 
 def get_code():
     run("git clone %s" % GIT_URL)
@@ -64,7 +66,8 @@ def prepare():
                     create_supervisord_file()
                     return
             else:
-                with cd(PROJECT_DIR):
+                with cd(WEB_PROJECT_DIR):
+                    create_supervisord_file()
                     pull()
 
 def config_nginx():
