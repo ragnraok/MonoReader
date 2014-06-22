@@ -67,8 +67,10 @@ def prepare():
                     return
             else:
                 with cd(WEB_PROJECT_DIR):
+                    run("source venv/bin/activate")
                     create_supervisord_file()
                     pull()
+                    run("python manager.py syncdb")
 
 def config_nginx():
     pass
@@ -110,3 +112,8 @@ def status():
         run("supervisorctl status mono")
         run("supervisorctl status worker")
         run("supervisorctl status clock")
+
+#def test():
+#    with cd(os.path.join("$HOME", WEB_PROJECT_DIR)):
+#        run("source venv/bin/activate")
+#        run("python test/test_site.py")
