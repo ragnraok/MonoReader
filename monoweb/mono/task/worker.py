@@ -16,7 +16,7 @@ connection = redis.from_url(redis_url)
 queue = Queue(QUEUE_NAME, connection=connection)
 
 def update_site(site):
-    if site:
+    if site and site.is_subscribe:
         is_new_article = site.update_site()
         if is_new_article:
             now_timestamp = calendar.timegm(datetime.datetime.utcnow().utctimetuple())
