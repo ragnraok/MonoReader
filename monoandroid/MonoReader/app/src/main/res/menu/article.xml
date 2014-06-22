@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="cn.ragnarok.monoreader.app.ui.activity.ArticleActivity" >
     <item android:id="@+id/action_scroll_top"
-        android:icon="@drawable/ic_av_upward"
+        android:icon="@drawable/ic_av_upload"
         android:showAsAction="always"
         android:title="@string/scroll_to_top"/>
     <item android:id="@+id/action_share"
@@ -16,8 +16,7 @@
         android:title="@string/refresh"/>
     <item android:id="@+id/action_open_in_browser"
         android:title="@string/open_in_browser"
-        android:showAsAction="ifRoom"
-        android:icon="@drawable/ic_location_web_site"
+        android:showAsAction="never"
         />
     <item android:id="@+id/action_fav_article"
         android:title="@string/fav_an_article"

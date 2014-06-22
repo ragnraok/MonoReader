@@ -85,11 +85,7 @@ public class CategorySetFragment extends DialogFragment {
             }
         });
 
-
-
-
         final AlertDialog dialog = builder.create();
-
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialogInterface) {
