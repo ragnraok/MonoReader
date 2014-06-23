@@ -334,11 +334,14 @@ public class ArticleActivity extends Activity {
     }
 
     private void shareArticle() {
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType("text/html");
-        intent.putExtra(Intent.EXTRA_SUBJECT, mArticle.title);
-        intent.putExtra(Intent.EXTRA_TEXT, mArticle.url);
-        startActivity(Intent.createChooser(intent, "Share via"));
+        if (mArticle != null) {
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("text/html");
+            intent.putExtra(Intent.EXTRA_SUBJECT, mArticle.title);
+            intent.putExtra(Intent.EXTRA_TEXT, mArticle.title + " " + mArticle.url);
+            startActivity(Intent.createChooser(intent, "Share via"));
+        }
+
     }
 
     private void openInBrowser() {
