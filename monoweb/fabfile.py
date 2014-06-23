@@ -64,6 +64,7 @@ def prepare():
                     run("source venv/bin/activate")
                     install_requirements()
                     create_supervisord_file()
+                    run("python manager.py syncdb")
                     return
             else:
                 with cd(WEB_PROJECT_DIR):
@@ -103,6 +104,16 @@ def stop():
         run("supervisorctl stop redis")
         run("supervisorctl stop worker")
         run("supervisorctl stop clock")
+
+def restart():
+    with cd(os.path.join("$HOME", WEB_PROJECT_DIR)):
+        # enter virtualenv
+        run("source venv/bin/activate")
+
+        run("supervisorctl restart mono")
+        run("supervisorctl restart redis")
+        run("supervisorctl restart worker")
+        run("supervisorctl restart clock")
 
 def status():
     with cd(os.path.join("$HOME", WEB_PROJECT_DIR)):
