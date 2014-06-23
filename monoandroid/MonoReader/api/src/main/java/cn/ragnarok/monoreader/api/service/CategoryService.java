@@ -1,12 +1,16 @@
 package cn.ragnarok.monoreader.api.service;
 
+import android.util.Base64;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
+import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.List;
 
@@ -84,7 +88,12 @@ public class CategoryService extends BaseAPIService {
         if (isUnClassified) {
             url = APIService.getInstance().createURL(String.format(Constant.URL.UNCLASSIFIED_CATEGORY_TIMELINE, page));
         } else {
-            url = APIService.getInstance().createURL(String.format(Constant.URL.CATEGORY_TIMELINE, category, page));
+            try {
+                url = APIService.getInstance().createURL(String.format(Constant.URL.CATEGORY_TIMELINE,
+                        URLEncoder.encode(category, "UTF-8"), page));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
         }
 
         Type resultType = new TypeToken<Collection<ListArticleObject>>(){}.getType();
