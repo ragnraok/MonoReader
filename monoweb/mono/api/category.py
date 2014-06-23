@@ -6,6 +6,8 @@ from objects import fill_category_object, fill_list_article_object
 from utils import SITE_NOT_EXIST, DATA_FORMAT_ERROR, PAGE_SMALL_THAN_ONE
 from mono.models import Site, Category, Article
 
+import urllib
+
 class CategoryListView(BaseAPIGETView):
     """
     response format:
@@ -92,6 +94,7 @@ class CategoryTimeline(BaseArticleListView):
             category_name = kwargs.get('category', None)
             if category_name is None:
                 raise ValueError(DATA_FORMAT_ERROR)
+            category_name = urllib.unquote_plus(category_name)
             category = Category.query.filter_by(name=category_name).first()
         page = kwargs.get('page', 1)
         if page < 1:
