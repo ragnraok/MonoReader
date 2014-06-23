@@ -2,8 +2,8 @@ from mono.config import LOG_DIRS
 
 import os
 
-HOST = ["128.199.169.216"]
-HOST_UESRNAME = "root"
+HOST = [""]
+HOST_UESRNAME = ""
 HOST_PASSWORD = ""
 GIT_URL = "https://github.com/ragnraok/MonoReader.git"
 SUPERVISOR_FILENAME = "supervisord.conf"
