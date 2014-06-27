@@ -144,27 +144,27 @@ public class Utils {
     public static long getDiskCacheSizeInKB(Context context) {
         long size = 0;
         File monoImgCache = new File(context.getExternalFilesDir(MONO_IMG_CACHE_DIR).getPath());
-        if (monoImgCache.exists()) {
+        if (monoImgCache != null && monoImgCache.exists()) {
             size += getFolderSize(monoImgCache);
         }
 
         File mainTimelineCache = new File(context.getExternalFilesDir(MAIN_TIMELINE_CACHE_DIR_NAME).getPath());
-        if (mainTimelineCache.exists()) {
+        if (mainTimelineCache != null && mainTimelineCache.exists()) {
             size += getFolderSize(mainTimelineCache);
         }
 
         File favTimelineCache = new File(context.getExternalFilesDir(FAV_TIMELINE_CACHE_DIR_NAME).getPath());
-        if (favTimelineCache.exists()) {
+        if (favTimelineCache != null && favTimelineCache.exists()) {
             size += getFolderSize(favTimelineCache);
         }
 
         File favArticleListCache = new File(context.getExternalFilesDir(FAV_ARTICLE_LIST_CACHE_DIR_NAME).getPath());
-        if (favArticleListCache.exists()) {
+        if (favArticleListCache != null && favArticleListCache.exists()) {
             size += getFolderSize(favArticleListCache);
         }
 
         File articleContentCache = new File(context.getExternalFilesDir(ARTICLE_CACHE_DIR_NAME).getPath());
-        if (articleContentCache.exists()) {
+        if (articleContentCache != null && articleContentCache.exists()) {
             size += getFolderSize(articleContentCache);
         }
 

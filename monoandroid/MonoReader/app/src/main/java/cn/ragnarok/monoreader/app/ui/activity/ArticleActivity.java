@@ -14,6 +14,10 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
@@ -86,6 +90,7 @@ public class ArticleActivity extends Activity {
     private void initWebViewSetting() {
         mWebView.getSettings().setLoadWithOverviewMode(true);
         mWebView.getSettings().setUseWideViewPort(true);
+        mWebView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
 
         mWebView.setOnScrollChangeListener(new ScrollableWebView.OnScrollChangeListener() {
             @Override

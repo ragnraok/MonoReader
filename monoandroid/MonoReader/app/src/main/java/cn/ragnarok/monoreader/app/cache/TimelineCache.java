@@ -217,9 +217,10 @@ public class TimelineCache {
                 String decodeContent = content;
                 TimelineCacheObject cacheContent = new Gson().fromJson(decodeContent,
                         new TypeToken<TimelineCacheObject>() {}.getType());
-                Log.d(TAG, "readDiskCacheInternal, cacheContent.articles.length: " + cacheContent.articles.length +
-                        ", cacheContent.lastpage: " + cacheContent.lastpage);
+
                 if (cacheContent != null) {
+                    Log.d(TAG, "readDiskCacheInternal, cacheContent.articles.length: " + cacheContent.articles.length +
+                            ", cacheContent.lastpage: " + cacheContent.lastpage);
                     cacheData.addAll(Arrays.asList(cacheContent.articles));
                     return cacheContent.lastpage;
                 }
@@ -375,5 +376,8 @@ public class TimelineCache {
         mMainTimelineMemCache.clear();
         mFavTimelineMemCache.clear();
         mFavArticleListMemCache.clear();
+        mMainTimelinePage = 1;
+        mFavArticleListPage = 1;
+        mFavTimelinePage = 1;
     }
 }

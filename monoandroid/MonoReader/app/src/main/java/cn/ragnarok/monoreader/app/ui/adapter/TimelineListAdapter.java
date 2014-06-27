@@ -42,8 +42,8 @@ public class TimelineListAdapter extends BaseAdapter {
 
     private static final int MAX_TITLE_LENGTH = 25;
 
-    private static final int ITEM_ARTICLE = 1;
-    private static final int ITEM_LOADING_PROGRESS = 2;
+    public static final int ITEM_ARTICLE = 1;
+    public static final int ITEM_LOADING_PROGRESS = 2;
 
     private Context mContext;
 //    private boolean mIsFavTimeline;
@@ -98,6 +98,10 @@ public class TimelineListAdapter extends BaseAdapter {
     public void setLoadingMore(boolean isLoadingMore) {
         this.mIsShowLoadingProgress = isLoadingMore;
         this.notifyDataSetChanged();
+    }
+
+    public boolean getIsLoadingMore() {
+        return this.mIsShowLoadingProgress;
     }
 
     public ArrayList<ListArticleObject> getData() {

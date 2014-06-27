@@ -59,9 +59,6 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        // TEST ONLY CODE
-//        APIService.getInstance().setHost(TestUtil.HOST);
-//        // END TEST ONLY CODE
 
 //        requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
 
@@ -128,6 +125,8 @@ public class MainActivity extends Activity {
         //if (savedInstanceState == null) {
 
         //}
+
+
     }
 
     private void initDrawer() {

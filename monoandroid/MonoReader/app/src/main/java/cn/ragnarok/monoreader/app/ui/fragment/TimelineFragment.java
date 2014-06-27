@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -67,9 +68,11 @@ public class TimelineFragment extends Fragment {
     private ArticleService mArticleService;
     private APIRequestFinishListener<Collection<ListArticleObject>> mRequestFinishListener;
     private APIRequestFinishListener<ChangeDateObject> mDataChangeReuqestFinishListener;
+    private boolean mIsCheckDataChangeFinish = false;
     private TimelineListAdapter mTimelineAdapter;
     private PullToRefreshLayout mPullToRefreshLayout;
 
+    private Object mLock = new Object();
     private int mPage;
     private boolean mIsLastPage;
     private boolean mIsLoadingMore;
@@ -83,6 +86,8 @@ public class TimelineFragment extends Fragment {
 
     private HandlerThread mFlushCacheThread = null;
     private Handler mFlushCacheHandler = null;
+
+    private Handler mUiHandler = new Handler(Looper.getMainLooper());
 
     public static TimelineFragment newInstance(boolean isFavTimeline) {
         TimelineFragment fragment = new TimelineFragment();
@@ -108,15 +113,7 @@ public class TimelineFragment extends Fragment {
         mFlushCacheThread.start();
         mFlushCacheHandler = new Handler(mFlushCacheThread.getLooper());
 
-//        initCachePage();
-
     }
-
-//    private void initCachePage() {
-//        mMainTimeCacheLastPage = mTimelineCache.getMainTimelineLastPage();
-//        mFavTimelineCacheLastPage = mTimelineCache.getFavTimelineLastPage();
-//        mFavArticleListCacheLastPage = mTimelineCache.getFavArticleListLastPage();
-//    }
 
     public void setIsFavTimeline(boolean isFav) {
         if (isFav != mIsFavTimeline || mIsInFavArticle) {
@@ -131,15 +128,26 @@ public class TimelineFragment extends Fragment {
         mIsLastPage = false;
         mIsLoadingMore = false;
         mIsInFavArticle = false;
+        mIsCheckDataChangeFinish = false;
         mTimelineList.setVisibility(View.GONE);
         mLoadingProgress.setVisibility(View.VISIBLE);
-        pullTimeline();
+//        pullTimeline();
+        mPullToRefreshLayout.setRefreshing(true);
         mTimelineList.smoothScrollToPosition(0);
+        mUiHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                loadTimelineFramCache();
+                pullTimeline();
+            }
+        }, 500);
+
     }
 
     private void pullFavArticles() {
         initPageFromCache();
-        mTimelineAdapter.clearData();
+//        mTimelineAdapter.clearData();
+        mIsCheckDataChangeFinish = false;
         mIsLastPage = false;
         mIsLoadingMore = false;
         mIsInFavArticle = true;
@@ -150,13 +158,23 @@ public class TimelineFragment extends Fragment {
             mPullToRefreshLayout.setRefreshComplete();
             return;
         }
-        mTimelineList.setVisibility(View.GONE);
-        mLoadingProgress.setVisibility(View.VISIBLE);
+//        mTimelineList.setVisibility(View.GONE);
+//        mLoadingProgress.setVisibility(View.VISIBLE);
         mTimelineList.smoothScrollToPosition(0);
 
         mPullToRefreshLayout.setRefreshing(true);
+
 //        mArticleService.loadFavArticleList(mPage, mRequestFinishListener);
-        mArticleService.favArticldListUpdateCheck(mDataChangeReuqestFinishListener);
+//        mArticleService.favArticldListUpdateCheck(mDataChangeReuqestFinishListener);
+        mPullToRefreshLayout.setRefreshing(true);
+        mTimelineList.smoothScrollToPosition(0);
+        mUiHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                loadTimelineFramCache();
+                pullTimeline();
+            }
+        }, 500);
     }
 
     @Override
@@ -186,8 +204,12 @@ public class TimelineFragment extends Fragment {
         mRequestFinishListener = new APIRequestFinishListener<Collection<ListArticleObject>>() {
             @Override
             public void onRequestSuccess() {
+                if (mPage == 1 && !mTimelineAdapter.getIsLoadingMore()) {
+                    mTimelineAdapter.clearData();
+                }
                 mPullToRefreshLayout.setRefreshComplete();
                 mTimelineAdapter.setLoadingMore(false);
+
             }
 
             @Override
@@ -199,7 +221,7 @@ public class TimelineFragment extends Fragment {
 
             @Override
             public void onGetResult(Collection<ListArticleObject> result) {
-                Log.d(TAG, "result.size=" + result.size());
+                Log.d(TAG, "result.size=" + result.size() + ", mPage=" + mPage);
 
                 if (result.size() == 0) {
                     mIsLastPage = true;
@@ -232,7 +254,7 @@ public class TimelineFragment extends Fragment {
         mDataChangeReuqestFinishListener = new APIRequestFinishListener<ChangeDateObject>() {
             @Override
             public void onRequestSuccess() {
-
+                mIsCheckDataChangeFinish = true;
             }
 
             @Override
@@ -242,6 +264,7 @@ public class TimelineFragment extends Fragment {
                 boolean isSuccess = loadTimelineFramCache();
                 if (!isSuccess) {
                     mPage = 1;
+                    mTimelineAdapter.clearData();
                     if (mIsInFavArticle) {
                         mArticleService.loadFavArticleList(mPage, mRequestFinishListener);
                     } else if (mIsFavTimeline) {
@@ -252,7 +275,7 @@ public class TimelineFragment extends Fragment {
                 } else {
                     mPullToRefreshLayout.setRefreshComplete();
                 }
-
+                mIsCheckDataChangeFinish = true;
             }
 
             @Override
@@ -269,6 +292,7 @@ public class TimelineFragment extends Fragment {
                 Log.d(TAG, "dataChangeRequest, lastUpdateTimestamp: " + lastUpdateTimestamp + ", newTimestamp: " + timestamp);
                 if (timestamp > lastUpdateTimestamp) {
                     mPage = 1;
+                    mTimelineAdapter.clearData();
                     if (mIsInFavArticle) {
                         mTimelineCache.clearFavArticleListCache();
                         mTimelineCache.setFavArticleListLastUpdate(timestamp);
@@ -286,6 +310,7 @@ public class TimelineFragment extends Fragment {
                     boolean isSuccess = loadTimelineFramCache();
                     if (!isSuccess) {
                         mPage = 1;
+                        mTimelineAdapter.clearData();
                         if (mIsInFavArticle) {
                             mArticleService.loadFavArticleList(mPage, mRequestFinishListener);
                         } else if (mIsFavTimeline) {
@@ -343,10 +368,6 @@ public class TimelineFragment extends Fragment {
     }
 
     private void initTimelineList() {
-//        mTimelineList.setFastScrollEnabled(true);
-        mTimelineList.setVisibility(View.GONE);
-        mLoadingProgress.setVisibility(View.VISIBLE);
-
         mTimelineList.setAdapter(mTimelineAdapter);
         mTimelineList.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
@@ -363,7 +384,7 @@ public class TimelineFragment extends Fragment {
             public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 
                 if (firstVisibleItem + visibleItemCount == totalItemCount - PRE_LOAD_ITEM_OFFSET && totalItemCount > 0
-                        && !mIsLoadingMore && !mIsLastPage) {
+                        && !mIsLoadingMore && !mIsLastPage && mIsCheckDataChangeFinish) {
                     // reach bottom
 //                    Log.d(TAG, "loading more timeline");
 //                    Toast.makeText(getActivity(), "Loading More", Toast.LENGTH_SHORT).show();
@@ -391,6 +412,9 @@ public class TimelineFragment extends Fragment {
         mTimelineList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (mTimelineAdapter.getItemViewType(i) != TimelineListAdapter.ITEM_ARTICLE) {
+                    return;
+                }
                 ListArticleObject article = (ListArticleObject) mTimelineAdapter.getItem(i);
                 Intent articleIntent = new Intent(getActivity(), ArticleActivity.class);
                 articleIntent.putExtra(ArticleActivity.ARTICLE_ID, article.articleId);
@@ -399,7 +423,19 @@ public class TimelineFragment extends Fragment {
             }
         });
 
-        pullTimeline();
+        mTimelineList.setVisibility(View.GONE);
+        mLoadingProgress.setVisibility(View.VISIBLE);
+        mPullToRefreshLayout.setRefreshing(true);
+        mUiHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                loadTimelineFramCache();
+                pullTimeline();
+            }
+        }, 500);
+
+
+
 
     }
 
@@ -435,24 +471,27 @@ public class TimelineFragment extends Fragment {
             result = true;
         }
         Log.d(TAG, "loadTimelineFromCache, mPage: " + mPage + ", articles.size: " + articles.size());
-        mTimelineList.setVisibility(View.VISIBLE);
-        mLoadingProgress.setVisibility(View.GONE);
+        if (result) {
+            mTimelineList.setVisibility(View.VISIBLE);
+            mLoadingProgress.setVisibility(View.GONE);
+        }
+
         //mPullToRefreshLayout.setRefreshComplete();
         return result;
     }
 
-    private ArrayList<ListArticleObject> getTimelineFromCache() {
-        ArrayList<ListArticleObject> articles;
-        if (mIsInFavArticle) {
-            articles = mTimelineCache.getFavArticleList();
-        }
-        else if (mIsFavTimeline) {
-            articles = mTimelineCache.getFavTimeline();
-        } else {
-            articles = mTimelineCache.getMainTimeline();
-        }
-        return articles;
-    }
+//    private ArrayList<ListArticleObject> getTimelineFromCache() {
+//        ArrayList<ListArticleObject> articles;
+//        if (mIsInFavArticle) {
+//            articles = mTimelineCache.getFavArticleList();
+//        }
+//        else if (mIsFavTimeline) {
+//            articles = mTimelineCache.getFavTimeline();
+//        } else {
+//            articles = mTimelineCache.getMainTimeline();
+//        }
+//        return articles;
+//    }
 
     private void initPageFromCache() {
         if (mIsInFavArticle) {
@@ -467,6 +506,7 @@ public class TimelineFragment extends Fragment {
 
     private void pullTimeline() {
         mPullToRefreshLayout.setRefreshing(true);
+        mIsCheckDataChangeFinish = false;
         if (!Utils.isNetworkConnected(getActivity())) {
             mTimelineAdapter.clearData();
             Toast.makeText(getActivity(), R.string.connection_failed, Toast.LENGTH_SHORT).show();
@@ -474,19 +514,17 @@ public class TimelineFragment extends Fragment {
             mPullToRefreshLayout.setRefreshComplete();
             return;
         }
-        mTimelineList.setVisibility(View.GONE);
-        mLoadingProgress.setVisibility(View.VISIBLE);
-        mTimelineAdapter.clearData();
-        if (mIsFavTimeline) {
+//        mTimelineList.setVisibility(View.GONE);
+//        mLoadingProgress.setVisibility(View.VISIBLE);
+//        mTimelineAdapter.clearData();
+        if (mIsInFavArticle) {
+            mArticleService.favArticldListUpdateCheck(mDataChangeReuqestFinishListener);
+        }
+        else if (mIsFavTimeline) {
             mTimelineService.favTimelineUpdateCheck(mDataChangeReuqestFinishListener);
         } else {
             mTimelineService.mainTimelineUpdateCheck(mDataChangeReuqestFinishListener);
         }
-//        if (mIsFavTimeline) {
-//            mTimelineService.favTimeline(mPage, mRequestFinishListener);
-//        } else {
-//            mTimelineService.mainTimeline(mPage, mRequestFinishListener);
-//        }
     }
 
     private void loadMoreTimeline() {
@@ -495,12 +533,15 @@ public class TimelineFragment extends Fragment {
         } else {
             mTimelineAdapter.setLoadingMore(true);
         }
+
         mPage++;
         if (mIsFavTimeline) {
             mTimelineService.favTimeline(mPage, mRequestFinishListener);
         } else {
             mTimelineService.mainTimeline(mPage, mRequestFinishListener);
         }
+
+
     }
 
     private void loadMoreFavAritcle() {
@@ -509,8 +550,11 @@ public class TimelineFragment extends Fragment {
         } else {
             mTimelineAdapter.setLoadingMore(true);
         }
+
         mPage++;
         mArticleService.loadFavArticleList(mPage, mRequestFinishListener);
+
+
     }
 
     private void initPullToRefreshLayout() {
