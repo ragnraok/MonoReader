@@ -131,7 +131,7 @@ public class TimelineFragment extends Fragment {
         mIsCheckDataChangeFinish = false;
         mTimelineList.setVisibility(View.GONE);
         mLoadingProgress.setVisibility(View.VISIBLE);
-//        pullTimeline();
+
         mPullToRefreshLayout.setRefreshing(true);
         mTimelineList.smoothScrollToPosition(0);
         mUiHandler.postDelayed(new Runnable() {
@@ -144,9 +144,8 @@ public class TimelineFragment extends Fragment {
 
     }
 
-    private void pullFavArticles() {
-        initPageFromCache();
-//        mTimelineAdapter.clearData();
+    private void pullFavArticles(boolean isFirstLoad) {
+        mTimelineAdapter.clearData();
         mIsCheckDataChangeFinish = false;
         mIsLastPage = false;
         mIsLoadingMore = false;
@@ -158,23 +157,23 @@ public class TimelineFragment extends Fragment {
             mPullToRefreshLayout.setRefreshComplete();
             return;
         }
-//        mTimelineList.setVisibility(View.GONE);
-//        mLoadingProgress.setVisibility(View.VISIBLE);
         mTimelineList.smoothScrollToPosition(0);
-
         mPullToRefreshLayout.setRefreshing(true);
 
-//        mArticleService.loadFavArticleList(mPage, mRequestFinishListener);
-//        mArticleService.favArticldListUpdateCheck(mDataChangeReuqestFinishListener);
-        mPullToRefreshLayout.setRefreshing(true);
-        mTimelineList.smoothScrollToPosition(0);
-        mUiHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                loadTimelineFramCache();
-                pullTimeline();
-            }
-        }, 500);
+        mTimelineList.setVisibility(View.GONE);
+        mLoadingProgress.setVisibility(View.VISIBLE);
+        if (isFirstLoad) {
+            mUiHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    loadTimelineFramCache();
+                    pullTimeline();
+                }
+            }, 500);
+        } else {
+            pullTimeline();
+        }
+
     }
 
     @Override
@@ -344,7 +343,7 @@ public class TimelineFragment extends Fragment {
                     setIsFavTimeline(true);
                 } else if (itemPosition == 2) {
                     mTimelineService.cancelRequest();
-                    pullFavArticles();
+                    pullFavArticles(true);
                 }
                 return true;
             }
@@ -569,7 +568,7 @@ public class TimelineFragment extends Fragment {
                 initPageFromCache();
                 mIsLastPage = false;
                 if (mIsInFavArticle) {
-                    pullFavArticles();
+                    pullFavArticles(false);
                 } else {
                     pullTimeline();
                 }
@@ -644,7 +643,7 @@ public class TimelineFragment extends Fragment {
                 break;
             case R.id.action_refresh:
                 if (mIsInFavArticle) {
-                    pullFavArticles();
+                    pullFavArticles(false);
                 } else {
                     resetTimeline();
                 }
