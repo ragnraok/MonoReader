@@ -1,8 +1,5 @@
 package cn.ragnarok.monoreader.api.service;
 
-import android.util.Base64;
-
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONException;
@@ -12,9 +9,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.net.URLEncoder;
 import java.util.Collection;
-import java.util.List;
 
-import cn.ragnarok.monoreader.api.base.APIRawResultListener;
 import cn.ragnarok.monoreader.api.base.APIRequestFinishListener;
 import cn.ragnarok.monoreader.api.base.BaseAPIGetRequest;
 import cn.ragnarok.monoreader.api.base.BaseAPIPostRequest;

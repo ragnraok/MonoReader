@@ -263,6 +263,8 @@ public class TimelineFragment extends Fragment {
                 boolean isSuccess = loadTimelineFramCache();
                 if (!isSuccess) {
                     mPage = 1;
+                    mTimelineList.setVisibility(View.GONE);
+                    mLoadingProgress.setVisibility(View.VISIBLE);
                     mTimelineAdapter.clearData();
                     if (mIsInFavArticle) {
                         mArticleService.loadFavArticleList(mPage, mRequestFinishListener);
@@ -291,6 +293,8 @@ public class TimelineFragment extends Fragment {
                 Log.d(TAG, "dataChangeRequest, lastUpdateTimestamp: " + lastUpdateTimestamp + ", newTimestamp: " + timestamp);
                 if (timestamp > lastUpdateTimestamp) {
                     mPage = 1;
+                    mTimelineList.setVisibility(View.GONE);
+                    mLoadingProgress.setVisibility(View.VISIBLE);
                     mTimelineAdapter.clearData();
                     if (mIsInFavArticle) {
                         mTimelineCache.clearFavArticleListCache();
@@ -309,6 +313,8 @@ public class TimelineFragment extends Fragment {
                     boolean isSuccess = loadTimelineFramCache();
                     if (!isSuccess) {
                         mPage = 1;
+                        mTimelineList.setVisibility(View.GONE);
+                        mLoadingProgress.setVisibility(View.VISIBLE);
                         mTimelineAdapter.clearData();
                         if (mIsInFavArticle) {
                             mArticleService.loadFavArticleList(mPage, mRequestFinishListener);
