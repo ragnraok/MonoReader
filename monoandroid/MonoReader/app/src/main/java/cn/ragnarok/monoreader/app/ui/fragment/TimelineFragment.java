@@ -369,6 +369,13 @@ public class TimelineFragment extends Fragment {
         initPullToRefreshLayout();
         initTimelineList();
 
+        ((MainActivity)getActivity()).setActionbarTitleDoubleClickListener(new Runnable() {
+            @Override
+            public void run() {
+                mTimelineList.smoothScrollToPosition(0);
+            }
+        });
+
         return mTimelineView;
     }
 
@@ -644,9 +651,9 @@ public class TimelineFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
-            case R.id.action_scroll_top:
-                mTimelineList.smoothScrollToPosition(0);
-                break;
+//            case R.id.action_scroll_top:
+//                mTimelineList.smoothScrollToPosition(0);
+//                break;
             case R.id.action_refresh:
                 if (mIsInFavArticle) {
                     pullFavArticles(false);

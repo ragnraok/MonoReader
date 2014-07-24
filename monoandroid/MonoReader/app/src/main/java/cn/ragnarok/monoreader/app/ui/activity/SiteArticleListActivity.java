@@ -1,10 +1,12 @@
 package cn.ragnarok.monoreader.app.ui.activity;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -55,6 +57,7 @@ public class SiteArticleListActivity extends Activity {
 
     private boolean mIsLoadingMore;
     private boolean mIsLastPage;
+    private long tabHolderClickTS = 0;
 
     private Handler mHandler = new Handler(Looper.getMainLooper());
 
@@ -154,6 +157,21 @@ public class SiteArticleListActivity extends Activity {
                 articleIntent.putExtra(ArticleActivity.ARTICLE_ID, article.articleId);
                 startActivity(articleIntent);
 
+            }
+        });
+
+        ActionBar actionBar = getActionBar();
+        actionBar.setCustomView(R.layout.actionbar_double_click_holder);
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.getCustomView().setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                if (SystemClock.elapsedRealtime() - tabHolderClickTS < 300) {
+                    // on double click
+                    mArticleListView.smoothScrollToPosition(0);
+                }
+                tabHolderClickTS = SystemClock.elapsedRealtime();
             }
         });
 

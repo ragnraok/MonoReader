@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.text.InputType;
@@ -55,6 +56,8 @@ public class MainActivity extends Activity {
     private ListView mLeftDrawer;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
+
+    private long tabHolderClickTS = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -220,5 +223,23 @@ public class MainActivity extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void setActionbarTitleDoubleClickListener(final Runnable job) {
+        ActionBar actionbar = getActionBar();
+        actionbar.setCustomView(R.layout.actionbar_double_click_holder);
+        actionbar.setDisplayShowCustomEnabled(true);
+        actionbar.getCustomView().setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                if (SystemClock.elapsedRealtime() - tabHolderClickTS < 300) {
+                    // on double click
+
+                    job.run();
+                }
+                tabHolderClickTS = SystemClock.elapsedRealtime();
+            }
+        });
     }
 }
